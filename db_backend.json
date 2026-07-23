@@ -404,6 +404,15 @@
   ],
   "audit_logs": [
     {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-07-23T07:23:04.213Z",
+      "id": "audit-1784791384213"
+    },
+    {
       "user_id": "usr-1784708645028",
       "action": "SUSPECT_LINK_ADD",
       "target_table": "suspect_links",
