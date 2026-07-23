@@ -1,0 +1,856 @@
+{
+  "stations": [
+    {
+      "id": "stn-blr-mll",
+      "name": "Malleshwaram Police Station",
+      "district": "Bengaluru City Police (West)"
+    },
+    {
+      "id": "stn-blr-ind",
+      "name": "Indiranagar Police Station",
+      "district": "Bengaluru City Police (East)"
+    },
+    {
+      "id": "stn-cid-hq",
+      "name": "Cyber Crime PS (CID Headquarters)",
+      "district": "CID Karnataka State HQ"
+    },
+    {
+      "id": "stn-mys-ctl",
+      "name": "Mysuru Central Police Station",
+      "district": "Mysuru City Police"
+    },
+    {
+      "id": "stn-hub-dwd",
+      "name": "Hubballi-Dharwad Town PS",
+      "district": "Hubballi-Dharwad Police"
+    },
+    {
+      "id": "stn-mng-nth",
+      "name": "Mangaluru North Police Station",
+      "district": "Mangaluru City Police"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "usr-1784704355604",
+      "email": "ka027777@nyayanetra.gov.in",
+      "full_name": "Inspector Gowda",
+      "badge_id": "KA-02-7777",
+      "role": "investigator",
+      "station_id": null,
+      "access_status": "active",
+      "createdAt": "2026-07-22T07:12:35.604Z"
+    },
+    {
+      "id": "usr-1784704501628",
+      "email": "ka049999@nyayanetra.gov.in",
+      "full_name": "Chief Gowda New",
+      "badge_id": "KA-04-9999",
+      "role": "admin",
+      "station_id": null,
+      "access_status": "active",
+      "createdAt": "2026-07-22T07:15:01.628Z"
+    },
+    {
+      "id": "usr-1784708645028",
+      "email": "ka082007@nyayanetra.gov.in",
+      "full_name": "yadavi bhat",
+      "badge_id": "ka-08-2007",
+      "role": "investigator",
+      "station_id": null,
+      "access_status": "active",
+      "createdAt": "2026-07-22T08:24:05.028Z"
+    }
+  ],
+  "cases": [
+    {
+      "id": "case-1784704530759",
+      "fir_number": "FIR #0184/2026",
+      "station_id": "stn-blr-mll",
+      "title": "Malleshwaram CDR & Telemetry Investigation",
+      "description": "Investigation into unauthorized cell tower activity near 18th Cross.",
+      "status": "open",
+      "priority": "high",
+      "created_by": "usr-1784704501628",
+      "createdAt": "2026-07-22T07:15:30.759Z"
+    },
+    {
+      "id": "case-1784708687954",
+      "fir_number": "FIR#0001/2026",
+      "station_id": null,
+      "title": "bagaluru cross",
+      "description": "",
+      "status": "open",
+      "priority": "high",
+      "created_by": "usr-1784708645028",
+      "createdAt": "2026-07-22T08:24:47.954Z"
+    },
+    {
+      "id": "case-1784737053718",
+      "fir_number": "FIR#0002/2026",
+      "station_id": "stn-cid-hq",
+      "title": "ragging in NMIT ",
+      "description": "some seniors ragged juniors itseems",
+      "status": "open",
+      "priority": "high",
+      "created_by": "usr-1784708645028",
+      "createdAt": "2026-07-22T16:17:33.719Z"
+    }
+  ],
+  "suspects": [
+    {
+      "id": "susp-1784704530760",
+      "case_id": "case-1784704530759",
+      "name": "Basavaraju H",
+      "aliases": [
+        "Basa",
+        "BH-402"
+      ],
+      "risk_score": 88,
+      "created_by": "usr-1784704501628",
+      "createdAt": "2026-07-22T07:15:30.760Z"
+    },
+    {
+      "id": "susp-1784704530760",
+      "case_id": "case-1784704530759",
+      "name": "Shivanna K",
+      "aliases": [
+        "Shiva"
+      ],
+      "risk_score": 72,
+      "created_by": "usr-1784704501628",
+      "createdAt": "2026-07-22T07:15:30.760Z"
+    },
+    {
+      "id": "susp-1784708687963",
+      "case_id": "case-1784708687954",
+      "name": "Sharat Gowda",
+      "aliases": [
+        "Sharry"
+      ],
+      "risk_score": 83,
+      "created_by": "usr-1784708645028",
+      "createdAt": "2026-07-22T08:24:47.963Z"
+    },
+    {
+      "id": "susp-1784708706387",
+      "case_id": "case-1784708687954",
+      "name": "Sharat Gowda",
+      "aliases": [
+        "Sharry"
+      ],
+      "risk_score": 78,
+      "created_by": "usr-1784708645028",
+      "createdAt": "2026-07-22T08:25:06.387Z"
+    },
+    {
+      "id": "susp-1784737160294",
+      "case_id": "case-1784737053718",
+      "name": "John Paul",
+      "aliases": [
+        "joe"
+      ],
+      "risk_score": 100,
+      "created_by": "usr-1784708645028",
+      "createdAt": "2026-07-22T16:19:20.294Z"
+    },
+    {
+      "id": "susp-1784737189654",
+      "case_id": "case-1784737053718",
+      "name": "Joseph",
+      "aliases": [
+        "jose"
+      ],
+      "risk_score": 89,
+      "created_by": "usr-1784708645028",
+      "createdAt": "2026-07-22T16:19:49.654Z"
+    }
+  ],
+  "suspect_links": [
+    {
+      "id": "link-1784704530760",
+      "case_id": "case-1784704530759",
+      "suspect_a_id": "susp-1784704530760",
+      "suspect_b_id": "susp-1784704530760",
+      "link_type": "cdr_call",
+      "detail": "14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4",
+      "created_by": "usr-1784704501628",
+      "createdAt": "2026-07-22T07:15:30.760Z"
+    },
+    {
+      "id": "link-1784737345208",
+      "case_id": "case-1784737053718",
+      "suspect_a_id": "susp-1784737160294",
+      "suspect_b_id": "susp-1784737189654",
+      "link_type": "cdr_call",
+      "detail": "12 calls between jose and joe before ragging",
+      "created_by": "usr-1784708645028",
+      "createdAt": "2026-07-22T16:22:25.208Z"
+    }
+  ],
+  "evidence_records": [
+    {
+      "id": "evid-1784704530760",
+      "case_id": "case-1784704530759",
+      "suspect_id": "susp-1784704530760",
+      "type": "cdr",
+      "cell_tower": "Tower KA-BLR-N4 (Malleshwaram 18th Cross)",
+      "phone_number": "+91 94808-99402",
+      "captured_at": "2026-07-22T07:15:30.760Z",
+      "details": {
+        "note": "ANPR camera matched vehicle KA-04-MB-4020"
+      },
+      "created_by": "usr-1784704501628",
+      "createdAt": "2026-07-22T07:15:30.760Z"
+    },
+    {
+      "id": "evid-1784737262920",
+      "case_id": "case-1784708687954",
+      "suspect_id": null,
+      "type": "cdr",
+      "cell_tower": "KA-05-5664",
+      "phone_number": "9380191739",
+      "captured_at": "2026-06-16T09:52",
+      "details": {
+        "notes": "there was a call regarding the ragging"
+      },
+      "created_by": "usr-1784708645028",
+      "createdAt": "2026-07-22T16:21:02.920Z"
+    }
+  ],
+  "conversations": [
+    {
+      "id": "conv-1784704355892",
+      "case_id": null,
+      "user_id": "usr-1784704355604",
+      "title": "Investigation Session",
+      "createdAt": "2026-07-22T07:12:35.892Z"
+    },
+    {
+      "id": "conv-1784704355896",
+      "case_id": null,
+      "user_id": "usr-1784704355604",
+      "title": "Investigation Session",
+      "createdAt": "2026-07-22T07:12:35.896Z"
+    },
+    {
+      "id": "conv-1784704638069",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Investigation Session",
+      "createdAt": "2026-07-22T07:17:18.069Z"
+    },
+    {
+      "id": "conv-1784708645295",
+      "case_id": null,
+      "user_id": "usr-1784708645028",
+      "title": "Investigation Session",
+      "createdAt": "2026-07-22T08:24:05.295Z"
+    },
+    {
+      "id": "conv-1784708645302",
+      "case_id": null,
+      "user_id": "usr-1784708645028",
+      "title": "Investigation Session",
+      "createdAt": "2026-07-22T08:24:05.302Z"
+    },
+    {
+      "id": "conv-1784708645314",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784708645028",
+      "title": "Investigation Session",
+      "createdAt": "2026-07-22T08:24:05.314Z"
+    },
+    {
+      "id": "conv-1784708692872",
+      "case_id": "case-1784708687954",
+      "user_id": "usr-1784708645028",
+      "title": "Investigation Session",
+      "createdAt": "2026-07-22T08:24:52.872Z"
+    },
+    {
+      "id": "conv-1784737056550",
+      "case_id": "case-1784737053718",
+      "user_id": "usr-1784708645028",
+      "title": "Investigation Session",
+      "createdAt": "2026-07-22T16:17:36.550Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-1784704737639",
+      "conversation_id": "conv-1784704638069",
+      "role": "user",
+      "content": "Where was the suspect Basavaraju H on 2026-07-20 at 17:30 IST based on CDR?",
+      "language": "en",
+      "createdAt": "2026-07-22T07:18:57.640Z"
+    },
+    {
+      "id": "msg-1784704737666",
+      "conversation_id": "conv-1784704638069",
+      "role": "assistant",
+      "content": "Suspect Details for Basavaraju H:\n• Basavaraju H (Aliases: Basa, BH-402) has a calculated risk score of 88%.\n  └─ Connections: Linked to 1 other individuals in this case via cdr call links.\n",
+      "language": "en",
+      "cited_record_ids": [
+        "case-1784704530759",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "createdAt": "2026-07-22T07:18:57.666Z"
+    },
+    {
+      "id": "msg-1784705056355",
+      "conversation_id": "conv-1784704638069",
+      "role": "user",
+      "content": "Show all fields and values of the database records associated with Basavaraju H (phone number +91 94808-99402) including timestamp and location.",
+      "language": "en",
+      "createdAt": "2026-07-22T07:24:16.356Z"
+    },
+    {
+      "id": "msg-1784705056638",
+      "conversation_id": "conv-1784704638069",
+      "role": "assistant",
+      "content": "Telemetry & CDR Log matches:\n• [CDR] Record for Phone +91 94808-99402 at Location Tower KA-BLR-N4 (Malleshwaram 18th Cross). Timestamp: 7/22/2026, 12:45:30 PM.\n",
+      "language": "en",
+      "cited_record_ids": [
+        "case-1784704530759",
+        "evid-1784704530760"
+      ],
+      "confidence_score": 95,
+      "createdAt": "2026-07-22T07:24:16.638Z"
+    },
+    {
+      "id": "msg-1784707319028",
+      "conversation_id": "conv-1784704638069",
+      "role": "user",
+      "content": "ಶಂಕಿತರು ಯಾರು?",
+      "language": "kn",
+      "createdAt": "2026-07-22T08:01:59.028Z"
+    },
+    {
+      "id": "msg-1784707319052",
+      "conversation_id": "conv-1784704638069",
+      "role": "assistant",
+      "content": "ಪ್ರಕರಣ FIR #0184/2026 ಗೆ ಸಂಬಂಧಿಸಿದ ಶಂಕಿತರ ವಿವರಗಳು:\n• Basavaraju H (ಅಪಾಯದ ಶ್ರೇಣಿ: 88%) - ಇತರ ಹೆಸರುಗಳು: Basa, BH-402\n• Shivanna K (ಅಪಾಯದ ಶ್ರೇಣಿ: 72%) - ಇತರ ಹೆಸರುಗಳು: Shiva\n",
+      "language": "kn",
+      "cited_record_ids": [
+        "case-1784704530759",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 80,
+      "createdAt": "2026-07-22T08:01:59.052Z"
+    },
+    {
+      "id": "msg-1784707879423",
+      "conversation_id": "conv-1784704638069",
+      "role": "user",
+      "content": "What are the rules for digital evidence in India?",
+      "language": "en",
+      "createdAt": "2026-07-22T08:11:19.424Z"
+    },
+    {
+      "id": "msg-1784707879438",
+      "conversation_id": "conv-1784704638069",
+      "role": "assistant",
+      "content": "Reference: Digital Evidence Admissibility (BSA & Indian Evidence Act)\n\nThe Bharatiya Sakshya Adhiniyam (BSA, formerly Indian Evidence Act) defines digital evidence rules:\n- Section 63 (Admissibility of electronic records, replacing IPC Section 65B)\n- Requires a signed digital certificate from the officer in charge to authenticate phone records (CDR), ANPR logs, or server logs in court.",
+      "language": "en",
+      "cited_record_ids": [
+        "case-1784704530759"
+      ],
+      "confidence_score": 98,
+      "createdAt": "2026-07-22T08:11:19.438Z"
+    },
+    {
+      "id": "msg-1784708723866",
+      "conversation_id": "conv-1784708692872",
+      "role": "user",
+      "content": "i want details of sharry",
+      "language": "en",
+      "createdAt": "2026-07-22T08:25:23.866Z"
+    },
+    {
+      "id": "msg-1784708723871",
+      "conversation_id": "conv-1784708692872",
+      "role": "assistant",
+      "content": "Case Dossier Executive Summary for FIR FIR#0001/2026:\n• Title: bagaluru cross\n• Status: OPEN | Priority: HIGH\n• Briefing: No case synopsis registered.\n• Roster: 2 suspect(s) identified (Sharat Gowda, Sharat Gowda).\n• Evidence: 0 telecommunication / signal record(s) indexed.",
+      "language": "en",
+      "cited_record_ids": [
+        "case-1784708687954"
+      ],
+      "confidence_score": 88,
+      "createdAt": "2026-07-22T08:25:23.871Z"
+    },
+    {
+      "id": "msg-1784737079202",
+      "conversation_id": "conv-1784737056550",
+      "role": "user",
+      "content": "hii can you tell about ragging that happened in an fir?",
+      "language": "en",
+      "createdAt": "2026-07-22T16:17:59.202Z"
+    },
+    {
+      "id": "msg-1784737079216",
+      "conversation_id": "conv-1784737056550",
+      "role": "assistant",
+      "content": "Case Dossier Executive Summary for FIR FIR#0002/2026:\n• Title: ragging in NMIT \n• Status: OPEN | Priority: HIGH\n• Briefing: some seniors ragged juniors itseems\n• Roster: 0 suspect(s) identified (None).\n• Evidence: 0 telecommunication / signal record(s) indexed.",
+      "language": "en",
+      "cited_record_ids": [
+        "case-1784737053718"
+      ],
+      "confidence_score": 88,
+      "createdAt": "2026-07-22T16:17:59.216Z"
+    }
+  ],
+  "audit_logs": [
+    {
+      "user_id": "usr-1784708645028",
+      "action": "SUSPECT_LINK_ADD",
+      "target_table": "suspect_links",
+      "target_id": "link-1784737345208",
+      "details": {
+        "link_type": "cdr_call"
+      },
+      "createdAt": "2026-07-22T16:22:25.209Z",
+      "id": "audit-1784737345209"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "EVIDENCE_ADD",
+      "target_table": "evidence_records",
+      "target_id": "evid-1784737262920",
+      "details": {
+        "type": "cdr"
+      },
+      "createdAt": "2026-07-22T16:21:02.921Z",
+      "id": "audit-1784737262921"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "SUSPECT_ADD",
+      "target_table": "suspects",
+      "target_id": "susp-1784737189654",
+      "details": {
+        "name": "Joseph"
+      },
+      "createdAt": "2026-07-22T16:19:49.655Z",
+      "id": "audit-1784737189655"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "SUSPECT_ADD",
+      "target_table": "suspects",
+      "target_id": "susp-1784737160294",
+      "details": {
+        "name": "John Paul"
+      },
+      "createdAt": "2026-07-22T16:19:20.298Z",
+      "id": "audit-1784737160298"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "RAG_QUERY",
+      "target_table": "conversations",
+      "target_id": "case-1784737053718",
+      "details": {
+        "query": "hii can you tell about ragging that happened in an fir?",
+        "language": "en",
+        "confidenceScore": 88,
+        "citedRecordsCount": 1
+      },
+      "createdAt": "2026-07-22T16:17:59.217Z",
+      "id": "audit-1784737079217"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1784737056550",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-07-22T16:17:36.551Z",
+      "id": "audit-1784737056551"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "CASE_CREATE",
+      "target_table": "cases",
+      "target_id": "case-1784737053718",
+      "details": {
+        "fir_number": "FIR#0002/2026"
+      },
+      "createdAt": "2026-07-22T16:17:33.721Z",
+      "id": "audit-1784737053721"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784708645028",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-07-22T16:16:13.282Z",
+      "id": "audit-1784736973282"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-07-22T08:29:33.497Z",
+      "id": "audit-1784708973497"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784708645028",
+      "details": {},
+      "createdAt": "2026-07-22T08:28:56.398Z",
+      "id": "audit-1784708936398"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "RAG_QUERY",
+      "target_table": "conversations",
+      "target_id": "case-1784708687954",
+      "details": {
+        "query": "i want details of sharry",
+        "language": "en",
+        "confidenceScore": 88,
+        "citedRecordsCount": 1
+      },
+      "createdAt": "2026-07-22T08:25:23.872Z",
+      "id": "audit-1784708723872"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "SUSPECT_ADD",
+      "target_table": "suspects",
+      "target_id": "susp-1784708706387",
+      "details": {
+        "name": "Sharat Gowda"
+      },
+      "createdAt": "2026-07-22T08:25:06.388Z",
+      "id": "audit-1784708706388"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1784708692872",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-07-22T08:24:52.873Z",
+      "id": "audit-1784708692873"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "SUSPECT_ADD",
+      "target_table": "suspects",
+      "target_id": "susp-1784708687963",
+      "details": {
+        "name": "Sharat Gowda"
+      },
+      "createdAt": "2026-07-22T08:24:47.964Z",
+      "id": "audit-1784708687964"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "CASE_CREATE",
+      "target_table": "cases",
+      "target_id": "case-1784708687954",
+      "details": {
+        "fir_number": "FIR#0001/2026"
+      },
+      "createdAt": "2026-07-22T08:24:47.955Z",
+      "id": "audit-1784708687955"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1784708645314",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-07-22T08:24:05.315Z",
+      "id": "audit-1784708645315"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1784708645302",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-07-22T08:24:05.303Z",
+      "id": "audit-1784708645303"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1784708645295",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-07-22T08:24:05.297Z",
+      "id": "audit-1784708645297"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "AUTH_SIGNUP",
+      "target_table": "profiles",
+      "target_id": "usr-1784708645028",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-07-22T08:24:05.029Z",
+      "id": "audit-1784708645029"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-07-22T08:23:44.327Z",
+      "id": "audit-1784708624327"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "RAG_QUERY",
+      "target_table": "conversations",
+      "target_id": "case-1784704530759",
+      "details": {
+        "query": "What are the rules for digital evidence in India?",
+        "language": "en",
+        "confidenceScore": 98,
+        "citedRecordsCount": 1
+      },
+      "createdAt": "2026-07-22T08:11:19.439Z",
+      "id": "audit-1784707879439"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "RAG_QUERY",
+      "target_table": "conversations",
+      "target_id": "case-1784704530759",
+      "details": {
+        "query": "ಶಂಕಿತರು ಯಾರು?",
+        "language": "kn",
+        "confidenceScore": 80,
+        "citedRecordsCount": 2
+      },
+      "createdAt": "2026-07-22T08:01:59.053Z",
+      "id": "audit-1784707319053"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-07-22T07:54:42.441Z",
+      "id": "audit-1784706882441"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-07-22T07:53:28.688Z",
+      "id": "audit-1784706808688"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-07-22T07:52:16.784Z",
+      "id": "audit-1784706736784"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-07-22T07:51:36.733Z",
+      "id": "audit-1784706696733"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-07-22T07:38:29.606Z",
+      "id": "audit-1784705909606"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-07-22T07:37:11.920Z",
+      "id": "audit-1784705831920"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-07-22T07:33:44.355Z",
+      "id": "audit-1784705624355"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-07-22T07:26:39.399Z",
+      "id": "audit-1784705199399"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "RAG_QUERY",
+      "target_table": "conversations",
+      "target_id": "case-1784704530759",
+      "details": {
+        "query": "Show all fields and values of the database records associated with Basavaraju H (phone number +91 94808-99402) including timestamp and location.",
+        "language": "en",
+        "confidenceScore": 95,
+        "citedRecordsCount": 2
+      },
+      "createdAt": "2026-07-22T07:24:16.639Z",
+      "id": "audit-1784705056639"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "RAG_QUERY",
+      "target_table": "conversations",
+      "target_id": "case-1784704530759",
+      "details": {
+        "query": "Where was the suspect Basavaraju H on 2026-07-20 at 17:30 IST based on CDR?",
+        "language": "en",
+        "confidenceScore": 95,
+        "citedRecordsCount": 2
+      },
+      "createdAt": "2026-07-22T07:18:57.667Z",
+      "id": "audit-1784704737667"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1784704638069",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-07-22T07:17:18.070Z",
+      "id": "audit-1784704638070"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-07-22T07:17:17.518Z",
+      "id": "audit-1784704637518"
+    },
+    {
+      "user_id": "usr-1784704501628",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704501628",
+      "details": {},
+      "createdAt": "2026-07-22T07:16:03.593Z",
+      "id": "audit-1784704563593"
+    },
+    {
+      "user_id": "usr-1784704501628",
+      "action": "AUTH_SIGNUP",
+      "target_table": "profiles",
+      "target_id": "usr-1784704501628",
+      "details": {
+        "role": "admin"
+      },
+      "createdAt": "2026-07-22T07:15:01.629Z",
+      "id": "audit-1784704501629"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-07-22T07:13:30.868Z",
+      "id": "audit-1784704410868"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1784704355896",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-07-22T07:12:35.897Z",
+      "id": "audit-1784704355897"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1784704355892",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-07-22T07:12:35.893Z",
+      "id": "audit-1784704355893"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_SIGNUP",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-07-22T07:12:35.604Z",
+      "id": "audit-1784704355604"
+    },
+    {
+      "user_id": "usr-1784702967232",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784702967232",
+      "details": {},
+      "createdAt": "2026-07-22T07:11:33.149Z",
+      "id": "audit-1784704293149"
+    }
+  ]
+}

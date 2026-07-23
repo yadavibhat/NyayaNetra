@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NyayaNetra | Security Token & Passcode Recovery</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error": "#ba1a1a",
+                        "primary": "#00152f",
+                        "primary-container": "#0f2a4a",
+                        "primary-fixed": "#d4e3ff",
+                        "on-primary": "#ffffff",
+                        "secondary": "#7d5700",
+                        "surface": "#faf9fc",
+                        "surface-container": "#efedf0",
+                        "surface-container-low": "#f4f3f6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#1a1c1e",
+                        "on-surface-variant": "#43474e",
+                        "outline": "#74777f",
+                        "outline-variant": "#c4c6cf",
+                        "gold-accent": "#D9A441",
+                        "navy-deep": "#0F2A4A"
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-surface font-sans text-on-surface min-h-screen flex flex-col justify-between">
+
+    <!-- Top Header -->
+    <header class="bg-primary text-on-primary px-6 py-4 flex justify-between items-center border-b border-primary-container shadow-sm">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="p-2 hover:bg-primary-container rounded-lg transition-colors flex items-center gap-1 text-slate-200 hover:text-white" title="Return to Login">
+                <span class="material-symbols-outlined">arrow_back</span>
+                <span class="text-xs font-semibold">Back to Login</span>
+            </a>
+            <span class="text-xs font-mono bg-primary-container px-2.5 py-1 rounded text-amber-300 border border-amber-500/30">
+                KARNATAKA CID SECURITY GATEWAY
+            </span>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs font-mono text-slate-300">OTP Gateway: ACTIVE (KA-TELECOM)</span>
+        </div>
+    </header>
+
+    <!-- Main Recovery Box -->
+    <main class="flex-1 flex items-center justify-center p-6">
+        <div class="w-full max-w-[480px] bg-white border border-outline-variant rounded-2xl shadow-xl p-8">
+            <div class="flex flex-col items-center text-center gap-2 mb-6">
+                <div class="w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-700 mb-1">
+                    <span class="material-symbols-outlined text-3xl">key</span>
+                </div>
+                <h1 class="text-xl font-bold text-navy-deep">Security Access Token Recovery</h1>
+                <p class="text-xs text-on-surface-variant leading-relaxed">
+                    Request an authorized one-time encryption token for Karnataka Police Officers (CID / Bengaluru City Police).
+                </p>
+            </div>
+
+            <form id="reset-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1.5" for="badge-id">Officer Badge ID / Service No.</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-lg">badge</span>
+                        <input id="badge-id" type="text" value="KA-04-4892 (Insp. B. Gowda)" required class="w-full pl-11 pr-4 py-3 bg-surface-container border border-outline-variant rounded-xl text-xs font-mono font-bold text-navy-deep focus:ring-2 focus:ring-primary/20 outline-none"/>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1.5" for="phone-no">Registered Mobile No. (Karnataka Police VPN)</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-lg">call</span>
+                        <input id="phone-no" type="text" value="+91 94808 04892" required class="w-full pl-11 pr-4 py-3 bg-surface-container border border-outline-variant rounded-xl text-xs font-mono font-bold text-navy-deep focus:ring-2 focus:ring-primary/20 outline-none"/>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-amber-700 text-lg shrink-0 mt-0.5">verified_user</span>
+                    <p class="leading-snug">
+                        <strong>Security Protocol:</strong> Reset token will be verified via Karnataka Police CCTNS SMS Gateway.
+                    </p>
+                </div>
+
+                <button type="submit" id="reset-btn" class="w-full bg-primary text-on-primary py-3.5 rounded-xl font-bold text-xs hover:bg-primary-container transition-all flex items-center justify-center gap-2 shadow-sm">
+                    <span class="material-symbols-outlined text-base">send_to_mobile</span>
+                    <span>Send Verification Token OTP</span>
+                </button>
+            </form>
+
+            <div id="otp-confirmation" class="hidden mt-6 pt-4 border-t border-outline-variant text-center">
+                <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 text-xs font-bold space-y-2">
+                    <p class="flex items-center justify-center gap-1.5 text-emerald-800 text-sm">
+                        <span class="material-symbols-outlined">check_circle</span> OTP Dispatched
+                    </p>
+                    <p class="font-mono text-emerald-950">Verification Code sent to +91 94808 04892</p>
+                    <a href="index.html" class="inline-block mt-2 px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition-colors">Return & Login with Token</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="p-4 text-center text-xs font-mono text-outline border-t border-outline-variant">
+        NyayaNetra Security Gateway &mdash; Criminal Investigation Department (CID), Karnataka State Police
+    </footer>
+
+    <script>
+        document.getElementById('reset-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('reset-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-base">sync</span> <span>Communicating with CCTNS Gateway...</span>';
+            setTimeout(() => {
+                btn.classList.add('hidden');
+                document.getElementById('otp-confirmation').classList.remove('hidden');
+            }, 1200);
+        });
+    </script>
+</body>
+</html>

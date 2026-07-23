@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NyayaNetra | Karnataka Law Enforcement Portal</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error": "#ba1a1a",
+              "primary": "#00152f",
+              "primary-container": "#0f2a4a",
+              "primary-fixed": "#d4e3ff",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#7a92b7",
+              "secondary": "#7d5700",
+              "secondary-container": "#ffc55f",
+              "secondary-fixed": "#ffdeaa",
+              "on-secondary-container": "#755100",
+              "tertiary": "#0e1621",
+              "tertiary-container": "#232a36",
+              "surface": "#faf9fc",
+              "surface-container": "#efedf0",
+              "surface-container-low": "#f4f3f6",
+              "surface-container-high": "#e9e7eb",
+              "surface-container-highest": "#e3e2e5",
+              "surface-container-lowest": "#ffffff",
+              "on-surface": "#1a1c1e",
+              "on-surface-variant": "#43474e",
+              "outline": "#74777f",
+              "outline-variant": "#c4c6cf",
+              "gold-accent": "#D9A441",
+              "navy-deep": "#0F2A4A",
+              "brand-gray": "#6B7280"
+            },
+            width: {
+              "88": "22rem",
+              "sidebar-width": "280px"
+            },
+            boxShadow: {
+              "2xs": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+              "xs": "0 1px 2px 0 rgb(0 0 0 / 0.05)"
+            },
+            fontFamily: {
+              "sans": ["Inter", "Noto Sans Kannada", "sans-serif"]
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-surface font-sans text-on-surface antialiased selection:bg-primary-fixed selection:text-primary">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
