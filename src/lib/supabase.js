@@ -191,6 +191,7 @@ export const dbService = {
         name: suspectData.name,
         aliases: suspectData.aliases || [],
         risk_score: suspectData.risk_score !== null && suspectData.risk_score !== undefined ? Number(suspectData.risk_score) : null,
+        image_url: suspectData.image_url || null,
         created_by: currentUser?.profile?.id || currentUser?.profile?._id || 'sys-admin',
         currentUser
       })
@@ -243,6 +244,7 @@ export const dbService = {
         cell_tower: evidenceData.cell_tower || '',
         phone_number: evidenceData.phone_number || '',
         captured_at: evidenceData.captured_at || new Date().toISOString(),
+        image_url: evidenceData.image_url || null,
         details: evidenceData.details || {},
         created_by: currentUser?.profile?.id || currentUser?.profile?._id || 'sys-admin',
         currentUser

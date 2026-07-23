@@ -16,7 +16,19 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
   const [name, setName] = useState('');
   const [aliases, setAliases] = useState('');
   const [riskScore, setRiskScore] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const reloadCases = async () => {
     try {
@@ -102,12 +114,14 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
         case_id: activeCaseId,
         name: name.trim(),
         aliases: aliasArray,
-        risk_score: scoreVal
+        risk_score: scoreVal,
+        image_url: imageUrl || null
       });
 
       setName('');
       setAliases('');
       setRiskScore('');
+      setImageUrl('');
       setQuickFirNumber('');
       setQuickTitle('');
       setShowQuickCaseForm(false);
@@ -257,6 +271,42 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
                 className="w-full px-3.5 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm text-on-surface"
               />
               <p className="text-[11px] text-outline mt-1">This should reflect a documented reason (repeat-offender pattern, active links, etc.) &mdash; not a guess. Leave blank rather than estimate.</p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1.5">
+                Suspect Photo / Mugshot <span className="text-outline font-normal">(optional)</span>
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="suspect-photo-upload"
+                />
+                <label
+                  htmlFor="suspect-photo-upload"
+                  className="cursor-pointer px-4 py-2.5 border border-outline-variant hover:bg-surface-container rounded-lg text-xs font-bold text-navy-deep transition-all bg-surface-container-low"
+                >
+                  Choose Image File
+                </label>
+                {imageUrl ? (
+                  <div className="relative w-11 h-11 rounded-full border border-outline-variant overflow-hidden bg-slate-100 shadow-sm shrink-0">
+                    <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl('')}
+                      className="absolute inset-0 bg-black/40 text-white flex items-center justify-center font-bold text-[8px] hover:bg-black/60 opacity-0 hover:opacity-100 transition-opacity"
+                      title="Clear photo"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                ) : (
+                  <span className="text-[10px] text-outline italic">No file selected</span>
+                )}
+              </div>
             </div>
 
             <div className="flex items-center gap-3 pt-2">

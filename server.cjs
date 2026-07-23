@@ -51,6 +51,7 @@ const SuspectSchema = new mongoose.Schema({
   name: { type: String, required: true },
   aliases: { type: [String], default: [] },
   risk_score: { type: Number, min: 0, max: 100, default: null },
+  image_url: { type: String, default: null },
   created_by: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
@@ -74,6 +75,7 @@ const EvidenceRecordSchema = new mongoose.Schema({
   cell_tower: { type: String, default: '' },
   phone_number: { type: String, default: '' },
   captured_at: { type: Date, required: true },
+  image_url: { type: String, default: null },
   details: { type: mongoose.Schema.Types.Mixed, default: {} },
   created_by: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
@@ -885,12 +887,13 @@ app.get('/api/suspects', async (req, res) => {
 
 app.post('/api/suspects', async (req, res) => {
   try {
-    const { case_id, name, aliases, risk_score, created_by, currentUser } = req.body;
+    const { case_id, name, aliases, risk_score, image_url, created_by, currentUser } = req.body;
     const suspect = await Store.addSuspect({
       case_id,
       name,
       aliases: aliases || [],
       risk_score: risk_score !== null ? Number(risk_score) : null,
+      image_url: image_url || null,
       created_by
     });
     const cUserId = currentUser?.profile?.id || currentUser?.profile?._id?.toString() || 'sys';
@@ -944,7 +947,7 @@ app.get('/api/evidence', async (req, res) => {
 
 app.post('/api/evidence', async (req, res) => {
   try {
-    const { case_id, suspect_id, type, cell_tower, phone_number, captured_at, details, created_by, currentUser } = req.body;
+    const { case_id, suspect_id, type, cell_tower, phone_number, captured_at, image_url, details, created_by, currentUser } = req.body;
     const e = await Store.addEvidence({
       case_id,
       suspect_id: suspect_id || null,
@@ -952,6 +955,7 @@ app.post('/api/evidence', async (req, res) => {
       cell_tower: cell_tower || '',
       phone_number: phone_number || '',
       captured_at: captured_at || new Date().toISOString(),
+      image_url: image_url || null,
       details: details || {},
       created_by
     });

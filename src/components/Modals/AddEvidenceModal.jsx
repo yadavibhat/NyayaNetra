@@ -20,7 +20,19 @@ export function AddEvidenceModal({ isOpen, onClose, onAdded, caseId, currentUser
   const [phoneNumber, setPhoneNumber] = useState('');
   const [capturedAt, setCapturedAt] = useState('');
   const [details, setDetails] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const reloadData = async () => {
     try {
@@ -88,6 +100,7 @@ export function AddEvidenceModal({ isOpen, onClose, onAdded, caseId, currentUser
         cell_tower: cellTower.trim() || null,
         phone_number: phoneNumber.trim() || null,
         captured_at: capturedAt,
+        image_url: imageUrl || null,
         details: { notes: details.trim() }
       });
 
@@ -96,6 +109,7 @@ export function AddEvidenceModal({ isOpen, onClose, onAdded, caseId, currentUser
       setPhoneNumber('');
       setCapturedAt('');
       setDetails('');
+      setImageUrl('');
       setError('');
       if (onAdded) onAdded(evidence);
       onClose();
@@ -292,8 +306,44 @@ export function AddEvidenceModal({ isOpen, onClose, onAdded, caseId, currentUser
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
                 placeholder="Any further context an investigator should see when this record is cited in chat"
-                className="w-full px-3.5 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm text-on-surface resize-none"
+                className="w-full px-3.5 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm text-on-surface resize-none mb-4"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1.5">
+                Upload Evidence Document / Scene Photo <span className="text-outline font-normal">(optional)</span>
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="evidence-photo-upload"
+                />
+                <label
+                  htmlFor="evidence-photo-upload"
+                  className="cursor-pointer px-4 py-2.5 border border-outline-variant hover:bg-surface-container rounded-lg text-xs font-bold text-navy-deep transition-all bg-surface-container-low"
+                >
+                  Choose Photo File
+                </label>
+                {imageUrl ? (
+                  <div className="relative w-11 h-11 rounded border border-outline-variant overflow-hidden bg-slate-100 shadow-sm shrink-0">
+                    <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl('')}
+                      className="absolute inset-0 bg-black/40 text-white flex items-center justify-center font-bold text-[8px] hover:bg-black/60 opacity-0 hover:opacity-100 transition-opacity"
+                      title="Clear photo"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                ) : (
+                  <span className="text-[10px] text-outline italic">No file selected</span>
+                )}
+              </div>
             </div>
 
             <div className="flex items-center gap-3 pt-2">

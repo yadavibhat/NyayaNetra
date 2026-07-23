@@ -15,6 +15,7 @@ export function NetworkView({ setActiveScreen }) {
   const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [suspects, setSuspects] = useState([]);
   const [links, setLinks] = useState([]);
+  const [evidence, setEvidence] = useState([]);
   const [selectedSuspect, setSelectedSuspect] = useState(null);
 
   // Modals
@@ -32,15 +33,18 @@ export function NetworkView({ setActiveScreen }) {
       }
 
       if (activeId) {
-        const [sList, lList] = await Promise.all([
+        const [sList, lList, eList] = await Promise.all([
           dbService.getSuspects(activeId),
-          dbService.getSuspectLinks(activeId)
+          dbService.getSuspectLinks(activeId),
+          dbService.getEvidence(activeId)
         ]);
         setSuspects(sList);
         setLinks(lList);
+        setEvidence(eList);
       } else {
         setSuspects([]);
         setLinks([]);
+        setEvidence([]);
       }
     } catch (err) {
       console.error(err);
@@ -135,6 +139,13 @@ export function NetworkView({ setActiveScreen }) {
             </div>
           ) : (
             <svg id="networkSvg" className="w-full h-full" viewBox="0 0 1000 800">
+              <defs>
+                {nodePositions.map(node => node.image_url && (
+                  <clipPath key={`clip-${node.id || node._id}`} id={`clip-${node.id || node._id}`}>
+                    <circle cx={node.cx} cy={node.cy} r={node.risk_score > 80 ? 48 : 38} />
+                  </clipPath>
+                ))}
+              </defs>
               <g id="edges">
                 {links.map(link => {
                   const s = nodePositions.find(n => n.id === link.suspect_a_id);
@@ -157,40 +168,68 @@ export function NetworkView({ setActiveScreen }) {
               </g>
 
               <g id="nodes">
-                {nodePositions.map(node => (
-                  <g
-                    key={node.id}
-                    className="node cursor-pointer"
-                    onClick={() => setSelectedSuspect(node)}
-                  >
-                    <circle
-                      cx={node.cx}
-                      cy={node.cy}
-                      r={node.risk_score > 80 ? 48 : 38}
-                      fill={node.risk_score > 80 ? '#D9A441' : '#0F2A4A'}
-                      stroke="#FFFFFF"
-                      strokeWidth="3"
-                    />
-                    <text
-                      x={node.cx}
-                      y={node.cy + 6}
-                      textAnchor="middle"
-                      fill="#FFFFFF"
-                      className="font-bold text-sm select-none pointer-events-none"
+                {nodePositions.map(node => {
+                  const nodeId = node.id || node._id;
+                  const r = node.risk_score > 80 ? 48 : 38;
+                  return (
+                    <g
+                      key={nodeId}
+                      className="node cursor-pointer"
+                      onClick={() => setSelectedSuspect(node)}
                     >
-                      {node.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-                    </text>
-                    <text
-                      x={node.cx}
-                      y={node.cy + (node.risk_score > 80 ? 68 : 58)}
-                      textAnchor="middle"
-                      fill="#0F2A4A"
-                      className="font-bold text-xs select-none pointer-events-none"
-                    >
-                      {node.name}
-                    </text>
-                  </g>
-                ))}
+                      {node.image_url ? (
+                        <>
+                          <circle
+                            cx={node.cx}
+                            cy={node.cy}
+                            r={r}
+                            fill="#FFFFFF"
+                            stroke={node.risk_score > 80 ? '#D9A441' : '#0F2A4A'}
+                            strokeWidth="3"
+                          />
+                          <image
+                            href={node.image_url}
+                            x={node.cx - r}
+                            y={node.cy - r}
+                            width={r * 2}
+                            height={r * 2}
+                            clipPath={`url(#clip-${nodeId})`}
+                            preserveAspectRatio="xMidYMid slice"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <circle
+                            cx={node.cx}
+                            cy={node.cy}
+                            r={r}
+                            fill={node.risk_score > 80 ? '#D9A441' : '#0F2A4A'}
+                            stroke="#FFFFFF"
+                            strokeWidth="3"
+                          />
+                          <text
+                            x={node.cx}
+                            y={node.cy + 6}
+                            textAnchor="middle"
+                            fill="#FFFFFF"
+                            className="font-bold text-sm select-none pointer-events-none"
+                          >
+                            {node.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                          </text>
+                        </>
+                      )}
+                      <text
+                        x={node.cx}
+                        y={node.cy + (node.risk_score > 80 ? 68 : 58)}
+                        textAnchor="middle"
+                        fill="#0F2A4A"
+                        className="font-bold text-xs select-none pointer-events-none"
+                      >
+                        {node.name}
+                      </text>
+                    </g>
+                  );
+                })}
               </g>
             </svg>
           )}
@@ -233,33 +272,75 @@ export function NetworkView({ setActiveScreen }) {
                 </div>
 
                 {/* Avatar Badge */}
-                <div className="aspect-square w-full rounded-2xl mb-5 bg-gradient-to-br from-navy-deep to-slate-900 border border-outline-variant flex flex-col items-center justify-center text-white relative shadow-inner p-6">
-                  <div className="w-24 h-24 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-300 font-extrabold text-3xl mb-2 shadow-md">
-                    {selectedSuspect.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-                  </div>
-                  <span className="text-xs font-mono text-amber-300 bg-black/50 px-2.5 py-1 rounded border border-amber-500/30">
-                    ID: {selectedSuspect.id.slice(0, 8)}
-                  </span>
+                <div className="aspect-square w-full rounded-2xl mb-5 bg-gradient-to-br from-navy-deep to-slate-900 border border-outline-variant flex flex-col items-center justify-center text-white relative shadow-inner overflow-hidden">
+                  {selectedSuspect.image_url ? (
+                    <img src={selectedSuspect.image_url} alt={selectedSuspect.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <>
+                      <div className="w-24 h-24 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-300 font-extrabold text-3xl mb-2 shadow-md">
+                        {selectedSuspect.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                      </div>
+                      <span className="text-xs font-mono text-amber-300 bg-black/50 px-2.5 py-1 rounded border border-amber-500/30">
+                        ID: {(selectedSuspect.id || selectedSuspect._id).slice(0, 8)}
+                      </span>
+                    </>
+                  )}
                 </div>
 
-                <div className="space-y-4 text-xs">
+                <div className="space-y-4 text-xs pb-6">
                   <div>
-                    <label className="text-[11px] font-bold text-outline uppercase tracking-wider block">Threat Risk Score</label>
+                    <label className="text-[11px] font-bold text-outline uppercase tracking-wider block font-sans">Threat Risk Score</label>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-bold border border-amber-300">
-                        {selectedSuspect.risk_score}% Calculated Risk Metric
+                        {selectedSuspect.risk_score !== null ? `${selectedSuspect.risk_score}%` : 'Unassessed'} Calculated Risk Metric
                       </span>
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-bold text-outline uppercase tracking-wider block">Known Aliases</label>
+                    <label className="text-[11px] font-bold text-outline uppercase tracking-wider block font-sans">Known Aliases</label>
                     <p className="font-mono font-bold text-navy-deep mt-0.5">
                       {selectedSuspect.aliases?.join(', ') || 'None recorded'}
                     </p>
                   </div>
 
-                  <div>
+                  {/* Linked Evidence Files & Scene Images */}
+                  <div className="pt-2">
+                    <label className="text-[11px] font-bold text-outline uppercase tracking-wider block mb-2 font-sans">Linked Evidence & Scene Photos</label>
+                    {evidence.filter(e => e.suspect_id === selectedSuspect.id || e.suspect_id === selectedSuspect._id).length === 0 ? (
+                      <p className="text-xs text-outline italic">No evidence records linked to this suspect.</p>
+                    ) : (
+                      <div className="space-y-2.5">
+                        {evidence
+                          .filter(e => e.suspect_id === selectedSuspect.id || e.suspect_id === selectedSuspect._id)
+                          .map((ev, idx) => (
+                            <div key={idx} className="p-3 bg-surface-container-low border border-outline-variant/60 rounded-xl space-y-1.5 text-[11px]">
+                              <div className="flex justify-between items-center font-bold text-navy-deep uppercase font-sans">
+                                <span>{ev.type} Record</span>
+                                <span className="font-mono text-outline">{new Date(ev.captured_at).toLocaleDateString()}</span>
+                              </div>
+                              {ev.phone_number && <p className="font-mono">📞 Phone: {ev.phone_number}</p>}
+                              {ev.cell_tower && <p className="font-mono">📡 Cell Tower: {ev.cell_tower}</p>}
+                              {ev.details?.notes && <p className="text-on-surface-variant font-medium">{ev.details.notes}</p>}
+                              
+                              {/* Display uploaded evidence scene/document photo */}
+                              {ev.image_url && (
+                                <div className="mt-2 rounded-lg border border-outline-variant overflow-hidden bg-slate-100 max-h-32">
+                                  <img 
+                                    src={ev.image_url} 
+                                    alt="Evidence Snapshot" 
+                                    className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-all"
+                                    onClick={() => window.open(ev.image_url, '_blank')}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-2">
                     <button
                       onClick={() => setActiveScreen('pdf')}
                       className="w-full py-3 bg-navy-deep text-on-primary font-bold text-xs rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-sm"
