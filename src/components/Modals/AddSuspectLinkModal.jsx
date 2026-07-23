@@ -165,10 +165,10 @@ export function AddSuspectLinkModal({ isOpen, onClose, onAdded, caseId, currentU
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let activeCaseId = selectedCaseId;
+    let activeCaseId = selectedCaseId || (cases.length > 0 ? (cases[0].id || cases[0]._id) : null);
 
     try {
-      if (showQuickCaseForm || !activeCaseId) {
+      if (showQuickCaseForm) {
         if (!quickFirNumber || !quickTitle) {
           setError('Please provide an FIR Number and Title for the new case.');
           return;
@@ -179,6 +179,11 @@ export function AddSuspectLinkModal({ isOpen, onClose, onAdded, caseId, currentU
           priority: 'high'
         });
         activeCaseId = createdCase.id || createdCase._id;
+      }
+
+      if (!activeCaseId) {
+        setError('No active case selected. Please create or select a case.');
+        return;
       }
 
       if (!suspectAId || !suspectBId) {

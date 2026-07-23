@@ -148,8 +148,8 @@ export function NetworkView({ setActiveScreen }) {
               </defs>
               <g id="edges">
                 {links.map(link => {
-                  const s = nodePositions.find(n => n.id === link.suspect_a_id);
-                  const t = nodePositions.find(n => n.id === link.suspect_b_id);
+                  const s = nodePositions.find(n => (n.id || n._id) === link.suspect_a_id);
+                  const t = nodePositions.find(n => (n.id || n._id) === link.suspect_b_id);
                   if (!s || !t) return null;
                   return (
                     <line

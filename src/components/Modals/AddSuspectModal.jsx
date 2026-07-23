@@ -77,16 +77,12 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
     } catch (err) {
       setError(err.message || 'Failed to create FIR case.');
     }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedCaseId && !showQuickCaseForm) {
-      setError('Please select an FIR case, or click "Create New FIR Case".');
-      return;
-    }
+    setError('');
+
     if (!name.trim()) {
-      setError('Full Name is required.');
+      setError('Please provide the Suspect Name.');
       return;
     }
 
@@ -330,4 +326,5 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
       </div>
     </AnimatePresence>
   );
+  }
 }
