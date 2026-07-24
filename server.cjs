@@ -430,6 +430,86 @@ async function generateLocalAIResponse(query, caseId, language = 'en') {
   const allEvidence = await Store.getEvidence(caseId);
   const allLinks = await Store.getLinks(caseId);
 
+  const targetCase = cases.find(c => c.id === caseId || c._id?.toString() === caseId) || cases[0];
+  const groqApiKey = process.env.GROQ_API_KEY;
+
+  if (targetCase && groqApiKey) {
+    console.log('Routing RAG query to Groq Cloud API using local JSON/Mongo database context...');
+    try {
+      const caseIdStr = targetCase.id || targetCase._id?.toString();
+      const caseSuspects = allSuspects.filter(s => s.case_id === caseIdStr);
+      const caseEvidence = allEvidence.filter(e => e.case_id === caseIdStr);
+      const caseLinks = allLinks.filter(l => l.case_id === caseIdStr);
+
+      const systemPrompt = `You are NyayaNetra, an AI Copilot for the Karnataka State Police.
+Your job is to answer the user's question using ONLY the provided database context.
+Rules:
+1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.
+2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.
+3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].
+4. Language: Respond in the requested language: ${language === 'kn' ? 'Kannada' : 'English'}. If the user requests Kannada, output your entire response in Kannada, maintaining professional legal terminology.`;
+
+      const formattedContext = `
+Case Profile:
+- ID: ${caseIdStr}
+- FIR Number: ${targetCase.fir_number}
+- Title: ${targetCase.title}
+- Description: ${targetCase.description || 'N/A'}
+- Status: ${targetCase.status}
+- Priority: ${targetCase.priority}
+
+Suspects Roster:
+${caseSuspects.map(s => `- ID: ${s.id || s._id} | Name: ${s.name} | Aliases: ${s.aliases?.join(', ') || 'None'} | Risk Score: ${s.risk_score || 0}%`).join('\n') || 'None'}
+
+Evidence Records:
+${caseEvidence.map(e => `- ID: ${e.id || e._id} | Type: ${e.type} | Phone: ${e.phone_number || 'N/A'} | Cell Tower: ${e.cell_tower || 'N/A'} | Notes: ${e.details?.notes || JSON.stringify(e.details || {})}`).join('\n') || 'None'}
+
+Suspect Network Links:
+${caseLinks.map(l => `- ID: ${l.id || l._id} | Suspect 1 ID: ${l.suspect_a_id || l.suspect_id_1} | Suspect 2 ID: ${l.suspect_b_id || l.suspect_id_2} | Type: ${l.link_type} | Detail: ${l.detail || 'N/A'}`).join('\n') || 'None'}
+`;
+
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${groqApiKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: `Retrieved case context:\n${formattedContext}\n\nUser Question: ${query}` }
+          ],
+          temperature: 0.1
+        })
+      });
+
+      if (response.ok) {
+        const resJson = await response.json();
+        const answerText = resJson.choices?.[0]?.message?.content || "No response received from model.";
+        
+        // Extract cited IDs
+        const citedRecordIds = [];
+        const allIds = [caseIdStr, ...caseSuspects.map(s => s.id || s._id?.toString()), ...caseEvidence.map(e => e.id || e._id?.toString()), ...caseLinks.map(l => l.id || l._id?.toString())];
+        allIds.forEach(id => {
+          if (id && answerText.includes(id)) {
+            citedRecordIds.push(id);
+          }
+        });
+
+        return {
+          answer: answerText,
+          confidenceScore: 95,
+          citedRecordIds
+        };
+      } else {
+        console.error('Groq API failed:', await response.text());
+      }
+    } catch (err) {
+      console.error('Failed to query Groq, falling back to local NLP templates:', err);
+    }
+  }
+
   const queryLower = query.toLowerCase();
 
   // 1. Check Indian Law & Police Knowledge Base first
@@ -469,7 +549,7 @@ async function generateLocalAIResponse(query, caseId, language = 'en') {
   let answer = "";
   let confidenceScore = 85;
 
-  const targetCase = cases.find(c => c.id === caseId || c._id?.toString() === caseId) || cases[0];
+  // targetCase already resolved at top
   if (!targetCase) {
     return {
       answer: language === 'kn' 
