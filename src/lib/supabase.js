@@ -3,6 +3,19 @@
 // Connects dynamically to the Express server on port 5000 (via Vite proxy)
 // =========================================================
 
+// Configure global API base URL for Zoho Catalyst Serverless routing compatibility
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? ''
+  : '/server/api';
+
+const originalFetch = window.fetch;
+window.fetch = function (url, options) {
+  if (typeof url === 'string' && url.startsWith('/api/')) {
+    url = API_BASE + url;
+  }
+  return originalFetch(url, options);
+};
+
 const AUTH_KEY = 'nyayanetra_auth_session';
 
 export function getStoredSession() {
