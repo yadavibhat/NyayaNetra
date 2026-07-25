@@ -12,6 +12,7 @@ export function AddSuspectLinkModal({ isOpen, onClose, onAdded, caseId, currentU
   const [showQuickCaseForm, setShowQuickCaseForm] = useState(false);
   const [quickFirNumber, setQuickFirNumber] = useState('');
   const [quickTitle, setQuickTitle] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const [showQuickSuspectForm, setShowQuickSuspectForm] = useState(false);
   const [quickSuspectName, setQuickSuspectName] = useState('');
@@ -167,10 +168,12 @@ export function AddSuspectLinkModal({ isOpen, onClose, onAdded, caseId, currentU
     e.preventDefault();
     let activeCaseId = selectedCaseId || (cases.length > 0 ? (cases[0].id || cases[0]._id) : null);
 
+    setSubmitting(true);
     try {
       if (showQuickCaseForm) {
         if (!quickFirNumber || !quickTitle) {
           setError('Please provide an FIR Number and Title for the new case.');
+          setSubmitting(false);
           return;
         }
         const createdCase = await dbService.addCase(currentUser, {
@@ -183,15 +186,18 @@ export function AddSuspectLinkModal({ isOpen, onClose, onAdded, caseId, currentU
 
       if (!activeCaseId) {
         setError('No active case selected. Please create or select a case.');
+        setSubmitting(false);
         return;
       }
 
       if (!suspectAId || !suspectBId) {
         setError('Please select both Suspect A and Suspect B. Use "Auto-Generate Suspects" if needed.');
+        setSubmitting(false);
         return;
       }
       if (suspectAId === suspectBId) {
         setError('Suspect A and Suspect B must be different individuals.');
+        setSubmitting(false);
         return;
       }
 
@@ -211,6 +217,8 @@ export function AddSuspectLinkModal({ isOpen, onClose, onAdded, caseId, currentU
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to add suspect link.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -454,9 +462,13 @@ export function AddSuspectLinkModal({ isOpen, onClose, onAdded, caseId, currentU
             <div className="flex items-center gap-3 pt-2">
               <button
                 type="submit"
-                className="flex-1 bg-primary text-on-primary py-3 rounded-lg text-sm font-semibold hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"
+                disabled={submitting}
+                className={`flex-1 bg-primary text-on-primary py-3 rounded-lg text-sm font-semibold hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2 ${
+                  submitting ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
               >
-                <Save className="w-4 h-4" /> Add Link Edge
+                {!submitting && <Save className="w-4 h-4" />}
+                <span>{submitting ? 'Adding...' : 'Add Link Edge'}</span>
               </button>
               <button
                 type="button"

@@ -3,10 +3,44 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, UserPlus, Save, PlusCircle } from 'lucide-react';
 import { dbService } from '../../lib/supabase';
 
+const compressImage = (base64Str, maxWidth = 400, maxHeight = 400) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = base64Str;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', 0.7));
+    };
+    img.onerror = () => {
+      resolve(base64Str);
+    };
+  });
+};
+
 export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser }) {
   const [cases, setCases] = useState([]);
   const [selectedCaseId, setSelectedCaseId] = useState(caseId || '');
   const [showQuickCaseForm, setShowQuickCaseForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   // Quick FIR fields
   const [quickFirNumber, setQuickFirNumber] = useState('');
@@ -23,8 +57,9 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageUrl(reader.result);
+      reader.onloadend = async () => {
+        const compressed = await compressImage(reader.result);
+        setImageUrl(compressed);
       };
       reader.readAsDataURL(file);
     }
@@ -88,6 +123,7 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
       return;
     }
 
+    setSubmitting(true);
     try {
       let activeCaseId = selectedCaseId;
 
@@ -95,6 +131,7 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
       if (showQuickCaseForm || !activeCaseId) {
         if (!quickFirNumber || !quickTitle) {
           setError('Please provide an FIR Number and Title for the new case.');
+          setSubmitting(false);
           return;
         }
         const createdCase = await dbService.addCase(currentUser, {
@@ -128,6 +165,8 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to add suspect.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -310,9 +349,13 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
             <div className="flex items-center gap-3 pt-2">
               <button
                 type="submit"
-                className="flex-1 bg-primary text-on-primary py-3 rounded-lg text-sm font-semibold hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"
+                disabled={submitting}
+                className={`flex-1 bg-primary text-on-primary py-3 rounded-lg text-sm font-semibold hover:bg-primary-container transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2 ${
+                  submitting ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
               >
-                <Save className="w-4 h-4" /> Add Suspect
+                {!submitting && <Save className="w-4 h-4" />}
+                <span>{submitting ? 'Adding...' : 'Add Suspect'}</span>
               </button>
               <button
                 type="button"

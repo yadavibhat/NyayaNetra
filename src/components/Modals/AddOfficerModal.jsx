@@ -10,6 +10,7 @@ export function AddOfficerModal({ isOpen, onClose, onAdded, currentUser }) {
   const [stationId, setStationId] = useState('');
   const [error, setError] = useState('');
   const [stations, setStations] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -36,6 +37,7 @@ export function AddOfficerModal({ isOpen, onClose, onAdded, currentUser }) {
       return;
     }
 
+    setSubmitting(true);
     try {
       const officer = await dbService.addOfficer(currentUser, {
         full_name: fullName,
@@ -50,6 +52,8 @@ export function AddOfficerModal({ isOpen, onClose, onAdded, currentUser }) {
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to add officer.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -141,9 +145,12 @@ export function AddOfficerModal({ isOpen, onClose, onAdded, currentUser }) {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-navy-deep text-on-primary text-xs font-bold rounded-lg hover:opacity-90 transition-all shadow-2xs"
+                disabled={submitting}
+                className={`px-4 py-2 bg-navy-deep text-on-primary text-xs font-bold rounded-lg hover:opacity-90 transition-all shadow-2xs ${
+                  submitting ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
               >
-                Add Officer
+                {submitting ? 'Adding...' : 'Add Officer'}
               </button>
             </div>
           </form>

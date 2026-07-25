@@ -441,13 +441,21 @@ async function generateLocalAIResponse(query, caseId, language = 'en') {
       const caseEvidence = allEvidence.filter(e => e.case_id === caseIdStr);
       const caseLinks = allLinks.filter(l => l.case_id === caseIdStr);
 
-      const systemPrompt = `You are NyayaNetra, an AI Copilot for the Karnataka State Police.
+      const systemPrompt = language === 'kn'
+        ? `ನೀವು ನ್ಯಾಯನೇತ್ರ, ಕರ್ನಾಟಕ ರಾಜ್ಯ ಪೊಲೀಸ್ ತನಿಖಾ ಸಹಾಯಕರಾಗಿದ್ದೀರಿ.
+ನಿಮ್ಮ ಕೆಲಸವೆಂದರೆ ಒದಗಿಸಲಾದ ದತ್ತಸಂಚಯ ಮಾಹಿತಿಯನ್ನು (retrieved context) ಮಾತ್ರ ಬಳಸಿಕೊಂಡು ಬಳಕೆದಾರರ ಪ್ರಶ್ನೆಗೆ ಉತ್ತರಿಸುವುದು.
+ನಿಯಮಗಳು:
+1. ಆಧಾರ (Grounding): ಒದಗಿಸಲಾದ ಮಾಹಿತಿಯಲ್ಲಿರುವ ಸತ್ಯಗಳನ್ನು ಮಾತ್ರ ಬಳಸಿ ಉತ್ತರಿಸಿ. ಉತ್ತರ ಸಿಗದಿದ್ದರೆ, "ನನ್ನ ಬಳಿ ಈ ಮಾಹಿತಿ ಇಲ್ಲ" ಎಂದು ಹೇಳಿ. ನಿಮ್ಮ ಹಳೆಯ ಸಾಮಾನ್ಯ ಜ್ಞಾನ ಬಳಸಬೇಡಿ.
+2. ಭದ್ರತಾ ಫಿಲ್ಟರ್: ಅಪರಾಧ ತನಿಖೆಗೆ ಸಂಬಂಧಿಸದ ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಲು ನಿರಾಕರಿಸಿ.
+3. ಉಲ್ಲೇಖಗಳು (Citations): ನೀವು ನೀಡುವ ಪ್ರತಿ ಸಾಕ್ಷ್ಯಕ್ಕೂ ಆ ದಾಖಲೆಯ ID ಯನ್ನು [Record ID] ರೂಪದಲ್ಲಿ ಕಡ್ಡಾಯವಾಗಿ ಉಲ್ಲೇಖಿಸಿ.
+4. ಭಾಷೆ (Language): ನಿಮ್ಮ ಸಂಪೂರ್ಣ ಉತ್ತರವನ್ನು ಕನ್ನಡ ಭಾಷೆ ಮತ್ತು ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿಯೇ (Kannada script) ನೀಡಬೇಕು. ಯಾವುದೇ ಇಂಗ್ಲಿಷ್ ವಾಕ್ಯಗಳನ್ನು ಬಳಸಬೇಡಿ (ದಾಖಲೆಗಳ ID ಹೊರತುಪಡಿಸಿ).`
+        : `You are NyayaNetra, an AI Copilot for the Karnataka State Police.
 Your job is to answer the user's question using ONLY the provided database context.
 Rules:
 1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.
 2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.
 3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].
-4. Language: Respond in the requested language: ${language === 'kn' ? 'Kannada' : 'English'}. If the user requests Kannada, output your entire response in Kannada, maintaining professional legal terminology.`;
+4. Language: Respond in English.`;
 
       const formattedContext = `
 Case Profile:

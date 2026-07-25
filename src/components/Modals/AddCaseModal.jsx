@@ -11,6 +11,7 @@ export function AddCaseModal({ isOpen, onClose, onAdded, currentUser }) {
   const [stationId, setStationId] = useState('');
   const [error, setError] = useState('');
   const [stations, setStations] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -37,6 +38,7 @@ export function AddCaseModal({ isOpen, onClose, onAdded, currentUser }) {
       return;
     }
 
+    setSubmitting(true);
     try {
       const caseItem = await dbService.addCase(currentUser, {
         fir_number: firNumber,
@@ -53,6 +55,8 @@ export function AddCaseModal({ isOpen, onClose, onAdded, currentUser }) {
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to create case.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -152,11 +156,14 @@ export function AddCaseModal({ isOpen, onClose, onAdded, currentUser }) {
               >
                 Cancel
               </button>
-              <button
+               <button
                 type="submit"
-                className="px-4 py-2 bg-navy-deep text-on-primary text-xs font-bold rounded-lg hover:opacity-90 transition-all shadow-2xs"
+                disabled={submitting}
+                className={`px-4 py-2 bg-navy-deep text-on-primary text-xs font-bold rounded-lg hover:opacity-90 transition-all shadow-2xs ${
+                  submitting ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
               >
-                Create FIR File
+                {submitting ? 'Creating...' : 'Create FIR File'}
               </button>
             </div>
           </form>

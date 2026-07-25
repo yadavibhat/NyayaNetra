@@ -690,6 +690,15 @@
   "audit_logs": [
     {
       "user_id": "usr-1784708645028",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784708645028",
+      "details": {},
+      "createdAt": "2026-07-25T20:28:42.847Z",
+      "id": "audit-1785011322847"
+    },
+    {
+      "user_id": "usr-1784708645028",
       "action": "AUTH_LOGIN",
       "target_table": "profiles",
       "target_id": "usr-1784708645028",
