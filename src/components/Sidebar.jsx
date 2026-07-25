@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { MessageSquarePlus, Share2, ShieldAlert, FolderOpen, ShieldCheck, LogOut, Activity, Plus, BarChart2 } from 'lucide-react';
+import { MessageSquarePlus, Share2, ShieldAlert, FolderOpen, ShieldCheck, LogOut, Activity, Plus, BarChart2, Cpu } from 'lucide-react';
 
 export function Sidebar({
   activeScreen,
@@ -144,6 +144,18 @@ export function Sidebar({
             >
               <FolderOpen className="w-5 h-5 text-primary" />
               <span className="text-xs font-semibold">Reports & Print</span>
+            </button>
+
+            <button
+              onClick={() => setActiveScreen('advanced')}
+              className={`w-full flex items-center gap-3 p-2.5 rounded-lg text-left transition-all ${
+                activeScreen === 'advanced'
+                  ? 'bg-primary text-on-primary font-bold'
+                  : 'text-on-surface-variant hover:bg-surface-container-high'
+              }`}
+            >
+              <Cpu className="w-5 h-5 text-gold-accent" />
+              <span className="text-xs font-semibold">Intelligence Core</span>
             </button>
 
             <button

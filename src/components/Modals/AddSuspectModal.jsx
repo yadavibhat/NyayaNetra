@@ -77,6 +77,8 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
     } catch (err) {
       setError(err.message || 'Failed to create FIR case.');
     }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -326,5 +328,4 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
       </div>
     </AnimatePresence>
   );
-  }
 }

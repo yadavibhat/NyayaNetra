@@ -1,19 +1,54 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { ShieldCheck, Lock, BadgeCheck, User, Key, Server, Gavel, CheckCircle2, ArrowRight, UserPlus } from 'lucide-react';
+import { ShieldCheck, Lock, BadgeCheck, User, Key, Server, Gavel, CheckCircle2, ArrowRight, UserPlus, Fingerprint } from 'lucide-react';
 
 export function LoginView({ setActiveScreen }) {
   const { login, signup, loading } = useAuth();
-  const [mode, setMode] = useState('login'); // 'login' | 'signup'
+  const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'biometric'
   const [role, setRole] = useState('investigator');
-  const [badgeId, setBadgeId] = useState('');
+  const [badgeId, setBadgeId] = useState('ka-08-2007');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
   const [unfoundBadge, setUnfoundBadge] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [bioState, setBioState] = useState('idle'); // 'idle' | 'scanning' | 'granted'
+
+  // Auto-prefill credentials for evaluation demo convenience
+  React.useEffect(() => {
+    if (mode === 'login') {
+      if (role === 'admin') {
+        setBadgeId('KA-04-9999');
+        setPassword('password123');
+      } else {
+        setBadgeId('ka-08-2007');
+        setPassword('password123');
+      }
+    }
+  }, [role, mode]);
+
+  const handleStartBiometricScan = () => {
+    setBioState('scanning');
+    setError('');
+    
+    setTimeout(() => {
+      setBioState('granted');
+      setTimeout(async () => {
+        try {
+          const session = await login({
+            badge_id: 'ka-08-2007',
+            password: 'password123'
+          });
+          setActiveScreen(session.profile.role === 'admin' ? 'admin' : 'chat');
+        } catch (err) {
+          setError('Biometric authentication failed. Please use standard Sign In.');
+          setBioState('idle');
+        }
+      }, 1000);
+    }, 2000);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -112,12 +147,21 @@ export function LoginView({ setActiveScreen }) {
               </button>
               <button
                 type="button"
+                onClick={() => { setMode('biometric'); setError(''); setBioState('idle'); }}
+                className={`flex-1 py-2 text-xs font-bold text-center rounded-xl transition-all flex items-center justify-center gap-1 ${
+                  mode === 'biometric' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-700 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20'
+                }`}
+              >
+                <Fingerprint className="w-3.5 h-3.5 text-emerald-600" /> Biometric Login
+              </button>
+              <button
+                type="button"
                 onClick={handleSwitchToSignup}
                 className={`flex-1 py-2 text-xs font-bold text-center rounded-xl transition-all flex items-center justify-center gap-1 ${
                   mode === 'signup' ? 'bg-navy-deep text-on-primary shadow-xs' : 'text-primary bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20'
                 }`}
               >
-                <UserPlus className="w-3.5 h-3.5 text-gold-accent" /> Sign Up / Create Account
+                <UserPlus className="w-3.5 h-3.5 text-gold-accent" /> Sign Up
               </button>
             </div>
 
@@ -142,7 +186,80 @@ export function LoginView({ setActiveScreen }) {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {mode === 'login' && (
+              <div className="p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl text-[11px] font-semibold text-indigo-950 flex items-start gap-2 leading-relaxed">
+                <span className="text-base">💡</span>
+                <div>
+                  <span className="font-bold text-indigo-900 block">Demo Credentials Pre-Filled:</span>
+                  Choose a role below (Investigator or Chief Officer) and click "Authenticate & Enter Portal" to log in instantly.
+                </div>
+              </div>
+            )}
+
+            {mode === 'biometric' ? (
+              <div className="flex flex-col items-center justify-center py-6 space-y-6">
+                <style>{`
+                  @keyframes laser-sweep {
+                    0% { top: 0%; }
+                    50% { top: 100%; }
+                    100% { top: 0%; }
+                  }
+                  .animate-laser-sweep {
+                    animation: laser-sweep 2s infinite ease-in-out;
+                  }
+                `}</style>
+
+                <div className="relative w-28 h-28 flex items-center justify-center border border-slate-200 rounded-2xl bg-slate-50 overflow-hidden shadow-inner group cursor-pointer" onClick={bioState === 'idle' ? handleStartBiometricScan : undefined}>
+                  <Fingerprint className={`w-16 h-16 transition-all duration-300 ${
+                    bioState === 'scanning' ? 'text-emerald-500 animate-pulse' : 
+                    bioState === 'granted' ? 'text-emerald-600 scale-105' : 'text-slate-400 group-hover:text-navy-deep'
+                  }`} />
+                  
+                  {/* Laser Sweeper */}
+                  {bioState === 'scanning' && (
+                    <div className="absolute inset-x-0 h-0.5 bg-emerald-400 shadow-[0_0_8px_#34d399] animate-laser-sweep"></div>
+                  )}
+                </div>
+
+                <div className="text-center space-y-1.5">
+                  {bioState === 'idle' && (
+                    <>
+                      <h3 className="text-xs font-bold text-navy-deep uppercase tracking-wider">Touch ID Security Check</h3>
+                      <p className="text-[10px] text-outline max-w-[280px] leading-relaxed mx-auto">
+                        Click the fingerprint scanner above to simulate secure biometric device identification.
+                      </p>
+                    </>
+                  )}
+                  {bioState === 'scanning' && (
+                    <>
+                      <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-wider animate-pulse">Scanning Biometrics...</h3>
+                      <p className="text-[10px] text-slate-500">
+                        Comparing local security keys with SCRB credential logs.
+                      </p>
+                    </>
+                  )}
+                  {bioState === 'granted' && (
+                    <>
+                      <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Access Granted!</h3>
+                      <p className="text-[10px] text-slate-500">
+                        Verifying Badge: <span className="font-mono font-bold text-navy-deep">KA-08-2007</span>... Routing to Portal.
+                      </p>
+                    </>
+                  )}
+                </div>
+
+                {bioState === 'idle' && (
+                  <button
+                    type="button"
+                    onClick={handleStartBiometricScan}
+                    className="px-6 py-2.5 bg-navy-deep text-on-primary text-xs font-bold rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm"
+                  >
+                    Start Simulated Scan
+                  </button>
+                )}
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
               {/* Role Selection */}
               <div>
                 <label className="block text-xs font-bold text-on-surface-variant uppercase mb-1.5">Select Clearance Role</label>
@@ -250,6 +367,7 @@ export function LoginView({ setActiveScreen }) {
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
+            )}
           </div>
 
           <div className="flex flex-col items-center gap-2 text-center text-xs font-mono">

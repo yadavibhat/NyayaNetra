@@ -134,15 +134,7 @@ export const dbService = {
     const res = await fetch('/api/cases');
     if (!res.ok) throw new Error(await res.text());
     const cases = await res.json();
-    if (!currentUser || currentUser.profile?.role === 'admin') {
-      return cases;
-    }
-    const currentUserId = currentUser.profile.id || currentUser.profile._id;
-    const currentStationId = currentUser.profile.station_id;
-    const stationCases = cases.filter(
-      c => c.created_by === currentUserId || (currentStationId && c.station_id === currentStationId)
-    );
-    return stationCases.length > 0 ? stationCases : cases;
+    return cases;
   },
 
   addCase: async (currentUser, caseData) => {

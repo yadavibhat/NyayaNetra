@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { ShieldCheck, MessageSquare, Share2, ShieldAlert, FileText, LogOut, CheckCircle2, BarChart2 } from 'lucide-react';
+import { ShieldCheck, MessageSquare, Share2, ShieldAlert, FileText, LogOut, CheckCircle2, BarChart2, Cpu } from 'lucide-react';
 
 export function Navbar({ activeScreen, setActiveScreen }) {
   const { session, logout } = useAuth();
@@ -81,6 +81,17 @@ export function Navbar({ activeScreen, setActiveScreen }) {
             }`}
           >
             <BarChart2 className="w-4 h-4" /> Data Insights
+          </button>
+
+          <button
+            onClick={() => setActiveScreen('advanced')}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1 ${
+              activeScreen === 'advanced'
+                ? 'text-gold-accent bg-primary-container border border-gold-accent/30'
+                : 'text-slate-300 hover:text-white hover:bg-primary-container/60'
+            }`}
+          >
+            <Cpu className="w-4 h-4 text-gold-accent" /> Advanced Core
           </button>
         </nav>
 

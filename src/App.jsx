@@ -10,6 +10,7 @@ import { AuditLogView } from './views/AuditLogView';
 import { SystemStatusView } from './views/SystemStatusView';
 import { ResetTokenView } from './views/ResetTokenView';
 import { InsightsView } from './views/InsightsView';
+import { AdvancedConsoleView } from './views/AdvancedConsoleView';
 
 function AppContent() {
   const { session } = useAuth();
@@ -54,6 +55,8 @@ function AppContent() {
         return <ResetTokenView setActiveScreen={setActiveScreen} />;
       case 'insights':
         return <InsightsView setActiveScreen={setActiveScreen} />;
+      case 'advanced':
+        return <AdvancedConsoleView setActiveScreen={setActiveScreen} />;
       default:
         return <LoginView setActiveScreen={setActiveScreen} />;
     }
