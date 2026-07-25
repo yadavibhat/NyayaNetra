@@ -1,0 +1,29 @@
+{
+  "defaults": {
+    "project": 1
+  },
+  "actives": {
+    "project": 1,
+    "env": 1
+  },
+  "projects": [
+    {
+      "idx": 1,
+      "id": "54150000000013047",
+      "name": "NyayaNetra",
+      "domain": {
+        "id": "50044345261",
+        "name": "nyayanetra-60080058315.development"
+      },
+      "timezone": "Asia/Kolkata",
+      "env": [
+        {
+          "idx": 1,
+          "id": "60080058315",
+          "name": "Development",
+          "type": 3
+        }
+      ]
+    }
+  ]
+}

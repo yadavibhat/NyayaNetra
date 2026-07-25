@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NyayaNetra | Karnataka Data Node Telemetry & System Status</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -34,19 +37,26 @@
         }
     </script>
     <style>
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
     </style>
 </head>
+
 <body class="bg-surface font-sans text-on-surface min-h-screen flex flex-col">
 
     <!-- Header -->
-    <header class="bg-primary text-on-primary px-6 py-4 flex justify-between items-center border-b border-primary-container shadow-sm">
+    <header
+        class="bg-primary text-on-primary px-6 py-4 flex justify-between items-center border-b border-primary-container shadow-sm">
         <div class="flex items-center gap-3">
-            <a href="index.html" class="p-2 hover:bg-primary-container rounded-lg transition-colors flex items-center gap-1 text-slate-200 hover:text-white" title="Return to Login">
+            <a href="index.html"
+                class="p-2 hover:bg-primary-container rounded-lg transition-colors flex items-center gap-1 text-slate-200 hover:text-white"
+                title="Return to Login">
                 <span class="material-symbols-outlined">arrow_back</span>
                 <span class="text-xs font-semibold">Back to Portal Login</span>
             </a>
-            <span class="text-xs font-mono bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded border border-emerald-500/40 font-bold">
+            <span
+                class="text-xs font-mono bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded border border-emerald-500/40 font-bold">
                 SYSTEM HEALTH: 100% NOMINAL
             </span>
         </div>
@@ -59,13 +69,18 @@
     <main class="flex-1 max-w-[960px] w-full mx-auto p-6 space-y-6">
 
         <!-- Title Card -->
-        <div class="bg-white border border-outline-variant p-6 rounded-2xl shadow-sm flex flex-wrap justify-between items-center gap-4">
+        <div
+            class="bg-white border border-outline-variant p-6 rounded-2xl shadow-sm flex flex-wrap justify-between items-center gap-4">
             <div>
-                <span class="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">INFRASTRUCTURE TELEMETRY</span>
+                <span
+                    class="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">INFRASTRUCTURE
+                    TELEMETRY</span>
                 <h1 class="text-2xl font-bold text-navy-deep mt-1">Karnataka Judicial Data Node Telemetry</h1>
-                <p class="text-xs text-on-surface-variant mt-0.5">Real-time status of CCTNS databases, CDR gateways, and ANPR camera networks across Karnataka State.</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">Real-time status of CCTNS databases, CDR gateways, and
+                    ANPR camera networks across Karnataka State.</p>
             </div>
-            <button onclick="location.reload()" class="px-4 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary-container transition-all flex items-center gap-1.5 shadow-2xs">
+            <button onclick="location.reload()"
+                class="px-4 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary-container transition-all flex items-center gap-1.5 shadow-2xs">
                 <span class="material-symbols-outlined text-base">refresh</span> Refresh Telemetry
             </button>
         </div>
@@ -73,7 +88,8 @@
         <!-- Node Status Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Node 1: Bengaluru -->
-            <div class="bg-white border border-outline-variant p-5 rounded-2xl shadow-2xs flex flex-col justify-between space-y-4">
+            <div
+                class="bg-white border border-outline-variant p-5 rounded-2xl shadow-2xs flex flex-col justify-between space-y-4">
                 <div class="flex justify-between items-start">
                     <div>
                         <span class="text-[10px] font-mono text-outline font-bold">NODE KA-BLR-01</span>
@@ -95,13 +111,15 @@
                         <span class="font-bold text-navy-deep">99.99%</span>
                     </div>
                 </div>
-                <div class="w-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-mono font-bold text-center py-1 rounded">
+                <div
+                    class="w-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-mono font-bold text-center py-1 rounded">
                     OPERATIONAL & SECURE
                 </div>
             </div>
 
             <!-- Node 2: Mysuru CID -->
-            <div class="bg-white border border-outline-variant p-5 rounded-2xl shadow-2xs flex flex-col justify-between space-y-4">
+            <div
+                class="bg-white border border-outline-variant p-5 rounded-2xl shadow-2xs flex flex-col justify-between space-y-4">
                 <div class="flex justify-between items-start">
                     <div>
                         <span class="text-[10px] font-mono text-outline font-bold">NODE KA-MYS-02</span>
@@ -123,13 +141,15 @@
                         <span class="font-bold text-navy-deep">99.98%</span>
                     </div>
                 </div>
-                <div class="w-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-mono font-bold text-center py-1 rounded">
+                <div
+                    class="w-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-mono font-bold text-center py-1 rounded">
                     OPERATIONAL & SECURE
                 </div>
             </div>
 
             <!-- Node 3: Hubballi Cyber -->
-            <div class="bg-white border border-outline-variant p-5 rounded-2xl shadow-2xs flex flex-col justify-between space-y-4">
+            <div
+                class="bg-white border border-outline-variant p-5 rounded-2xl shadow-2xs flex flex-col justify-between space-y-4">
                 <div class="flex justify-between items-start">
                     <div>
                         <span class="text-[10px] font-mono text-outline font-bold">NODE KA-HUB-03</span>
@@ -151,7 +171,8 @@
                         <span class="font-bold text-navy-deep">100.0%</span>
                     </div>
                 </div>
-                <div class="w-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-mono font-bold text-center py-1 rounded">
+                <div
+                    class="w-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-mono font-bold text-center py-1 rounded">
                     OPERATIONAL & SECURE
                 </div>
             </div>
@@ -159,21 +180,26 @@
 
         <!-- Telemetry Logs Table -->
         <div class="bg-white border border-outline-variant p-6 rounded-2xl shadow-sm">
-            <h3 class="text-sm font-bold text-navy-deep uppercase tracking-wider mb-4 pb-2 border-b border-outline-variant">
+            <h3
+                class="text-sm font-bold text-navy-deep uppercase tracking-wider mb-4 pb-2 border-b border-outline-variant">
                 Live Encryption & Telemetry Activity Log
             </h3>
             <div class="space-y-2 font-mono text-xs text-on-surface">
-                <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/50 flex justify-between items-center">
+                <div
+                    class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/50 flex justify-between items-center">
                     <span class="text-emerald-700 font-bold">[11:54:12 IST]</span>
-                    <span class="text-navy-deep">KA-BLR-01: AES-256 Key Exchange Verified for Malleshwaram PS Session</span>
+                    <span class="text-navy-deep">KA-BLR-01: AES-256 Key Exchange Verified for Malleshwaram PS
+                        Session</span>
                     <span class="text-outline">OK (0.04ms)</span>
                 </div>
-                <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/50 flex justify-between items-center">
+                <div
+                    class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/50 flex justify-between items-center">
                     <span class="text-emerald-700 font-bold">[11:50:08 IST]</span>
                     <span class="text-navy-deep">KA-MYS-02: CDR Query Completed for Target +91 94808 04892</span>
                     <span class="text-outline">OK (0.12ms)</span>
                 </div>
-                <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/50 flex justify-between items-center">
+                <div
+                    class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/50 flex justify-between items-center">
                     <span class="text-emerald-700 font-bold">[11:45:30 IST]</span>
                     <span class="text-navy-deep">KA-HUB-03: ANPR Camera Tower DEL-N-402 Synchronized</span>
                     <span class="text-outline">OK (0.08ms)</span>
@@ -186,4 +212,5 @@
         NyayaNetra Telemetry Service &mdash; Karnataka State Police Data Center
     </footer>
 </body>
+
 </html>
