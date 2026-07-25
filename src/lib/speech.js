@@ -102,6 +102,42 @@ export async function speakText({ text, lang = 'en', onEnd }) {
   fallbackWebSpeech({ text: preparedText, lang: lang === 'kn' ? 'kn-IN' : 'en-IN', onEnd });
 }
 
+function selectBestVoice(voices, lang) {
+  const langLower = lang.toLowerCase();
+  const langBase = langLower.split('-')[0];
+  
+  // Filter voices matching the language prefix (e.g. "en" or "kn")
+  const matchingVoices = voices.filter(v => 
+    v.lang.toLowerCase() === langLower || 
+    v.lang.toLowerCase().startsWith(langBase)
+  );
+  
+  if (matchingVoices.length === 0) return null;
+
+  // Prioritize Siri, Google, Premium/Natural, and Samantha voices
+  return matchingVoices.sort((a, b) => {
+    const aName = a.name.toLowerCase();
+    const bName = b.name.toLowerCase();
+    
+    // Siri is exceptionally high-quality on macOS
+    const aSiri = aName.includes('siri');
+    const bSiri = bName.includes('siri');
+    if (aSiri !== bSiri) return aSiri ? -1 : 1;
+
+    // Google neural voices on Chrome are very smooth
+    const aGoogle = aName.includes('google');
+    const bGoogle = bName.includes('google');
+    if (aGoogle !== bGoogle) return aGoogle ? -1 : 1;
+
+    // Premium, Natural, or Samantha
+    const aPremium = aName.includes('premium') || aName.includes('natural') || aName.includes('samantha');
+    const bPremium = bName.includes('premium') || bName.includes('natural') || bName.includes('samantha');
+    if (aPremium !== bPremium) return aPremium ? -1 : 1;
+
+    return 0;
+  })[0];
+}
+
 function fallbackWebSpeech({ text, lang, onEnd }) {
   if (!('speechSynthesis' in window)) {
     console.warn('Speech synthesis not supported in this browser.');
@@ -111,18 +147,37 @@ function fallbackWebSpeech({ text, lang, onEnd }) {
 
   window.speechSynthesis.cancel();
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = lang;
-  utterance.rate = 0.95;
-  utterance.pitch = 1.0;
+  const speak = () => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    utterance.rate = 0.95; // Slightly slower rate for professional legal tone
+    utterance.pitch = 1.0;
 
-  utterance.onend = () => { if (onEnd) onEnd(); };
-  utterance.onerror = (e) => {
-    console.error('Speech synthesis error:', e);
-    if (onEnd) onEnd();
+    const voices = window.speechSynthesis.getVoices();
+    const bestVoice = selectBestVoice(voices, lang);
+    if (bestVoice) {
+      utterance.voice = bestVoice;
+      console.log('Selected premium TTS Voice:', bestVoice.name, bestVoice.lang);
+    }
+
+    utterance.onend = () => { if (onEnd) onEnd(); };
+    utterance.onerror = (e) => {
+      console.error('Speech synthesis error:', e);
+      if (onEnd) onEnd();
+    };
+
+    window.speechSynthesis.speak(utterance);
   };
 
-  window.speechSynthesis.speak(utterance);
+  // If voices are not yet loaded, wait for the browser event
+  if (window.speechSynthesis.getVoices().length === 0) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.onvoiceschanged = null; // Unbind to prevent double execution
+      speak();
+    };
+  } else {
+    speak();
+  }
 }
 
 export function stopSpeaking() {
