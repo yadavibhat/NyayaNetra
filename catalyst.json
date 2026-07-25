@@ -6,6 +6,9 @@
   "functions": {
     "targets": [
       "api"
-    ]
+    ],
+    "scripts": {
+      "predeploy": "cp ../server.cjs api/ && cp ../db_backend.json api/"
+    }
   }
 }
