@@ -147,21 +147,12 @@ export function LoginView({ setActiveScreen }) {
               </button>
               <button
                 type="button"
-                onClick={() => { setMode('biometric'); setError(''); setBioState('idle'); }}
-                className={`flex-1 py-2 text-xs font-bold text-center rounded-xl transition-all flex items-center justify-center gap-1 ${
-                  mode === 'biometric' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-700 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20'
-                }`}
-              >
-                <Fingerprint className="w-3.5 h-3.5 text-emerald-600" /> Biometric Login
-              </button>
-              <button
-                type="button"
                 onClick={handleSwitchToSignup}
                 className={`flex-1 py-2 text-xs font-bold text-center rounded-xl transition-all flex items-center justify-center gap-1 ${
                   mode === 'signup' ? 'bg-navy-deep text-on-primary shadow-xs' : 'text-primary bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20'
                 }`}
               >
-                <UserPlus className="w-3.5 h-3.5 text-gold-accent" /> Sign Up
+                <UserPlus className="w-3.5 h-3.5 text-gold-accent" /> Sign Up / Create Account
               </button>
             </div>
 
@@ -196,70 +187,7 @@ export function LoginView({ setActiveScreen }) {
               </div>
             )}
 
-            {mode === 'biometric' ? (
-              <div className="flex flex-col items-center justify-center py-6 space-y-6">
-                <style>{`
-                  @keyframes laser-sweep {
-                    0% { top: 0%; }
-                    50% { top: 100%; }
-                    100% { top: 0%; }
-                  }
-                  .animate-laser-sweep {
-                    animation: laser-sweep 2s infinite ease-in-out;
-                  }
-                `}</style>
-
-                <div className="relative w-28 h-28 flex items-center justify-center border border-slate-200 rounded-2xl bg-slate-50 overflow-hidden shadow-inner group cursor-pointer" onClick={bioState === 'idle' ? handleStartBiometricScan : undefined}>
-                  <Fingerprint className={`w-16 h-16 transition-all duration-300 ${
-                    bioState === 'scanning' ? 'text-emerald-500 animate-pulse' : 
-                    bioState === 'granted' ? 'text-emerald-600 scale-105' : 'text-slate-400 group-hover:text-navy-deep'
-                  }`} />
-                  
-                  {/* Laser Sweeper */}
-                  {bioState === 'scanning' && (
-                    <div className="absolute inset-x-0 h-0.5 bg-emerald-400 shadow-[0_0_8px_#34d399] animate-laser-sweep"></div>
-                  )}
-                </div>
-
-                <div className="text-center space-y-1.5">
-                  {bioState === 'idle' && (
-                    <>
-                      <h3 className="text-xs font-bold text-navy-deep uppercase tracking-wider">Touch ID Security Check</h3>
-                      <p className="text-[10px] text-outline max-w-[280px] leading-relaxed mx-auto">
-                        Click the fingerprint scanner above to simulate secure biometric device identification.
-                      </p>
-                    </>
-                  )}
-                  {bioState === 'scanning' && (
-                    <>
-                      <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-wider animate-pulse">Scanning Biometrics...</h3>
-                      <p className="text-[10px] text-slate-500">
-                        Comparing local security keys with SCRB credential logs.
-                      </p>
-                    </>
-                  )}
-                  {bioState === 'granted' && (
-                    <>
-                      <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Access Granted!</h3>
-                      <p className="text-[10px] text-slate-500">
-                        Verifying Badge: <span className="font-mono font-bold text-navy-deep">KA-08-2007</span>... Routing to Portal.
-                      </p>
-                    </>
-                  )}
-                </div>
-
-                {bioState === 'idle' && (
-                  <button
-                    type="button"
-                    onClick={handleStartBiometricScan}
-                    className="px-6 py-2.5 bg-navy-deep text-on-primary text-xs font-bold rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm"
-                  >
-                    Start Simulated Scan
-                  </button>
-                )}
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {/* Role Selection */}
               <div>
                 <label className="block text-xs font-bold text-on-surface-variant uppercase mb-1.5">Select Clearance Role</label>
@@ -356,18 +284,64 @@ export function LoginView({ setActiveScreen }) {
                 </div>
               </div>
 
+              {mode === 'login' && (
+                  <div className="border border-emerald-500/25 bg-emerald-500/5 rounded-xl p-4 flex flex-col items-center gap-2.5 animate-fade-in">
+                    <style>{`
+                      @keyframes laser-sweep {
+                        0% { top: 0%; }
+                        50% { top: 100%; }
+                        100% { top: 0%; }
+                      }
+                      .animate-laser-sweep {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        height: 2px;
+                        background-color: #34d399;
+                        box-shadow: 0 0 8px #34d399;
+                        animation: laser-sweep 2s infinite ease-in-out;
+                      }
+                    `}</style>
+                    
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Quick Biometric Scan</span>
+                    </div>
 
+                    {bioState === 'idle' ? (
+                      <button
+                        type="button"
+                        onClick={handleStartBiometricScan}
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs"
+                      >
+                        <Fingerprint className="w-4 h-4" />
+                        <span>Authenticate with Touch ID</span>
+                      </button>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1.5 w-full">
+                        <div className="relative w-12 h-12 flex items-center justify-center border border-emerald-200 rounded-xl bg-white overflow-hidden shadow-inner">
+                          <Fingerprint className={`w-8 h-8 transition-colors duration-300 ${bioState === 'scanning' ? 'text-emerald-500 animate-pulse' : 'text-emerald-600 scale-105'}`} />
+                           {bioState === 'scanning' && (
+                            <div className="animate-laser-sweep"></div>
+                           )}
+                        </div>
+                        <span className="text-[10px] font-bold text-emerald-700 animate-pulse">
+                          {bioState === 'scanning' ? 'Scanning fingerprint...' : 'Access Granted! Routing...'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-navy-deep text-on-primary py-3.5 rounded-xl font-bold text-xs hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span>{mode === 'signup' ? 'Create Officer Account & Enter' : 'Authenticate & Enter Portal'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </form>
-            )}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-navy-deep text-on-primary py-3.5 rounded-xl font-bold text-xs hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <span>{mode === 'signup' ? 'Create Officer Account & Enter' : 'Authenticate & Enter Portal'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
           </div>
 
           <div className="flex flex-col items-center gap-2 text-center text-xs font-mono">
