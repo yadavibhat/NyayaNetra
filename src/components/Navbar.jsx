@@ -16,8 +16,8 @@ export function Navbar({ activeScreen, setActiveScreen }) {
           <img
             alt="NyayaNetra Logo"
             className="h-9 w-auto object-contain transition-transform group-hover:scale-105"
-            src="/assets/logo.svg"
-            onError={(e) => { e.target.onerror = null; e.target.src = '/assets/logo.png'; }}
+            src="./assets/logo.svg"
+            onError={(e) => { e.target.onerror = null; e.target.src = './assets/logo.png'; }}
           />
           <span className="text-xl font-bold tracking-tight text-on-primary">NyayaNetra</span>
         </button>

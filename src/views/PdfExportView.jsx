@@ -164,8 +164,8 @@ export function PdfExportView({ setActiveScreen }) {
               <img
                 alt="Emblem Logo"
                 className="h-16 w-auto object-contain"
-                src="/assets/logo.svg"
-                onError={(e) => { e.target.onerror = null; e.target.src = '/assets/logo.png'; }}
+                src="./assets/logo.svg"
+                onError={(e) => { e.target.onerror = null; e.target.src = './assets/logo.png'; }}
               />
               <div>
                 <h2 className="text-xl font-bold text-navy-deep uppercase tracking-wider">State Judicial Intelligence Record</h2>

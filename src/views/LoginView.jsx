@@ -118,12 +118,12 @@ export function LoginView({ setActiveScreen }) {
           className="w-full max-w-[460px] flex flex-col gap-6"
         >
           {/* Brand Header */}
-          <div className="flex flex-col items-center gap-3 text-center">
+          <div className="flex items-center justify-center gap-4 text-left">
             <img
               alt="NyayaNetra Logo"
-              className="h-20 w-auto object-contain transition-transform hover:scale-105"
-              src="/assets/logo.svg"
-              onError={(e) => { e.target.onerror = null; e.target.src = '/assets/logo.png'; }}
+              className="h-16 w-auto object-contain transition-transform hover:scale-105"
+              src="./assets/logo.svg"
+              onError={(e) => { e.target.onerror = null; e.target.src = './assets/logo.png'; }}
             />
             <div>
               <h1 className="text-3xl font-bold text-primary tracking-tight">NyayaNetra</h1>
