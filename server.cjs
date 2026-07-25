@@ -1815,6 +1815,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend Express server running on port ${PORT}`);
-});
+if (process.env.CATALYST_PORT) {
+  module.exports = app;
+} else {
+  app.listen(PORT, () => {
+    console.log(`Backend Express server running on port ${PORT}`);
+  });
+}

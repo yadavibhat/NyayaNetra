@@ -1,0 +1,11 @@
+{
+  "client": {
+    "source": "dist",
+    "name": "nyayanetra"
+  },
+  "functions": {
+    "targets": [
+      "api"
+    ]
+  }
+}
