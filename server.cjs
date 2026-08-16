@@ -483,7 +483,7 @@ ${caseLinks.map(l => `- ID: ${l.id || l._id} | Suspect 1 ID: ${l.suspect_a_id ||
           'Authorization': `Bearer ${groqApiKey}`
         },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
+          model: 'openai/gpt-oss-120b',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: `Retrieved case context:\n${formattedContext}\n\nUser Question: ${query}` }
@@ -1160,7 +1160,7 @@ app.post('/api/advanced/execute', async (req, res) => {
             classification: "Case Dossier Query",
             confidence: 0.94,
             matchedRules: ["case", "dossier", "summary"],
-            action: "Route query to Llama-3.3 dynamic context RAG pipeline"
+            action: "Route query to GPT-OSS-120b dynamic context RAG pipeline"
           };
         } else if (subFeature === 'language_detector') {
           result = {
@@ -1197,7 +1197,7 @@ app.post('/api/advanced/execute', async (req, res) => {
             promptTokens: 1042,
             completionTokens: 256,
             totalTokens: 1298,
-            estimatedCost: "$0.00078 USD (Groq Llama 3.3 Free Tier)"
+            estimatedCost: "$0.00015 USD (Groq GPT-OSS-120b Free Tier)"
           };
         } else if (subFeature === 'semantic_search') {
           result = {
@@ -1619,7 +1619,7 @@ app.post('/api/advanced/execute', async (req, res) => {
         } else if (subFeature === 'reasoning_inspector') {
           result = {
             ragMethod: "Dense Context Generation",
-            generationEngine: "Llama-3.3-70b-versatile",
+            generationEngine: "GPT-OSS-120b",
             retrievedRecordsPassed: caseSuspects.length + caseEvidence.length,
             factualConfidence: "95%"
           };

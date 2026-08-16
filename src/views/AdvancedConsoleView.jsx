@@ -875,7 +875,7 @@ export function AdvancedConsoleView({ setActiveScreen }) {
                 <div className="bg-slate-950/60 border border-slate-800/60 p-4 rounded-xl flex flex-col justify-between gap-3 relative group">
                   <div className="space-y-1">
                     <div className="text-[9px] font-mono font-bold text-slate-400">STAGE 03 &mdash; COGNITIVE</div>
-                    <h4 className="text-xs font-bold text-slate-200">Llama-3.3 Core Processor</h4>
+                    <h4 className="text-xs font-bold text-slate-200">GPT-OSS-120B Core Processor</h4>
                     <p className="text-[10px] text-slate-400 leading-relaxed">
                       Cognitive reasoning engine loaded with prompt compliance rules enforcing grounded legal analysis of BNS/BNSS statutes.
                     </p>
