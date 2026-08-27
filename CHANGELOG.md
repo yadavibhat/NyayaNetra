@@ -1,5 +1,13 @@
 # NyayaNetra Changelog
 
+## [Batch 4] - 2026-08-27: Behavioral Profiling & Predictive Hotspot Formulas (Tier 4)
+
+- **Modus Operandi (MO) Trait Tagging**: Added structured MO behavioral tagging with a fixed multi-select vocabulary across suspect registration and profile cards.
+- **Rule-Based Behavioral Match Engine**: Created `/api/profiling/similar-suspects` using deterministic Jaccard similarity to explain and rank suspects sharing criminal operating traits.
+- **Behavioral Profiling Drawer**: Added an explainable "Behavioral Match" panel in Network View displaying explicit shared MO traits and match percentages for selected suspects.
+- **Transparent Hotspot Scoring Formula**: Replaced black-box correlation estimates with the official Karnataka Police BNSS Heuristic Index (50% Station Density + 30% Recidivism Proportion + 20% Incident Velocity) documented directly in code and UI.
+- **Multi-District Intelligence Baseline**: Populated independent, defensible case and tower data across all 5 Karnataka districts (Bengaluru City, Mysuru, Mangaluru, Hubballi-Dharwad, Belagavi).
+
 ## [Batch 3] - 2026-08-27: Cross-Case Network & AI Explainability (Tier 3)
 
 - **Cross-Case Association Engine**: Created `/api/network/cross-case` using vector cosine similarity ($\ge 0.85$) over suspect profiles to reveal hidden multi-case criminal networks.
