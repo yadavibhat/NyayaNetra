@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { dbService } from '../lib/api';
 import { createSpeechRecognizer, speakText, stopSpeaking } from '../lib/speech';
 import { Navbar } from '../components/Navbar';
@@ -13,12 +14,12 @@ import { Sparkles, Send, Mic, Volume2, VolumeX, Copy, CheckCircle2, FileText, In
 
 export function ChatView({ setActiveScreen }) {
   const { session } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const [cases, setCases] = useState([]);
   const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [currentConversationId, setCurrentConversationId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [promptInput, setPromptInput] = useState('');
-  const [language, setLanguage] = useState('en'); // 'en' | 'kn'
   const [isThinking, setIsThinking] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -418,20 +419,22 @@ export function ChatView({ setActiveScreen }) {
                             )}
                           </div>
 
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1">
                             <button
                               onClick={() => handleSpeak(msg.content)}
-                              className="p-1.5 text-outline hover:text-navy-deep rounded-lg transition-colors"
+                              className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center text-outline hover:text-navy-deep rounded-lg transition-colors"
                               title="Listen to text-to-speech audio"
+                              aria-label="Listen to text-to-speech audio"
                             >
-                              {isSpeaking ? <VolumeX className="w-4 h-4 text-red-600" /> : <Volume2 className="w-4 h-4" />}
+                              {isSpeaking ? <VolumeX className="w-5 h-5 text-red-600" /> : <Volume2 className="w-5 h-5" />}
                             </button>
                             <button
                               onClick={() => navigator.clipboard.writeText(msg.content)}
-                              className="p-1.5 text-outline hover:text-navy-deep rounded-lg transition-colors"
+                              className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center text-outline hover:text-navy-deep rounded-lg transition-colors"
                               title="Copy response text"
+                              aria-label="Copy response text"
                             >
-                              <Copy className="w-4 h-4" />
+                              <Copy className="w-5 h-5" />
                             </button>
                           </div>
                         </div>
@@ -613,12 +616,8 @@ export function ChatView({ setActiveScreen }) {
                       handleSendMessage(e);
                     }
                   }}
-                  className="w-full pl-4 pr-44 py-3.5 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-sm font-medium text-on-surface"
-                  placeholder={
-                    language === 'kn'
-                      ? 'ಮಲ್ಲೇಶ್ವರಂ ಪ್ರಕರಣ ಅಥವಾ ಸಿಡಿಆರ್ ಮಾಹಿತಿಯನ್ನು ಕನ್ನಡದಲ್ಲಿ ನಮೂದಿಸಿ...'
-                      : 'Enter investigation query in English...'
-                  }
+                  className="w-full pl-4 pr-48 py-3.5 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-sm font-medium text-on-surface"
+                  placeholder={t('chat_input_placeholder')}
                 />
                 
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -627,16 +626,18 @@ export function ChatView({ setActiveScreen }) {
                     <button
                       type="button"
                       onClick={() => setLanguage('en')}
-                      className={`px-2.5 py-1 ${language === 'en' ? 'bg-primary text-on-primary' : 'text-outline hover:bg-surface-container'}`}
+                      className={`px-2.5 py-1.5 min-h-[36px] ${language === 'en' ? 'bg-primary text-on-primary' : 'text-outline hover:bg-surface-container'}`}
+                      aria-label="Switch chat language to English"
                     >
                       Eng
                     </button>
                     <button
                       type="button"
                       onClick={() => setLanguage('kn')}
-                      className={`px-2.5 py-1 ${language === 'kn' ? 'bg-primary text-on-primary' : 'text-outline hover:bg-surface-container'}`}
+                      className={`px-2.5 py-1.5 min-h-[36px] ${language === 'kn' ? 'bg-primary text-on-primary' : 'text-outline hover:bg-surface-container'}`}
+                      aria-label="Switch chat language to Kannada"
                     >
-                      Kan (ಕನ್ನಡ)
+                      ಕನ್ನಡ
                     </button>
                   </div>
 
@@ -644,10 +645,11 @@ export function ChatView({ setActiveScreen }) {
                   <button
                     type="button"
                     onClick={toggleRecording}
-                    className={`p-2 rounded-full transition-all ${
+                    className={`p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full transition-all ${
                       isRecording ? 'bg-red-600 text-white animate-bounce' : 'text-primary hover:bg-surface-container-high'
                     }`}
                     title="Voice-to-Text STT (Bhashini API for Kannada)"
+                    aria-label={isRecording ? "Stop voice recording" : "Start voice recording"}
                   >
                     <Mic className="w-5 h-5" />
                   </button>
@@ -655,8 +657,9 @@ export function ChatView({ setActiveScreen }) {
                   {/* Send Button */}
                   <button
                     type="submit"
-                    className="p-2 bg-primary text-on-primary rounded-lg hover:bg-primary-container transition-all active:scale-95 shadow-sm"
+                    className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center bg-primary text-on-primary rounded-xl hover:bg-primary-container transition-all active:scale-95 shadow-sm"
                     title="Run RAG Query"
+                    aria-label="Send investigation query"
                   >
                     <Send className="w-5 h-5" />
                   </button>

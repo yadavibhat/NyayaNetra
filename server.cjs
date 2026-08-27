@@ -631,6 +631,36 @@ Suspect Network Links:
 ${finalLinks.map(l => `- ID: ${l.id || l._id} | Suspect 1 ID: ${l.suspect_a_id || l.suspect_a_id || l.suspect_id_1} | Suspect 2 ID: ${l.suspect_b_id || l.suspect_id_2} | Type: ${l.link_type} | Detail: ${l.detail || 'N/A'}`).join('\n') || 'None'}
 `;
 
+      // Multi-Turn Memory: Load last 6 messages from current conversation
+      let historyMessages = [];
+      if (options.conversationId) {
+        try {
+          const priorMsgs = await Store.getMessages(options.conversationId);
+          // Take previous turns (excluding current query if already saved)
+          const relevantPrior = priorMsgs
+            .filter(m => m.content && m.content.trim() !== query.trim())
+            .slice(-6);
+
+          let totalChars = 0;
+          const formattedHistory = [];
+          // Build backwards to keep recent turns under 3000 chars limit
+          for (let i = relevantPrior.length - 1; i >= 0; i--) {
+            const m = relevantPrior[i];
+            const charLen = m.content.length;
+            if (totalChars + charLen <= 3000) {
+              formattedHistory.unshift({
+                role: m.role === 'assistant' ? 'assistant' : 'user',
+                content: m.content
+              });
+              totalChars += charLen;
+            }
+          }
+          historyMessages = formattedHistory;
+        } catch (hErr) {
+          console.warn('Failed to load conversation history:', hErr.message);
+        }
+      }
+
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -641,6 +671,7 @@ ${finalLinks.map(l => `- ID: ${l.id || l._id} | Suspect 1 ID: ${l.suspect_a_id |
           model: 'openai/gpt-oss-120b',
           messages: [
             { role: 'system', content: systemPrompt },
+            ...historyMessages,
             { role: 'user', content: `Retrieved case context:\n${formattedContext}\n\nUser Question: ${query}` }
           ],
           temperature: 0.1
@@ -1626,8 +1657,8 @@ app.post('/api/messages', async (req, res) => {
       language: language || 'en'
     });
 
-    // 2. Generate grounded classical NLP answer with top-k vector retrieval
-    const ragResult = await generateLocalAIResponse(content, caseId, language, { scope });
+    // 2. Generate grounded classical NLP answer with top-k vector retrieval & multi-turn memory
+    const ragResult = await generateLocalAIResponse(content, caseId, language, { scope, conversationId: conversation_id });
 
     // 3. Save assistant response with explainability metadata
     const assistantMsg = await Store.addMessage({

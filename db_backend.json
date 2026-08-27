@@ -23109,6 +23109,41 @@
       "user_id": "usr-1784704355604",
       "title": "Smoke Test Conversation",
       "createdAt": "2026-08-27T06:56:28.858Z"
+    },
+    {
+      "id": "conv-1787813855413",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-27T06:57:35.413Z"
+    },
+    {
+      "id": "conv-1787813897077",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-27T06:58:17.077Z"
+    },
+    {
+      "id": "conv-1787814112695",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Batch 4 User Flow Verification",
+      "createdAt": "2026-08-27T07:01:52.695Z"
+    },
+    {
+      "id": "conv-1787814503680",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Multi-Turn Memory Test",
+      "createdAt": "2026-08-27T07:08:23.680Z"
+    },
+    {
+      "id": "conv-1787814533114",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-27T07:08:53.114Z"
     }
   ],
   "messages": [
@@ -24002,9 +24037,536 @@
         "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
       },
       "createdAt": "2026-08-27T06:56:31.450Z"
+    },
+    {
+      "id": "msg-1787813855441",
+      "conversation_id": "conv-1787813855413",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-27T06:57:35.441Z"
+    },
+    {
+      "id": "msg-1787813856328",
+      "conversation_id": "conv-1787813855413",
+      "role": "assistant",
+      "content": "**Active Suspects**\n\n| Suspect ID | Name | Aliases | Risk Score |\n|------------|------|---------|------------|\n| susp-1784704530761 | Shivanna K | Shiva | 72% |\n| susp-1784704530760 | Basavaraju H | Basa, BH‑402 | 88% |\n\nBoth suspects are currently listed as active participants in the “Malleshwaram CDR & Telemetry Investigation” (case‑1784704530759)【susp-1784704530761】,【susp-1784704530760】.",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530761",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "susp-1784704530761",
+          "type": "suspect",
+          "score": 84,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 84,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 83,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "evid-blr-002",
+          "type": "evidence",
+          "score": 81,
+          "label": "ANPR: KA-BLR-ANPR-09 (Sampige Road)"
+        },
+        {
+          "id": "evid-blr-004",
+          "type": "evidence",
+          "score": 80,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "evid-blr-001",
+          "type": "evidence",
+          "score": 79,
+          "label": "CDR: +91 94808-99402"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-27T06:57:36.328Z"
+    },
+    {
+      "id": "msg-1787813897109",
+      "conversation_id": "conv-1787813897077",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-27T06:58:17.109Z"
+    },
+    {
+      "id": "msg-1787813898278",
+      "conversation_id": "conv-1787813897077",
+      "role": "assistant",
+      "content": "**Active Suspects**\n\n| Suspect ID | Name | Aliases | Risk Score |\n|------------|------|---------|------------|\n| susp-1784704530761 | Shivanna K | Shiva | 72% |\n| susp-1784704530760 | Basavaraju H | Basa, BH‑402 | 88% |\n\nThese two individuals are listed in the “Suspects Roster” for the Malleshwaram CDR & Telemetry Investigation case [case-1784704530759]【susp-1784704530761】【susp-1784704530760】.",
+      "language": "en",
+      "cited_record_ids": [
+        "case-1784704530759",
+        "susp-1784704530761",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "susp-1784704530761",
+          "type": "suspect",
+          "score": 84,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 84,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 83,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "evid-blr-002",
+          "type": "evidence",
+          "score": 81,
+          "label": "ANPR: KA-BLR-ANPR-09 (Sampige Road)"
+        },
+        {
+          "id": "evid-blr-004",
+          "type": "evidence",
+          "score": 80,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "evid-blr-001",
+          "type": "evidence",
+          "score": 79,
+          "label": "CDR: +91 94808-99402"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-27T06:58:18.278Z"
+    },
+    {
+      "id": "msg-1787814112724",
+      "conversation_id": "conv-1787814112695",
+      "role": "user",
+      "content": "What are the modus operandi behavioral traits of suspects in this case?",
+      "language": "en",
+      "createdAt": "2026-08-27T07:01:52.724Z"
+    },
+    {
+      "id": "msg-1787814115114",
+      "conversation_id": "conv-1787814112695",
+      "role": "assistant",
+      "content": "The suspects’ behavior in this case shows a pattern of tightly‑coordinated, night‑time activity that relies on mobile communications and a pre‑planned escape vehicle.\n\n* **Coordinated phone‑call activity** – Both suspects exchanged a series of 14 calls between 02:00 and 05:00 a.m., the exact window of the gold‑store burglary, using the same handset (+91 94808‑99402) at the Malleshwaram 18th Cross cell tower (KA‑BLR‑N4). This indicates a deliberate, synchronized use of mobile calls to plan and execute the crime【evid-blr-001】【evid-blr-004】.  \n* **Use of a getaway vehicle** – The investigation notes that a car registered as KA‑04‑MB‑4022 was used as the “getaway car,” suggesting that the perpetrators prepared an escape method in advance【evid-blr-002】.  \n* **Night‑time operation** – The bulk of the communication and the burglary itself occur in the early‑morning hours (02:00‑05:00), reflecting a preference for operating under low‑visibility conditions.  \n* **Reliance on unauthorized cell‑tower activity** – The case title references “unauthorized cell tower activity,” implying that the suspects may have exploited or manipulated the cellular infrastructure to avoid detection while coordinating the crime【Case Profile】.\n\nTogether, these elements form the modus operandi: synchronized, covert coordination via mobile calls during early‑morning hours, combined with a pre‑arranged escape vehicle, often leveraging the local cellular network for illicit communication.",
+      "language": "en",
+      "cited_record_ids": [
+        "evid-blr-002",
+        "evid-blr-001",
+        "evid-blr-004"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "susp-1784704530761",
+          "type": "suspect",
+          "score": 85,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 83,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 78,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "evid-blr-002",
+          "type": "evidence",
+          "score": 77,
+          "label": "ANPR: KA-BLR-ANPR-09 (Sampige Road)"
+        },
+        {
+          "id": "evid-blr-001",
+          "type": "evidence",
+          "score": 76,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "evid-blr-004",
+          "type": "evidence",
+          "score": 76,
+          "label": "CDR: +91 94808-99402"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-27T07:01:55.114Z"
+    },
+    {
+      "id": "msg-1787814503761",
+      "conversation_id": "conv-1787814503680",
+      "role": "user",
+      "content": "Who is suspect Basavaraju H?",
+      "language": "en",
+      "createdAt": "2026-08-27T07:08:23.761Z"
+    },
+    {
+      "id": "msg-1787814508461",
+      "conversation_id": "conv-1787814503680",
+      "role": "assistant",
+      "content": "Basavaraju H is one of the listed suspects in the Malleshwaram CDR & Telemetry Investigation. His record (susp-1784704530760) shows the following details:\n\n- **Name:** Basavaraju H  \n- **Aliases:** Basa, BH‑402  \n- **Risk Score:** 88 %  \n\n[Record ID: susp-1784704530760]",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 87,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "susp-1784704530761",
+          "type": "suspect",
+          "score": 80,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "evid-blr-001",
+          "type": "evidence",
+          "score": 78,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "evid-blr-004",
+          "type": "evidence",
+          "score": 78,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 77,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "evid-blr-002",
+          "type": "evidence",
+          "score": 76,
+          "label": "ANPR: KA-BLR-ANPR-09 (Sampige Road)"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n\nEvidence Records:\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-27T07:08:28.461Z"
+    },
+    {
+      "id": "msg-1787814508521",
+      "conversation_id": "conv-1787814503680",
+      "role": "user",
+      "content": "What is his risk score and what modus operandi traits does he exhibit?",
+      "language": "en",
+      "createdAt": "2026-08-27T07:08:28.521Z"
+    },
+    {
+      "id": "msg-1787814509723",
+      "conversation_id": "conv-1787814503680",
+      "role": "assistant",
+      "content": "- **Risk Score:** 88 % [Record ID: susp-1784704530760]  \n\n- **Modus operandi traits (as reflected in the case data):**  \n  1. **Coordinated CDR activity:** Basavaraju H is linked to 14 phone‑calls made between 02:00 AM and 05:00 AM from the Malleshwaram 18th Cross cell tower (KA‑BLR‑N4) during the burglary window, indicating he used mobile communications to coordinate the crime [Record ID: link-1784704530760].  \n  2. **Association with unauthorized cell‑tower usage:** The investigation centers on “unauthorized cell tower activity,” and Basavaraju H appears in the suspect roster for this case, suggesting he was involved in exploiting the tower for illicit purposes [Record ID: case-1784704530759].  \n\nThese are the only modus‑operandi details present in the provided case context.",
+      "language": "en",
+      "cited_record_ids": [
+        "case-1784704530759",
+        "susp-1784704530760",
+        "link-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "susp-1784704530761",
+          "type": "suspect",
+          "score": 85,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 84,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "evid-blr-004",
+          "type": "evidence",
+          "score": 77,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "evid-blr-002",
+          "type": "evidence",
+          "score": 76,
+          "label": "ANPR: KA-BLR-ANPR-09 (Sampige Road)"
+        },
+        {
+          "id": "evid-blr-001",
+          "type": "evidence",
+          "score": 75,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 75,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-27T07:08:29.723Z"
+    },
+    {
+      "id": "msg-1787814533143",
+      "conversation_id": "conv-1787814533114",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-27T07:08:53.143Z"
+    },
+    {
+      "id": "msg-1787814533927",
+      "conversation_id": "conv-1787814533114",
+      "role": "assistant",
+      "content": "The case lists two active suspects:\n\n1. **Shivanna K** – also known as **Shiva**. He has a risk score of **72 %**【susp-1784704530761】.  \n2. **Basavaraju H** – also known as **Basa** and **BH‑402**. He has a risk score of **88 %**【susp-1784704530760】.",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530761",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "susp-1784704530761",
+          "type": "suspect",
+          "score": 84,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 84,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 83,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "evid-blr-002",
+          "type": "evidence",
+          "score": 81,
+          "label": "ANPR: KA-BLR-ANPR-09 (Sampige Road)"
+        },
+        {
+          "id": "evid-blr-004",
+          "type": "evidence",
+          "score": 80,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "evid-blr-001",
+          "type": "evidence",
+          "score": 79,
+          "label": "CDR: +91 94808-99402"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-27T07:08:53.927Z"
     }
   ],
   "audit_logs": [
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787814533114",
+      "details": {
+        "title": "Smoke Test Conversation"
+      },
+      "createdAt": "2026-08-27T07:08:53.126Z",
+      "id": "audit-1787814533126"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T07:08:53.081Z",
+      "id": "audit-1787814533081"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "RAG_QUERY",
+      "target_table": "conversations",
+      "target_id": null,
+      "details": {
+        "query": "What is his risk score and what modus operandi traits does he exhibit?",
+        "language": "en",
+        "confidenceScore": 95,
+        "citedRecordsCount": 3,
+        "retrievedRecordsCount": 6,
+        "scope": "this_case"
+      },
+      "createdAt": "2026-08-27T07:08:29.739Z",
+      "id": "audit-1787814509739"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "RAG_QUERY",
+      "target_table": "conversations",
+      "target_id": null,
+      "details": {
+        "query": "Who is suspect Basavaraju H?",
+        "language": "en",
+        "confidenceScore": 95,
+        "citedRecordsCount": 1,
+        "retrievedRecordsCount": 6,
+        "scope": "this_case"
+      },
+      "createdAt": "2026-08-27T07:08:28.478Z",
+      "id": "audit-1787814508478"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787814503680",
+      "details": {
+        "title": "Multi-Turn Memory Test"
+      },
+      "createdAt": "2026-08-27T07:08:23.716Z",
+      "id": "audit-1787814503716"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "RAG_QUERY",
+      "target_table": "conversations",
+      "target_id": null,
+      "details": {
+        "query": "What are the modus operandi behavioral traits of suspects in this case?",
+        "language": "en",
+        "confidenceScore": 95,
+        "citedRecordsCount": 3,
+        "retrievedRecordsCount": 6,
+        "scope": "this_case"
+      },
+      "createdAt": "2026-08-27T07:01:55.125Z",
+      "id": "audit-1787814115125"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787814112695",
+      "details": {
+        "title": "Batch 4 User Flow Verification"
+      },
+      "createdAt": "2026-08-27T07:01:52.707Z",
+      "id": "audit-1787814112707"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T07:01:52.653Z",
+      "id": "audit-1787814112653"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787813897077",
+      "details": {
+        "title": "Smoke Test Conversation"
+      },
+      "createdAt": "2026-08-27T06:58:17.091Z",
+      "id": "audit-1787813897091"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:58:17.006Z",
+      "id": "audit-1787813897006"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787813855413",
+      "details": {
+        "title": "Smoke Test Conversation"
+      },
+      "createdAt": "2026-08-27T06:57:35.426Z",
+      "id": "audit-1787813855426"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:57:35.373Z",
+      "id": "audit-1787813855373"
+    },
     {
       "user_id": "usr-1784704355604",
       "action": "CONVERSATION_CREATE",

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { dbService } from '../lib/api';
 import { Navbar } from '../components/Navbar';
 import { Sidebar } from '../components/Sidebar';
@@ -11,6 +12,7 @@ import { Share2, Plus, UserPlus, Network, X, FileText } from 'lucide-react';
 
 export function NetworkView({ setActiveScreen }) {
   const { session } = useAuth();
+  const { language, t } = useLanguage();
   const [cases, setCases] = useState([]);
   const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [suspects, setSuspects] = useState([]);
@@ -405,16 +407,22 @@ export function NetworkView({ setActiveScreen }) {
 
                 <div className="space-y-4 text-xs pb-6">
                   <div>
-                    <label className="text-[11px] font-bold text-outline uppercase tracking-wider block font-sans">Threat Risk Score</label>
+                    <label className="text-[11px] font-bold text-outline uppercase tracking-wider block font-sans">{t('network_threat_score')}</label>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-bold border border-amber-300">
-                        {selectedSuspect.risk_score !== null ? `${selectedSuspect.risk_score}%` : 'Unassessed'} Calculated Risk Metric
+                      <span className={`px-3 py-1.5 rounded-xl font-bold border flex items-center gap-1.5 ${
+                        (selectedSuspect.risk_score || 0) >= 75
+                          ? 'bg-red-100 text-red-900 border-red-300'
+                          : (selectedSuspect.risk_score || 0) >= 50
+                          ? 'bg-amber-100 text-amber-900 border-amber-300'
+                          : 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                      }`}>
+                        {(selectedSuspect.risk_score || 0) >= 75 ? '⚠️ High Threat' : (selectedSuspect.risk_score || 0) >= 50 ? '⚡ Moderate Threat' : '🛡️ Standard Threat'} ({selectedSuspect.risk_score !== null ? `${selectedSuspect.risk_score}%` : 'Unassessed'})
                       </span>
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-bold text-outline uppercase tracking-wider block font-sans">Known Aliases</label>
+                    <label className="text-[11px] font-bold text-outline uppercase tracking-wider block font-sans">{t('network_aliases')}</label>
                     <p className="font-mono font-bold text-navy-deep mt-0.5">
                       {selectedSuspect.aliases?.join(', ') || 'None recorded'}
                     </p>

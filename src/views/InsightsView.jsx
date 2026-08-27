@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { dbService } from '../lib/api';
 import { Navbar } from '../components/Navbar';
 import { Sidebar } from '../components/Sidebar';
-import { BarChart3, PieChart, TrendingUp, AlertTriangle, Lightbulb, Users, Radio, ShieldAlert } from 'lucide-react';
+import { BarChart3, PieChart, TrendingUp, AlertTriangle, Lightbulb, Users, Radio, ShieldAlert, ShieldCheck } from 'lucide-react';
 
 export function InsightsView({ setActiveScreen }) {
   const { session } = useAuth();
+  const { language, t } = useLanguage();
   const [cases, setCases] = useState([]);
   const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [suspects, setSuspects] = useState([]);
@@ -248,19 +250,19 @@ export function InsightsView({ setActiveScreen }) {
 
                         {/* Labels / Legend */}
                         <div className="grid grid-cols-3 gap-2 text-xs">
-                          <div className="p-3 bg-red-50 rounded-xl border border-red-100 flex flex-col items-center">
-                            <span className="w-2.5 h-2.5 bg-red-500 rounded-full mb-1"></span>
-                            <span className="text-outline text-[10px] font-bold uppercase">High Risk (≥75%)</span>
+                          <div className="p-3 bg-red-50 rounded-xl border border-red-200 flex flex-col items-center">
+                            <span className="text-base mb-0.5">⚠️</span>
+                            <span className="text-red-900 text-[10px] font-bold uppercase">High Risk (≥75%)</span>
                             <span className="font-bold text-red-950 mt-1 text-sm">{highRiskCount}</span>
                           </div>
-                          <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 flex flex-col items-center">
-                            <span className="w-2.5 h-2.5 bg-amber-500 rounded-full mb-1"></span>
-                            <span className="text-outline text-[10px] font-bold uppercase">Medium Risk</span>
+                          <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 flex flex-col items-center">
+                            <span className="text-base mb-0.5">⚡</span>
+                            <span className="text-amber-900 text-[10px] font-bold uppercase">Moderate (50-74%)</span>
                             <span className="font-bold text-amber-950 mt-1 text-sm">{mediumRiskCount}</span>
                           </div>
-                          <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex flex-col items-center">
-                            <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full mb-1"></span>
-                            <span className="text-outline text-[10px] font-bold uppercase">Low Risk (&lt;50%)</span>
+                          <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex flex-col items-center">
+                            <span className="text-base mb-0.5">🛡️</span>
+                            <span className="text-emerald-900 text-[10px] font-bold uppercase">Low Risk (&lt;50%)</span>
                             <span className="font-bold text-emerald-950 mt-1 text-sm">{lowRiskCount}</span>
                           </div>
                         </div>
