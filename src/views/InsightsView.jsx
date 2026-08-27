@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { dbService } from '../lib/supabase';
+import { dbService } from '../lib/api';
 import { Navbar } from '../components/Navbar';
 import { Sidebar } from '../components/Sidebar';
 import { BarChart3, PieChart, TrendingUp, AlertTriangle, Lightbulb, Users, Radio, ShieldAlert } from 'lucide-react';

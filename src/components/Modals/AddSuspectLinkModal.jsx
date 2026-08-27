@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Share2, Save, PlusCircle, Zap } from 'lucide-react';
-import { dbService } from '../../lib/supabase';
+import { dbService } from '../../lib/api';
 
 export function AddSuspectLinkModal({ isOpen, onClose, onAdded, caseId, currentUser }) {
   const [cases, setCases] = useState([]);

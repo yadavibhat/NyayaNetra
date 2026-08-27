@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Building2 } from 'lucide-react';
-import { dbService } from '../../lib/supabase';
+import { dbService } from '../../lib/api';
 
 export function AddStationModal({ isOpen, onClose, onAdded, currentUser }) {
   const [name, setName] = useState('');

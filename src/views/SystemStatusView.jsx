@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { Navbar } from '../components/Navbar';
-import { dbService } from '../lib/supabase';
+import { dbService } from '../lib/api';
 import { RefreshCw, CheckCircle2, ShieldCheck } from 'lucide-react';
 
 export function SystemStatusView({ setActiveScreen }) {

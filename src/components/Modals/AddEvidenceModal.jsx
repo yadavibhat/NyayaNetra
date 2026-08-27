@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, FileSpreadsheet, Save, PlusCircle } from 'lucide-react';
-import { dbService } from '../../lib/supabase';
+import { dbService } from '../../lib/api';
 
 const compressImage = (base64Str, maxWidth = 400, maxHeight = 400) => {
   return new Promise((resolve) => {

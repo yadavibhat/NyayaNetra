@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { dbService } from '../lib/supabase';
+import { dbService } from '../lib/api';
 import { ArrowLeft, Printer, ShieldAlert } from 'lucide-react';
 
 export function PdfExportView({ setActiveScreen }) {

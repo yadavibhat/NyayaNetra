@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, FilePlus } from 'lucide-react';
-import { dbService } from '../../lib/supabase';
+import { dbService } from '../../lib/api';
 
 export function AddCaseModal({ isOpen, onClose, onAdded, currentUser }) {
   const [firNumber, setFirNumber] = useState('');
