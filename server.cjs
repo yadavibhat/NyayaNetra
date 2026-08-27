@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const app = express();
@@ -157,6 +158,25 @@ if (fs.existsSync(DB_FILE)) {
 function saveLocalDB() {
   fs.writeFileSync(DB_FILE, JSON.stringify(localDb, null, 2));
 }
+
+// Ensure all profiles have bcrypt hashed passwords (cost factor 12)
+async function migrateProfilePasswords() {
+  if (localDb.profiles && localDb.profiles.length > 0) {
+    let modified = false;
+    for (const p of localDb.profiles) {
+      if (!p.password || !p.password.startsWith('$2')) {
+        const plain = p.password || 'password123';
+        p.password = await bcrypt.hash(plain, 12);
+        modified = true;
+      }
+    }
+    if (modified) {
+      saveLocalDB();
+      console.log('Migrated existing profile passwords to bcrypt hashes.');
+    }
+  }
+}
+migrateProfilePasswords().catch(err => console.error('Password migration error:', err));
 
 // Unified Store Methods
 const Store = {
@@ -763,8 +783,12 @@ app.post('/api/auth/signup', async (req, res) => {
       return res.json(session);
     }
     const defaultRole = role || 'investigator';
+    const plainPassword = password || 'password123';
+    const hashedPassword = await bcrypt.hash(plainPassword, 12);
+
     const profile = await Store.addProfile({
       email: email || `${badge_id.toLowerCase().replace(/[^a-z0-9]/g, '')}@nyayanetra.gov.in`,
+      password: hashedPassword,
       full_name,
       badge_id,
       role: defaultRole,
@@ -786,7 +810,7 @@ app.post('/api/auth/signup', async (req, res) => {
 // Login
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { email, badge_id } = req.body;
+    const { email, badge_id, password } = req.body;
     let profile = null;
     if (badge_id) {
       profile = await Store.findProfileByBadge(badge_id);
@@ -800,6 +824,29 @@ app.post('/api/auth/login', async (req, res) => {
 
     if (profile.access_status === 'revoked') {
       return res.status(403).send('Account clearance has been revoked by SCRB Access Console.');
+    }
+
+    // Bcrypt password verification
+    const inputPassword = password || 'password123';
+    if (profile.password) {
+      let isMatch = false;
+      if (typeof profile.password === 'string' && profile.password.startsWith('$2')) {
+        isMatch = await bcrypt.compare(inputPassword, profile.password);
+      } else {
+        // Fallback for legacy plaintext password migration
+        isMatch = profile.password === inputPassword;
+        if (isMatch) {
+          profile.password = await bcrypt.hash(inputPassword, 12);
+          saveLocalDB();
+        }
+      }
+      if (!isMatch) {
+        return res.status(401).send('INVALID_CREDENTIALS');
+      }
+    } else {
+      // Legacy seeded account without password field - set hashed password
+      profile.password = await bcrypt.hash(inputPassword, 12);
+      saveLocalDB();
     }
 
     const session = {
@@ -854,8 +901,11 @@ app.get('/api/officers', async (req, res) => {
 app.post('/api/officers', async (req, res) => {
   try {
     const { currentUser, officerData } = req.body;
+    const plainPassword = officerData.password || 'password123';
+    const hashedPassword = await bcrypt.hash(plainPassword, 12);
     const newOfficer = await Store.addProfile({
       email: `${officerData.badge_id.toLowerCase().replace(/[^a-z0-9]/g, '')}@nyayanetra.gov.in`,
+      password: hashedPassword,
       full_name: officerData.full_name,
       badge_id: officerData.badge_id,
       role: officerData.role || 'investigator',

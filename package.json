@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
+    "bcrypt": "^6.0.0",
     "clsx": "^2.1.1",
     "cors": "^2.8.6",
     "d3-force": "^3.0.0",

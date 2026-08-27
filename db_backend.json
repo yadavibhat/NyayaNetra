@@ -40,7 +40,8 @@
       "role": "investigator",
       "station_id": null,
       "access_status": "active",
-      "createdAt": "2026-07-22T07:12:35.604Z"
+      "createdAt": "2026-07-22T07:12:35.604Z",
+      "password": "$2b$12$p9wuhIJtTIj8PfriWG/ChexFr.M73PpMYSQ4jsAvq4Xtpz6CxLLjy"
     },
     {
       "id": "usr-1784704501628",
@@ -50,7 +51,8 @@
       "role": "admin",
       "station_id": null,
       "access_status": "active",
-      "createdAt": "2026-07-22T07:15:01.628Z"
+      "createdAt": "2026-07-22T07:15:01.628Z",
+      "password": "$2b$12$op1STWpITYL32lyu2tgVSeat/J.gwh2zy4VZfXLR0dFw3.sixKPrC"
     },
     {
       "id": "usr-1784708645028",
@@ -60,7 +62,8 @@
       "role": "investigator",
       "station_id": null,
       "access_status": "active",
-      "createdAt": "2026-07-22T08:24:05.028Z"
+      "createdAt": "2026-07-22T08:24:05.028Z",
+      "password": "$2b$12$3zhKyk9oRZXU4KjARt4o4.X3.QhfLb4KR56PMjw63Jre7liudzeYW"
     },
     {
       "id": "usr-1784983624878",
@@ -70,7 +73,19 @@
       "role": "investigator",
       "station_id": null,
       "access_status": "active",
-      "createdAt": "2026-07-25T12:47:04.878Z"
+      "createdAt": "2026-07-25T12:47:04.878Z",
+      "password": "$2b$12$HMo1FFNZzsn00.oay3job.BprThPX7vqSdlOnNva6f7hjqYZ7Cadm"
+    },
+    {
+      "id": "usr-1787811279299",
+      "email": "katest9005@nyayanetra.gov.in",
+      "password": "$2b$12$L.blHorbwz4qiNuIK/XaEeWFc0V.jfBfEivAI4aEA0iMdZsujpJJG",
+      "full_name": "Test Officer",
+      "badge_id": "KA-TEST-9005",
+      "role": "investigator",
+      "station_id": null,
+      "access_status": "active",
+      "createdAt": "2026-08-27T06:14:39.299Z"
     }
   ],
   "cases": [
@@ -406,6 +421,41 @@
       "user_id": "usr-1784708645028",
       "title": "Investigation Session",
       "createdAt": "2026-07-25T13:22:17.887Z"
+    },
+    {
+      "id": "conv-1787807061553",
+      "case_id": null,
+      "user_id": "usr-1784563493059",
+      "title": "Investigation Session",
+      "createdAt": "2026-08-27T05:04:21.553Z"
+    },
+    {
+      "id": "conv-1787807061570",
+      "case_id": null,
+      "user_id": "usr-1784563493059",
+      "title": "Investigation Session",
+      "createdAt": "2026-08-27T05:04:21.570Z"
+    },
+    {
+      "id": "conv-1787807061610",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784563493059",
+      "title": "Investigation Session",
+      "createdAt": "2026-08-27T05:04:21.610Z"
+    },
+    {
+      "id": "conv-1787811096483",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-27T06:11:36.483Z"
+    },
+    {
+      "id": "conv-1787811110995",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-27T06:11:50.995Z"
     }
   ],
   "messages": [
@@ -685,9 +735,161 @@
       ],
       "confidence_score": 95,
       "createdAt": "2026-07-25T13:41:47.360Z"
+    },
+    {
+      "id": "msg-1787811096501",
+      "conversation_id": "conv-1787811096483",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-27T06:11:36.501Z"
+    },
+    {
+      "id": "msg-1787811097754",
+      "conversation_id": "conv-1787811096483",
+      "role": "assistant",
+      "content": "**Active Suspects in the Malleshwaram CDR & Telemetry Investigation (FIR #0184/2026):**\n\n| Suspect ID | Name | Known Aliases | Risk Score |\n|------------|------|---------------|------------|\n| susp-1784704530760 | Basavaraju H | Basa, BH‑402 | 88% |\n| susp-1784704530760 | Shivanna K | Shiva | 72% |\n\nThese are the two individuals currently listed as suspects in the case. [susp-1784704530760] (both entries share the same record ID).",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530760",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "createdAt": "2026-08-27T06:11:37.754Z"
+    },
+    {
+      "id": "msg-1787811111000",
+      "conversation_id": "conv-1787811110995",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-27T06:11:51.000Z"
+    },
+    {
+      "id": "msg-1787811112417",
+      "conversation_id": "conv-1787811110995",
+      "role": "assistant",
+      "content": "The case lists two active suspects:\n\n1. **Basavaraju H** – also known as “Basa” and “BH‑402”, with a risk score of **88 %**【susp-1784704530760】.  \n2. **Shivanna K** – also known as “Shiva”, with a risk score of **72 %**【susp-1784704530760】.",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530760",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "createdAt": "2026-08-27T06:11:52.417Z"
     }
   ],
   "audit_logs": [
+    {
+      "user_id": "usr-1787811279299",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1787811279299",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:14:39.591Z",
+      "id": "audit-1787811279591"
+    },
+    {
+      "user_id": "usr-1787811279299",
+      "action": "AUTH_SIGNUP",
+      "target_table": "profiles",
+      "target_id": "usr-1787811279299",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:14:39.300Z",
+      "id": "audit-1787811279300"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:14:38.694Z",
+      "id": "audit-1787811278694"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787811110995",
+      "details": {
+        "title": "Smoke Test Conversation"
+      },
+      "createdAt": "2026-08-27T06:11:50.995Z",
+      "id": "audit-1787811110995"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:11:50.985Z",
+      "id": "audit-1787811110985"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787811096483",
+      "details": {
+        "title": "Smoke Test Conversation"
+      },
+      "createdAt": "2026-08-27T06:11:36.485Z",
+      "id": "audit-1787811096485"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:11:36.451Z",
+      "id": "audit-1787811096451"
+    },
+    {
+      "user_id": "usr-1784563493059",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787807061610",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-08-27T05:04:21.611Z",
+      "id": "audit-1787807061611"
+    },
+    {
+      "user_id": "usr-1784563493059",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787807061570",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-08-27T05:04:21.571Z",
+      "id": "audit-1787807061571"
+    },
+    {
+      "user_id": "usr-1784563493059",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787807061553",
+      "details": {
+        "title": "Investigation Session"
+      },
+      "createdAt": "2026-08-27T05:04:21.561Z",
+      "id": "audit-1787807061561"
+    },
     {
       "user_id": "usr-1784708645028",
       "action": "AUTH_LOGOUT",
