@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 
@@ -444,6 +445,21 @@ const IndianPoliceCrimeKB = [
   }
 ];
 
+// In-memory map to store the most recent prompt and completion strings for Token Meter
+const lastAIExecutionMap = new Map();
+
+// Helper for deterministic JSON serialization with sorted keys (for forensic SHA-256 dossier hash)
+function deterministicStringify(obj) {
+  if (obj === null || typeof obj !== 'object') {
+    return JSON.stringify(obj);
+  }
+  if (Array.isArray(obj)) {
+    return '[' + obj.map(deterministicStringify).join(',') + ']';
+  }
+  const keys = Object.keys(obj).sort();
+  return '{' + keys.map(k => JSON.stringify(k) + ':' + deterministicStringify(obj[k])).join(',') + '}';
+}
+
 async function generateLocalAIResponse(query, caseId, language = 'en') {
   const cases = await Store.getCases();
   const allSuspects = await Store.getSuspects(caseId);
@@ -516,6 +532,11 @@ ${caseLinks.map(l => `- ID: ${l.id || l._id} | Suspect 1 ID: ${l.suspect_a_id ||
         const resJson = await response.json();
         const answerText = resJson.choices?.[0]?.message?.content || "No response received from model.";
         
+        // Record prompt & completion text for Token Meter
+        const fullPromptText = `${systemPrompt}\n${formattedContext}\n${query}`;
+        lastAIExecutionMap.set(caseIdStr || 'default', { promptText: fullPromptText, completionText: answerText, timestamp: Date.now() });
+        lastAIExecutionMap.set('default', { promptText: fullPromptText, completionText: answerText, timestamp: Date.now() });
+
         // Extract cited IDs
         const citedRecordIds = [];
         const allIds = [caseIdStr, ...caseSuspects.map(s => s.id || s._id?.toString()), ...caseEvidence.map(e => e.id || e._id?.toString()), ...caseLinks.map(l => l.id || l._id?.toString())];
@@ -760,6 +781,10 @@ ${caseLinks.map(l => `- ID: ${l.id || l._id} | Suspect 1 ID: ${l.suspect_a_id ||
       answer += `• Evidence: ${allEvidence.length} telecommunication / signal record(s) indexed.`;
     }
   }
+
+  const caseIdKey = (targetCase ? (targetCase.id || targetCase._id?.toString()) : caseId) || 'default';
+  lastAIExecutionMap.set(caseIdKey, { promptText: query, completionText: answer, timestamp: Date.now() });
+  lastAIExecutionMap.set('default', { promptText: query, completionText: answer, timestamp: Date.now() });
 
   return {
     answer,
@@ -1185,7 +1210,7 @@ app.post('/api/messages', async (req, res) => {
 // Advanced Feature Console Executor (9 Categories x 10 Sub-features = 90 Real Analytics bindings)
 app.post('/api/advanced/execute', async (req, res) => {
   try {
-    const { category, subFeature, caseId, userId } = req.body;
+    const { category, subFeature, caseId, userId, query, payload } = req.body;
     
     // Fetch real data to operate on
     const cases = await Store.getCases();
@@ -1243,16 +1268,56 @@ app.post('/api/advanced/execute', async (req, res) => {
             ]
           };
         } else if (subFeature === 'token_meter') {
+          const stats = lastAIExecutionMap.get(caseIdStr) || lastAIExecutionMap.get('default');
+          const promptStr = stats?.promptText || '';
+          const completionStr = stats?.completionText || '';
+          const promptTokens = promptStr ? Math.ceil(promptStr.length / 4) : 1042;
+          const completionTokens = completionStr ? Math.ceil(completionStr.length / 4) : 256;
+          const totalTokens = promptTokens + completionTokens;
+
           result = {
-            promptTokens: 1042,
-            completionTokens: 256,
-            totalTokens: 1298,
-            estimatedCost: "$0.00015 USD (Groq GPT-OSS-120b Free Tier)"
+            promptTokens,
+            completionTokens,
+            totalTokens,
+            promptCharCount: promptStr.length,
+            completionCharCount: completionStr.length,
+            estimationMethod: "chars/4 approximation",
+            estimatedCost: `$${((totalTokens / 1000) * 0.00015).toFixed(6)} USD (Groq GPT-OSS-120b Free Tier)`
           };
         } else if (subFeature === 'semantic_search') {
+          // TODO(Batch 2): replace with embedding cosine similarity
+          const rawQuery = (query || req.body.searchQuery || payload?.query || payload?.searchQuery || '').trim().toLowerCase();
+          const queryKeywords = rawQuery.split(/\s+/).filter(w => w.length > 1);
+
+          const matches = cases.map(c => {
+            const searchableText = `${c.fir_number || ''} ${c.title || ''} ${c.description || ''} ${c.status || ''} ${c.priority || ''}`.toLowerCase();
+            let score = 0;
+            if (queryKeywords.length === 0) {
+              score = 60;
+            } else {
+              let matchedCount = 0;
+              for (const kw of queryKeywords) {
+                if (searchableText.includes(kw)) {
+                  matchedCount++;
+                }
+              }
+              score = Math.round((matchedCount / queryKeywords.length) * 100);
+              if (searchableText.includes(rawQuery) && rawQuery.length > 2) {
+                score = Math.min(100, Math.max(score, 85) + 15);
+              }
+            }
+            return {
+              fir: c.fir_number,
+              title: c.title,
+              relevance: `${Math.min(100, Math.max(0, score))}%`,
+              scoreValue: score
+            };
+          }).sort((a, b) => b.scoreValue - a.scoreValue);
+
           result = {
             searchScope: "Active District Case Files",
-            matches: cases.map(c => ({ fir: c.fir_number, title: c.title, relevance: "100%" }))
+            query: rawQuery || "All Active Cases",
+            matches: matches.map(({ fir, title, relevance }) => ({ fir, title, relevance }))
           };
         } else if (subFeature === 'entity_highlighter') {
           result = {
@@ -1458,9 +1523,31 @@ app.post('/api/advanced/execute', async (req, res) => {
             pageBreakPolicy: "Avoid splitting tables across pages"
           };
         } else if (subFeature === 'dossier_hash') {
+          const dossierPayload = {
+            case: targetCase ? {
+              fir_number: targetCase.fir_number,
+              title: targetCase.title,
+              description: targetCase.description,
+              status: targetCase.status,
+              priority: targetCase.priority
+            } : null,
+            suspects: caseSuspects.map(s => ({ id: s.id || s._id, name: s.name, risk_score: s.risk_score, aliases: s.aliases })),
+            evidence: caseEvidence.map(e => ({ id: e.id || e._id, type: e.type, phone: e.phone_number, tower: e.cell_tower, details: e.details })),
+            links: caseLinks.map(l => ({ id: l.id || l._id, a: l.suspect_a_id, b: l.suspect_b_id, type: l.link_type }))
+          };
+          const serialized = deterministicStringify(dossierPayload);
+          const computedHash = crypto.createHash('sha256').update(serialized).digest('hex');
+
           result = {
             hashAlgorithm: "SHA-256",
-            hashValue: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            hashValue: computedHash,
+            targetCaseId: caseIdStr,
+            recordsHashed: {
+              suspectsCount: caseSuspects.length,
+              evidenceCount: caseEvidence.length,
+              linksCount: caseLinks.length
+            },
+            timestamp: new Date().toISOString()
           };
         } else if (subFeature === 'export_audit') {
           result = {
