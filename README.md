@@ -91,7 +91,25 @@ npm run build
 
 ---
 
+## ☁️ Deployment & Serverless Synchronization
+
+The root `server.cjs` is the canonical backend implementation. When deploying to Zoho Catalyst serverless environments:
+
+1. **Sync Serverless Function Backend**:
+   ```bash
+   npm run sync:catalyst
+   ```
+   This automatically synchronizes all vector RAG, bcrypt authentication, and behavioral profiling logic into `functions/api/server.cjs`.
+
+2. **Deploy to Catalyst**:
+   ```bash
+   npx zcatalyst deploy
+   ```
+
+---
+
 ## 📄 Documentation Links
 
 - **[System Self-Audit Report](docs/AUDIT-REPORT.md)**: Ground-truth scorecard across all 7 core claims with exact file:line citations.
 - **[Changelog](CHANGELOG.md)**: Technical release notes and version history.
+
