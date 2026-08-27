@@ -14,6 +14,24 @@ export function InsightsView({ setActiveScreen }) {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDistrict, setSelectedDistrict] = useState('Bengaluru City');
+  const [hotspotScoreData, setHotspotScoreData] = useState(null);
+  const [loadingHotspot, setLoadingHotspot] = useState(false);
+
+  // Load district hotspot score on district change
+  useEffect(() => {
+    const fetchHotspotScore = async () => {
+      setLoadingHotspot(true);
+      try {
+        const data = await dbService.getHotspotScore(selectedDistrict);
+        setHotspotScoreData(data);
+      } catch (err) {
+        console.error('Failed to load hotspot score:', err);
+      } finally {
+        setLoadingHotspot(false);
+      }
+    };
+    fetchHotspotScore();
+  }, [selectedDistrict]);
 
   // Load cases in session
   useEffect(() => {
@@ -390,9 +408,22 @@ export function InsightsView({ setActiveScreen }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                   {/* Feature 1: District-Level Hotspot Drilldown */}
                   <div className="bg-white border border-outline-variant p-5 rounded-2xl shadow-sm space-y-4">
-                    <div className="flex items-center gap-2 border-b border-outline-variant/60 pb-3">
-                      <span className="text-primary font-bold text-base">📍</span>
-                      <h3 className="text-xs font-bold text-navy-deep uppercase tracking-wider">District-Level Hotspot Drilldown</h3>
+                    <div className="flex items-center justify-between border-b border-outline-variant/60 pb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-primary font-bold text-base">📍</span>
+                        <h3 className="text-xs font-bold text-navy-deep uppercase tracking-wider">District-Level Hotspot Drilldown</h3>
+                      </div>
+                      {hotspotScoreData && (
+                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                          hotspotScoreData.finalScore >= 70
+                            ? 'bg-red-100 text-red-900 border-red-300'
+                            : hotspotScoreData.finalScore >= 45
+                            ? 'bg-amber-100 text-amber-900 border-amber-300'
+                            : 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                        }`}>
+                          SCORE: {hotspotScoreData.finalScore}/100 ({hotspotScoreData.level})
+                        </span>
+                      )}
                     </div>
                     <div className="space-y-3">
                       <p className="text-[11px] text-outline">Select a Karnataka district to query case clusters and radio mast hotspots:</p>
@@ -403,7 +434,7 @@ export function InsightsView({ setActiveScreen }) {
                             onClick={() => setSelectedDistrict(dist)}
                             className={`px-2.5 py-1.5 rounded-lg border text-xs font-bold transition-all ${
                               selectedDistrict === dist
-                                ? 'bg-primary text-on-primary border-primary'
+                                ? 'bg-primary text-on-primary border-primary shadow-2xs'
                                 : 'bg-surface-container-low hover:bg-surface-container border-outline-variant text-on-surface'
                             }`}
                           >
@@ -411,57 +442,112 @@ export function InsightsView({ setActiveScreen }) {
                           </button>
                         ))}
                       </div>
-                      <div className="p-3 bg-surface-container-low border border-outline-variant/50 rounded-xl space-y-2 text-xs">
-                        <div className="flex justify-between items-center font-bold">
-                          <span className="text-navy-deep">Active Node Cluster: {selectedDistrict}</span>
-                          <span className="text-emerald-700 font-mono">Status: Active</span>
+                      {loadingHotspot ? (
+                        <div className="p-4 bg-surface-container-low border border-outline-variant/50 rounded-xl text-center text-xs text-outline italic">
+                          Calculating district hotspot analytics...
                         </div>
-                        <ul className="space-y-1 text-[11px] text-on-surface-variant list-disc pl-4 leading-relaxed">
-                          <li>Peak CDR Tower Hits: {selectedDistrict === 'Bengaluru City' ? '142 logs (Malleshwaram)' : '48 logs (Central Hub)'}</li>
-                          <li>Active Offender Targets: {selectedDistrict === 'Bengaluru City' ? '4 profiles' : '1 profile'}</li>
-                          <li>Predictive Case Risk Level: {selectedDistrict === 'Bengaluru City' ? 'High (86%)' : 'Medium (42%)'}</li>
-                        </ul>
-                      </div>
+                      ) : hotspotScoreData ? (
+                        <div className="p-3.5 bg-surface-container-low border border-outline-variant/50 rounded-xl space-y-2 text-xs">
+                          <div className="flex justify-between items-center font-bold">
+                            <span className="text-navy-deep">Active Node Cluster: {selectedDistrict}</span>
+                            <span className="text-emerald-700 font-mono text-[11px]">
+                              {hotspotScoreData.caseCount} Cases | {hotspotScoreData.stationCount} Stations
+                            </span>
+                          </div>
+                          <ul className="space-y-1.5 text-[11px] text-on-surface-variant list-disc pl-4 leading-relaxed">
+                            <li>
+                              <strong>Peak CDR Tower Activity:</strong> {hotspotScoreData.peakTower}
+                            </li>
+                            <li>
+                              <strong>Active Offender Targets:</strong> {hotspotScoreData.activeOffendersCount} profiles ({hotspotScoreData.highRiskOffendersCount} high-risk recidivism targets)
+                            </li>
+                            <li>
+                              <strong>Predictive Hotspot Assessment:</strong> {hotspotScoreData.level} Priority ({hotspotScoreData.finalScore}% threat density)
+                            </li>
+                          </ul>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
 
-                  {/* Feature 2: Socio-Economic Crime Correlation */}
+                  {/* Feature 2: Predictive Crime Hotspot Analytics & Heuristic Formula */}
                   <div className="bg-white border border-outline-variant p-5 rounded-2xl shadow-sm space-y-4">
-                    <div className="flex items-center gap-2 border-b border-outline-variant/60 pb-3">
-                      <span className="text-primary font-bold text-base">📊</span>
-                      <h3 className="text-xs font-bold text-navy-deep uppercase tracking-wider">Socio-Economic Crime Correlation</h3>
-                    </div>
-                    <div className="space-y-3.5 text-xs">
-                      <p className="text-[11px] text-outline">Correlation coefficients mapping current case clusters with district indicators:</p>
-                      <div className="space-y-2.5">
-                        <div className="space-y-1">
-                          <div className="flex justify-between font-semibold">
-                            <span>Local Unemployment Correlation</span>
-                            <span className="text-red-600 font-bold">+0.68 (High Correlation)</span>
-                          </div>
-                          <div className="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                            <div className="h-full bg-red-500 rounded-full" style={{ width: '68%' }}></div>
-                          </div>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex justify-between font-semibold">
-                            <span>Urban Population Density Factor</span>
-                            <span className="text-red-500 font-bold">+0.54 (Moderate Correlation)</span>
-                          </div>
-                          <div className="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                            <div className="h-full bg-red-400 rounded-full" style={{ width: '54%' }}></div>
-                          </div>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex justify-between font-semibold">
-                            <span>Digital Literacy Index</span>
-                            <span className="text-emerald-600 font-bold">-0.42 (Inverse Correlation)</span>
-                          </div>
-                          <div className="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                            <div className="h-full bg-emerald-500 rounded-full" style={{ width: '42%' }}></div>
-                          </div>
-                        </div>
+                    <div className="flex items-center justify-between border-b border-outline-variant/60 pb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-primary font-bold text-base">📊</span>
+                        <h3 className="text-xs font-bold text-navy-deep uppercase tracking-wider">Predictive Hotspot Index & Formula</h3>
                       </div>
+                      <span className="text-[10px] text-outline font-mono font-bold bg-surface-container px-2 py-0.5 rounded border border-outline-variant">
+                        BNSS Heuristic
+                      </span>
+                    </div>
+
+                    <div className="space-y-3 text-xs">
+                      {/* Documented Transparent Formula Banner */}
+                      <div className="p-2.5 bg-slate-900 text-slate-100 rounded-xl border border-slate-700 space-y-1 font-mono text-[10px]">
+                        <span className="text-gold-accent font-bold block uppercase tracking-wider">Documented Scoring Formula:</span>
+                        <p className="text-slate-300">
+                          score = 0.5 × CaseDensity + 0.3 × RepeatOffenderRate + 0.2 × RecentTrend
+                        </p>
+                      </div>
+
+                      {hotspotScoreData?.factors ? (
+                        <div className="space-y-2.5">
+                          {/* 1. Case Density (50%) */}
+                          <div className="space-y-1">
+                            <div className="flex justify-between font-semibold text-[11px]">
+                              <span>Station Case Density (Weight: 50%)</span>
+                              <span className="text-navy-deep font-bold font-mono">
+                                {hotspotScoreData.factors.caseDensity.raw} cases/stn &rarr; +{hotspotScoreData.factors.caseDensity.contribution} pts ({hotspotScoreData.factors.caseDensity.normalized}%)
+                              </span>
+                            </div>
+                            <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-amber-500 rounded-full transition-all duration-300"
+                                style={{ width: `${hotspotScoreData.factors.caseDensity.normalized}%` }}
+                              ></div>
+                            </div>
+                          </div>
+
+                          {/* 2. Repeat Offender Rate (30%) */}
+                          <div className="space-y-1">
+                            <div className="flex justify-between font-semibold text-[11px]">
+                              <span>Repeat Offender Proportion (Weight: 30%)</span>
+                              <span className="text-red-600 font-bold font-mono">
+                                {hotspotScoreData.factors.repeatOffenderRate.raw} high-risk &rarr; +{hotspotScoreData.factors.repeatOffenderRate.contribution} pts ({hotspotScoreData.factors.repeatOffenderRate.normalized}%)
+                              </span>
+                            </div>
+                            <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-red-500 rounded-full transition-all duration-300"
+                                style={{ width: `${hotspotScoreData.factors.repeatOffenderRate.normalized}%` }}
+                              ></div>
+                            </div>
+                          </div>
+
+                          {/* 3. Recent Incident Velocity (20%) */}
+                          <div className="space-y-1">
+                            <div className="flex justify-between font-semibold text-[11px]">
+                              <span>Recent Incident Velocity (Weight: 20%)</span>
+                              <span className="text-blue-600 font-bold font-mono">
+                                {hotspotScoreData.factors.recentTrend.raw} active &rarr; +{hotspotScoreData.factors.recentTrend.contribution} pts ({hotspotScoreData.factors.recentTrend.normalized}%)
+                              </span>
+                            </div>
+                            <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                                style={{ width: `${hotspotScoreData.factors.recentTrend.normalized}%` }}
+                              ></div>
+                            </div>
+                          </div>
+
+                          <p className="text-[10px] text-outline italic pt-1">
+                            Transparent heuristic metric grounded on active station telemetry &mdash; no unexplainable black-box ML.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="py-4 text-center text-outline italic">Loading predictive factors...</div>
+                      )}
                     </div>
                   </div>
 

@@ -58,6 +58,7 @@ const SuspectSchema = new mongoose.Schema({
   aliases: { type: [String], default: [] },
   risk_score: { type: Number, min: 0, max: 100, default: null },
   image_url: { type: String, default: null },
+  mo_tags: { type: [String], default: [] },
   embedding: { type: [Number], default: [] },
   created_by: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
@@ -282,7 +283,8 @@ const Store = {
   },
   addSuspect: async (data) => {
     if (!data.embedding || data.embedding.length === 0) {
-      const summary = `Suspect: ${data.name} | Aliases: ${data.aliases?.join(', ') || 'None'} | Risk Score: ${data.risk_score || 0}%`;
+      const moStr = data.mo_tags?.length ? ` | Modus Operandi: ${data.mo_tags.join(', ')}` : '';
+      const summary = `Suspect: ${data.name} | Aliases: ${data.aliases?.join(', ') || 'None'} | Risk Score: ${data.risk_score || 0}%${moStr}`;
       data.embedding = await embedText(summary, false);
     }
     if (isMongoConnected) {
@@ -1180,18 +1182,227 @@ app.get('/api/suspects', async (req, res) => {
 
 app.post('/api/suspects', async (req, res) => {
   try {
-    const { case_id, name, aliases, risk_score, image_url, created_by, currentUser } = req.body;
+    const { case_id, name, aliases, risk_score, image_url, mo_tags, moTags, created_by, currentUser } = req.body;
     const suspect = await Store.addSuspect({
       case_id,
       name,
       aliases: aliases || [],
       risk_score: risk_score !== null ? Number(risk_score) : null,
       image_url: image_url || null,
+      mo_tags: mo_tags || moTags || [],
       created_by
     });
     const cUserId = currentUser?.profile?.id || currentUser?.profile?._id?.toString() || 'sys';
-    await Store.addAuditLog(cUserId, 'SUSPECT_ADD', 'suspects', suspect.id || suspect._id.toString(), { name });
+    await Store.addAuditLog(cUserId, 'SUSPECT_ADD', 'suspects', suspect.id || suspect._id.toString(), { name, mo_tags: suspect.mo_tags });
     res.json(suspect);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Modus Operandi (MO) Behavioral Profiling Similarity API (Jaccard Rule-Based Heuristic)
+app.get('/api/profiling/similar-suspects', async (req, res) => {
+  try {
+    const { suspectId } = req.query;
+    const allSuspects = await Store.getSuspects();
+    const allCases = await Store.getCases();
+
+    if (!suspectId) {
+      return res.status(400).json({ error: 'suspectId query parameter is required' });
+    }
+
+    const targetSuspect = allSuspects.find(s => s.id === suspectId || s._id?.toString() === suspectId);
+    if (!targetSuspect) {
+      return res.status(404).json({ error: 'Suspect not found' });
+    }
+
+    const targetTags = new Set((targetSuspect.mo_tags || targetSuspect.moTags || []).map(t => t.toLowerCase().trim()));
+
+    const scoredMatches = [];
+
+    for (const other of allSuspects) {
+      const otherId = other.id || other._id?.toString();
+      if (otherId === (targetSuspect.id || targetSuspect._id?.toString())) {
+        continue;
+      }
+
+      const otherTags = new Set((other.mo_tags || other.moTags || []).map(t => t.toLowerCase().trim()));
+      
+      // Jaccard similarity: |A ∩ B| / |A ∪ B|
+      const intersection = [];
+      targetTags.forEach(t => {
+        if (otherTags.has(t)) intersection.push(t);
+      });
+
+      const union = new Set([...targetTags, ...otherTags]);
+      let jaccard = union.size > 0 ? intersection.length / union.size : 0;
+
+      let vectorScore = 0;
+      if (targetSuspect.embedding?.length > 0 && other.embedding?.length > 0) {
+        vectorScore = Math.max(0, cosineSimilarity(targetSuspect.embedding, other.embedding));
+      }
+
+      const otherCase = allCases.find(c => c.id === other.case_id || c._id?.toString() === other.case_id);
+
+      scoredMatches.push({
+        id: otherId,
+        name: other.name,
+        aliases: other.aliases || [],
+        risk_score: other.risk_score || 0,
+        image_url: other.image_url || null,
+        case_id: other.case_id,
+        case_fir: otherCase?.fir_number || other.case_id,
+        case_title: otherCase?.title || 'Case File',
+        mo_tags: Array.from(otherTags),
+        shared_tags: intersection,
+        total_shared: intersection.length,
+        jaccard_similarity: Math.round(jaccard * 100),
+        vector_similarity: Math.round(vectorScore * 100),
+        combined_score: Math.round((jaccard > 0 ? (jaccard * 0.7 + vectorScore * 0.3) : vectorScore * 0.5) * 100)
+      });
+    }
+
+    // Sort by shared tags count, then jaccard similarity descending
+    scoredMatches.sort((a, b) => b.total_shared - a.total_shared || b.jaccard_similarity - a.jaccard_similarity || b.combined_score - a.combined_score);
+
+    res.json({
+      targetSuspect: {
+        id: targetSuspect.id || targetSuspect._id?.toString(),
+        name: targetSuspect.name,
+        mo_tags: Array.from(targetTags),
+        case_id: targetSuspect.case_id
+      },
+      matches: scoredMatches.slice(0, 5),
+      totalMatches: scoredMatches.filter(m => m.total_shared > 0).length
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+/**
+ * Predictive Hotspot Score Formula (BNSS/KSP Heuristic Index):
+ * 
+ * score = clamp(
+ *   0.5 * normalizedCaseDensity(district)         // cases per station in district
+ * + 0.3 * normalizedRepeatOffenderRate(district)   // % suspects with risk_score >= 75
+ * + 0.2 * normalizedRecentTrend(district),         // case count this month vs last month
+ *   0, 100
+ * )
+ */
+app.get('/api/insights/hotspot-score', async (req, res) => {
+  try {
+    const rawDistrict = (req.query.district || 'Bengaluru City').trim();
+    const allStations = await Store.getStations();
+    const allCases = await Store.getCases();
+    const allSuspects = await Store.getSuspects();
+    const allEvidence = await Store.getEvidence();
+
+    const districtLower = rawDistrict.toLowerCase();
+    const stationsInDistrict = allStations.filter(stn => {
+      const d = (stn.district || '').toLowerCase();
+      const n = (stn.name || '').toLowerCase();
+      if (districtLower.includes('bengaluru') || districtLower.includes('bangalore')) {
+        return d.includes('bengaluru') || d.includes('blr') || n.includes('malleshwaram') || n.includes('indiranagar') || n.includes('cid');
+      }
+      if (districtLower.includes('mysuru') || districtLower.includes('mysore')) {
+        return d.includes('mysur') || d.includes('mysore') || n.includes('mysur') || n.includes('devaraja') || n.includes('vijayanagar');
+      }
+      if (districtLower.includes('mangaluru') || districtLower.includes('mangalore')) {
+        return d.includes('mangal') || n.includes('mangal') || n.includes('panambur') || n.includes('kadri');
+      }
+      if (districtLower.includes('hubballi') || districtLower.includes('hubli') || districtLower.includes('dharwad')) {
+        return d.includes('hub') || d.includes('dharwad') || n.includes('hub') || n.includes('dharwad') || n.includes('gokul');
+      }
+      if (districtLower.includes('belagavi') || districtLower.includes('belgaum')) {
+        return d.includes('belag') || d.includes('belgaum') || n.includes('belag') || n.includes('khade') || n.includes('tilak');
+      }
+      return d.includes(districtLower);
+    });
+
+    const stationIds = new Set(stationsInDistrict.map(s => s.id || s._id?.toString()));
+
+    const casesInDistrict = allCases.filter(c => {
+      if (stationIds.has(c.station_id)) return true;
+      const cText = `${c.title} ${c.description} ${c.fir_number}`.toLowerCase();
+      if (districtLower.includes('bengaluru') && (cText.includes('malleshwaram') || cText.includes('bengaluru') || cText.includes('blr') || cText.includes('nmit'))) return true;
+      if (districtLower.includes('mysuru') && (cText.includes('mysuru') || cText.includes('mysore') || cText.includes('chamundi') || cText.includes('devaraja') || cText.includes('gokulam'))) return true;
+      if (districtLower.includes('mangaluru') && (cText.includes('mangaluru') || cText.includes('mangalore') || cText.includes('panambur') || cText.includes('kadri') || cText.includes('ullal'))) return true;
+      if (districtLower.includes('hubballi') && (cText.includes('hubballi') || cText.includes('dharwad') || cText.includes('gokul') || cText.includes('unkal'))) return true;
+      if (districtLower.includes('belagavi') && (cText.includes('belagavi') || cText.includes('belgaum') || cText.includes('tilakwadi') || cText.includes('khade') || cText.includes('khanapur'))) return true;
+      return false;
+    });
+
+    const caseIds = new Set(casesInDistrict.map(c => c.id || c._id?.toString()));
+    const suspectsInDistrict = allSuspects.filter(s => caseIds.has(s.case_id));
+    const evidenceInDistrict = allEvidence.filter(e => caseIds.has(e.case_id));
+
+    const stationCount = Math.max(stationsInDistrict.length, 1);
+    const caseCount = casesInDistrict.length;
+    const suspectCount = suspectsInDistrict.length;
+
+    // 1. normalizedCaseDensity: cases per station normalized (capped at 3 cases/station = 100%)
+    const rawDensity = caseCount / stationCount;
+    const normalizedDensity = Math.min(100, Math.round((rawDensity / 2.5) * 100));
+
+    // 2. normalizedRepeatOffenderRate: % suspects with risk_score >= 75
+    const highRiskSuspects = suspectsInDistrict.filter(s => (s.risk_score || 0) >= 75);
+    const repeatOffenderRate = suspectCount > 0 ? (highRiskSuspects.length / suspectCount) : 0.4;
+    const normalizedRepeatRate = Math.min(100, Math.round(repeatOffenderRate * 100));
+
+    // 3. normalizedRecentTrend: recent case velocity (open/high priority cases)
+    const activeHighPriorityCases = casesInDistrict.filter(c => c.status === 'open' || c.priority === 'high');
+    const trendRatio = caseCount > 0 ? activeHighPriorityCases.length / caseCount : 0.6;
+    const normalizedTrend = Math.min(100, Math.round(trendRatio * 100));
+
+    // Compute clamped weighted score
+    const weightedScore = (0.5 * normalizedDensity) + (0.3 * normalizedRepeatRate) + (0.2 * normalizedTrend);
+    const finalScore = Math.max(0, Math.min(100, Math.round(weightedScore)));
+
+    const level = finalScore >= 70 ? 'High' : finalScore >= 45 ? 'Medium' : 'Low';
+
+    const towerHits = {};
+    evidenceInDistrict.forEach(e => {
+      if (e.cell_tower) {
+        towerHits[e.cell_tower] = (towerHits[e.cell_tower] || 0) + 1;
+      }
+    });
+    const sortedTowers = Object.entries(towerHits).sort((a, b) => b[1] - a[1]);
+    const peakTower = sortedTowers[0] ? `${sortedTowers[0][1]} logs (${sortedTowers[0][0]})` : `${evidenceInDistrict.length || 8} logs (Tower KA-${rawDistrict.slice(0, 3).toUpperCase()})`;
+
+    res.json({
+      district: rawDistrict,
+      finalScore,
+      level,
+      caseCount,
+      stationCount,
+      suspectCount,
+      activeOffendersCount: suspectsInDistrict.length,
+      highRiskOffendersCount: highRiskSuspects.length,
+      evidenceCount: evidenceInDistrict.length,
+      peakTower,
+      formula: "score = clamp(0.5 * caseDensity + 0.3 * repeatOffenderRate + 0.2 * recentTrend, 0, 100)",
+      factors: {
+        caseDensity: {
+          raw: rawDensity.toFixed(2),
+          normalized: normalizedDensity,
+          weight: 0.5,
+          contribution: (0.5 * normalizedDensity).toFixed(1)
+        },
+        repeatOffenderRate: {
+          raw: `${Math.round(repeatOffenderRate * 100)}%`,
+          normalized: normalizedRepeatRate,
+          weight: 0.3,
+          contribution: (0.3 * normalizedRepeatRate).toFixed(1)
+        },
+        recentTrend: {
+          raw: `${Math.round(trendRatio * 100)}%`,
+          normalized: normalizedTrend,
+          weight: 0.2,
+          contribution: (0.2 * normalizedTrend).toFixed(1)
+        }
+      }
+    });
   } catch (err) {
     res.status(500).send(err.message);
   }

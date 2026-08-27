@@ -3,6 +3,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, UserPlus, Save, PlusCircle } from 'lucide-react';
 import { dbService } from '../../lib/api';
 
+export const MO_VOCABULARY = [
+  "night-time",
+  "day-time",
+  "forced-entry",
+  "lone-actor",
+  "group-of-2+",
+  "weapon-blunt",
+  "weapon-sharp",
+  "weapon-none",
+  "telecom-spoofing",
+  "insider-collusion",
+  "known-to-victim",
+  "repeat-offender",
+  "vehicle-escape"
+];
+
 const compressImage = (base64Str, maxWidth = 400, maxHeight = 400) => {
   return new Promise((resolve) => {
     const img = new Image();
@@ -50,6 +66,7 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
   const [name, setName] = useState('');
   const [aliases, setAliases] = useState('');
   const [riskScore, setRiskScore] = useState('');
+  const [selectedMoTags, setSelectedMoTags] = useState([]);
   const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
 
@@ -150,12 +167,14 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
         name: name.trim(),
         aliases: aliasArray,
         risk_score: scoreVal,
-        image_url: imageUrl || null
+        image_url: imageUrl || null,
+        mo_tags: selectedMoTags
       });
 
       setName('');
       setAliases('');
       setRiskScore('');
+      setSelectedMoTags([]);
       setImageUrl('');
       setQuickFirNumber('');
       setQuickTitle('');
@@ -178,9 +197,9 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 8 }}
           transition={{ duration: 0.2 }}
-          className="w-full max-w-lg bg-white border border-outline-variant rounded-2xl shadow-xl overflow-hidden"
+          className="w-full max-w-lg bg-white border border-outline-variant rounded-2xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col"
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant shrink-0">
             <div className="flex items-center gap-2">
               <UserPlus className="w-5 h-5 text-navy-deep" />
               <h2 className="text-base font-bold text-navy-deep">Add Suspect</h2>
@@ -193,7 +212,7 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4 overflow-y-auto flex-1">
             {error && (
               <div className="p-3 bg-red-50 border border-red-200 text-error text-xs font-semibold rounded-lg">
                 {error}
@@ -291,6 +310,36 @@ export function AddSuspectModal({ isOpen, onClose, onAdded, caseId, currentUser 
                 placeholder="e.g. Chikka, Bittu"
                 className="w-full px-3.5 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm text-on-surface"
               />
+            </div>
+
+            {/* Modus Operandi (MO) Trait Tags Selection */}
+            <div>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1.5">
+                Modus Operandi (MO) Behavioral Traits <span className="text-outline font-normal">(select all observed traits)</span>
+              </label>
+              <div className="flex flex-wrap gap-1.5 p-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl max-h-36 overflow-y-auto">
+                {MO_VOCABULARY.map(tag => {
+                  const isSelected = selectedMoTags.includes(tag);
+                  return (
+                    <button
+                      type="button"
+                      key={tag}
+                      onClick={() => {
+                        setSelectedMoTags(prev =>
+                          isSelected ? prev.filter(t => t !== tag) : [...prev, tag]
+                        );
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all border ${
+                        isSelected
+                          ? 'bg-primary text-on-primary border-primary shadow-2xs'
+                          : 'bg-white hover:bg-surface-container border-outline-variant text-navy-deep'
+                      }`}
+                    >
+                      {isSelected ? '✓ ' : '+ '}{tag}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div>

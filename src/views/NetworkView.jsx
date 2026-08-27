@@ -23,6 +23,7 @@ export function NetworkView({ setActiveScreen }) {
   const [crossCaseLinks, setCrossCaseLinks] = useState([]);
   const [crossCaseSuspects, setCrossCaseSuspects] = useState([]);
   const [isLoadingCrossCase, setIsLoadingCrossCase] = useState(false);
+  const [similarSuspectsData, setSimilarSuspectsData] = useState(null);
 
   // Modals
   const [isAddCaseOpen, setIsAddCaseOpen] = useState(false);
@@ -84,6 +85,23 @@ export function NetworkView({ setActiveScreen }) {
 
     fetchCrossCase();
   }, [showCrossCase, selectedCaseId]);
+
+  // Fetch similar suspects for selected suspect (Modus Operandi Jaccard profiling)
+  useEffect(() => {
+    if (!selectedSuspect) {
+      setSimilarSuspectsData(null);
+      return;
+    }
+    const fetchSimilar = async () => {
+      try {
+        const data = await dbService.getSimilarSuspects(selectedSuspect.id || selectedSuspect._id);
+        setSimilarSuspectsData(data);
+      } catch (err) {
+        console.error('Failed to load similar suspects:', err);
+      }
+    };
+    fetchSimilar();
+  }, [selectedSuspect]);
 
   const selectedCase = cases.find(c => c.id === selectedCaseId);
 
@@ -400,6 +418,75 @@ export function NetworkView({ setActiveScreen }) {
                     <p className="font-mono font-bold text-navy-deep mt-0.5">
                       {selectedSuspect.aliases?.join(', ') || 'None recorded'}
                     </p>
+                  </div>
+
+                  {/* Modus Operandi Traits Badges */}
+                  {selectedSuspect.mo_tags && selectedSuspect.mo_tags.length > 0 && (
+                    <div>
+                      <label className="text-[11px] font-bold text-outline uppercase tracking-wider block font-sans">
+                        Modus Operandi (MO) Traits
+                      </label>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {selectedSuspect.mo_tags.map(tag => (
+                          <span key={tag} className="px-2 py-0.5 bg-purple-50 text-purple-900 border border-purple-200 text-[10px] font-bold rounded">
+                            🏷️ {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Behavioral Match Panel (Jaccard Rule-Based Similarity) */}
+                  <div className="pt-2">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-[11px] font-bold text-navy-deep uppercase tracking-wider font-sans">
+                        Behavioral Profiling Match
+                      </label>
+                      {similarSuspectsData && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-surface-container text-navy-deep border border-outline-variant font-mono">
+                          Jaccard Heuristic
+                        </span>
+                      )}
+                    </div>
+
+                    {!similarSuspectsData ? (
+                      <div className="p-3 bg-surface-container-low rounded-xl text-center text-outline text-[11px] italic">
+                        Analyzing modus operandi profile...
+                      </div>
+                    ) : similarSuspectsData.matches.length === 0 ? (
+                      <div className="p-3 bg-surface-container-low border border-outline-variant/60 rounded-xl text-[11px] text-outline italic">
+                        No other suspects share behavioral traits with this profile.
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <p className="text-[11px] text-on-surface-variant font-medium">
+                          <strong>{similarSuspectsData.totalMatches || similarSuspectsData.matches.length} suspects</strong> share modus-operandi traits with this suspect:
+                        </p>
+                        <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                          {similarSuspectsData.matches.map(m => (
+                            <div key={m.id} className="p-2.5 bg-surface-container-low border border-outline-variant/60 rounded-xl space-y-1 text-[11px]">
+                              <div className="flex justify-between items-center">
+                                <span className="font-bold text-navy-deep">{m.name}</span>
+                                <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-mono font-bold text-[10px] border border-emerald-300">
+                                  {m.jaccard_similarity}% MO Match
+                                </span>
+                              </div>
+                              <p className="text-[10px] font-mono text-outline">{m.case_fir} &mdash; {m.case_title}</p>
+                              {m.shared_tags && m.shared_tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1 items-center pt-0.5">
+                                  <span className="text-[10px] text-purple-900 font-semibold">Shared:</span>
+                                  {m.shared_tags.map(t => (
+                                    <span key={t} className="px-1.5 py-0.5 rounded bg-purple-100 text-purple-900 text-[9px] font-bold border border-purple-200">
+                                      {t}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Linked Evidence Files & Scene Images */}

@@ -197,10 +197,23 @@ export const dbService = {
         aliases: suspectData.aliases || [],
         risk_score: suspectData.risk_score !== null && suspectData.risk_score !== undefined ? Number(suspectData.risk_score) : null,
         image_url: suspectData.image_url || null,
+        mo_tags: suspectData.mo_tags || suspectData.moTags || [],
         created_by: currentUser?.profile?.id || currentUser?.profile?._id || 'sys-admin',
         currentUser
       })
     });
+    if (!res.ok) throw new Error(await res.text());
+    return await res.json();
+  },
+
+  getSimilarSuspects: async (suspectId) => {
+    const res = await fetch(`/api/profiling/similar-suspects?suspectId=${suspectId}`);
+    if (!res.ok) throw new Error(await res.text());
+    return await res.json();
+  },
+
+  getHotspotScore: async (district) => {
+    const res = await fetch(`/api/insights/hotspot-score?district=${encodeURIComponent(district)}`);
     if (!res.ok) throw new Error(await res.text());
     return await res.json();
   },
