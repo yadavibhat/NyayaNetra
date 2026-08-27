@@ -1,5 +1,13 @@
 # NyayaNetra Changelog
 
+## [Batch 3] - 2026-08-27: Cross-Case Network & AI Explainability (Tier 3)
+
+- **Cross-Case Association Engine**: Created `/api/network/cross-case` using vector cosine similarity ($\ge 0.85$) over suspect profiles to reveal hidden multi-case criminal networks.
+- **Dynamic Network Link Visualization**: Added a "Show cross-case links" toggle in Network View that dynamically merges cross-case entities using visually distinct dashed edges.
+- **Collapsible Evidence Sources**: Surfaced top-k retrieved evidence chips with similarity match percentages under every AI Copilot response.
+- **Inspect Model Prompt Drawer**: Added transparent model disclosure showing exact system prompts and database context fed into the LLM.
+- **Preserved Default Visuals**: Ensured single-case network graph and chat interface render cleanly with explainability tools collapsed by default.
+
 ## [Batch 2] - 2026-08-27: Real Semantic Search & Local Vector RAG (Tier 2)
 
 - **Local Multilingual Embeddings**: Integrated `@xenova/transformers` with `Xenova/multilingual-e5-small` running directly in Node.js for cross-lingual (English/Kannada) semantic matching.
