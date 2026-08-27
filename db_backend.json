@@ -23072,7 +23072,7 @@
       "id": "conv-1787812838021",
       "case_id": "case-1784704530759",
       "user_id": "usr-1784704355604",
-      "title": "Batch 2 Flow Test",
+      "title": "Multilingual Vector RAG Verification",
       "createdAt": "2026-08-27T06:40:38.021Z"
     },
     {
@@ -23100,7 +23100,7 @@
       "id": "conv-1787813263333",
       "case_id": "case-1784704530759",
       "user_id": "usr-1784704355604",
-      "title": "Batch 3 User Flow Verification",
+      "title": "Cross-Case Network Graph Verification",
       "createdAt": "2026-08-27T06:47:43.334Z"
     },
     {
@@ -23128,7 +23128,7 @@
       "id": "conv-1787814112695",
       "case_id": "case-1784704530759",
       "user_id": "usr-1784704355604",
-      "title": "Batch 4 User Flow Verification",
+      "title": "Behavioral Profiling Jaccard Verification",
       "createdAt": "2026-08-27T07:01:52.695Z"
     },
     {
@@ -23163,7 +23163,7 @@
       "id": "conv-1787814638098",
       "case_id": "case-1784704530759",
       "user_id": "usr-1784704355604",
-      "title": "Batch 5 E2E Audit Flow",
+      "title": "Multi-Turn Context & Accessibility Audit",
       "createdAt": "2026-08-27T07:10:38.098Z"
     },
     {
@@ -24839,7 +24839,7 @@
       "target_table": "conversations",
       "target_id": "conv-1787814638098",
       "details": {
-        "title": "Batch 5 E2E Audit Flow"
+        "title": "Multi-Turn Context & Accessibility Audit"
       },
       "createdAt": "2026-08-27T07:10:38.111Z",
       "id": "audit-1787814638111"
@@ -24986,7 +24986,7 @@
       "target_table": "conversations",
       "target_id": "conv-1787814112695",
       "details": {
-        "title": "Batch 4 User Flow Verification"
+        "title": "Behavioral Profiling Jaccard Verification"
       },
       "createdAt": "2026-08-27T07:01:52.707Z",
       "id": "audit-1787814112707"
@@ -25090,7 +25090,7 @@
       "target_table": "conversations",
       "target_id": "conv-1787813263333",
       "details": {
-        "title": "Batch 3 User Flow Verification"
+        "title": "Cross-Case Network Graph Verification"
       },
       "createdAt": "2026-08-27T06:47:43.340Z",
       "id": "audit-1787813263340"
@@ -25194,7 +25194,7 @@
       "target_table": "conversations",
       "target_id": "conv-1787812838021",
       "details": {
-        "title": "Batch 2 Flow Test"
+        "title": "Multilingual Vector RAG Verification"
       },
       "createdAt": "2026-08-27T06:40:38.027Z",
       "id": "audit-1787812838027"

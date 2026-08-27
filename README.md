@@ -94,4 +94,4 @@ npm run build
 ## 📄 Documentation Links
 
 - **[System Self-Audit Report](docs/AUDIT-REPORT.md)**: Ground-truth scorecard across all 7 core claims with exact file:line citations.
-- **[Changelog](CHANGELOG.md)**: Plain-English summary of Batches 1 through 5.
+- **[Changelog](CHANGELOG.md)**: Technical release notes and version history.

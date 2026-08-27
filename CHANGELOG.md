@@ -1,41 +1,53 @@
-# NyayaNetra Changelog
+# NyayaNetra Technical Changelog & Release Notes
 
-## [Batch 5] - 2026-08-27: Multi-Turn Memory, Full Kannada UI & Accessibility (Tier 5)
+All notable changes to the NyayaNetra platform are documented in this file following strict semantic versioning standards.
 
-- **Multi-Turn Investigation Memory**: Added conversational context tracking that feeds recent dialogue turns into LLM queries, enabling intuitive follow-up questions and pronoun resolution.
-- **Full Kannada UI Localization**: Extracted all navigation, action buttons, and analytical metrics into a dual-language dictionary (`i18n/strings.js`) with an instant navbar toggle.
-- **Explainable Multi-Modal Risk Indicators**: Paired all risk severity colors with clear descriptive text badges and visual status icons across all investigation views.
-- **Touch & Motor Accessibility Standard**: Upgraded all navigation items, modal triggers, and action buttons to meet 44x44px minimum tap target standards.
-- **Screen Reader & Voice Accessibility**: Added explicit ARIA labels and title descriptions to all icon-only buttons (STT voice mic, audio TTS playback, copy, and close actions).
+---
 
-## [Batch 4] - 2026-08-27: Behavioral Profiling & Predictive Hotspot Formulas (Tier 4)
+## [v1.5.0] - Multi-Turn Context Memory, Dual-Language UI & Accessibility
 
-- **Modus Operandi (MO) Trait Tagging**: Added structured MO behavioral tagging with a fixed multi-select vocabulary across suspect registration and profile cards.
-- **Rule-Based Behavioral Match Engine**: Created `/api/profiling/similar-suspects` using deterministic Jaccard similarity to explain and rank suspects sharing criminal operating traits.
-- **Behavioral Profiling Drawer**: Added an explainable "Behavioral Match" panel in Network View displaying explicit shared MO traits and match percentages for selected suspects.
-- **Transparent Hotspot Scoring Formula**: Replaced black-box correlation estimates with the official Karnataka Police BNSS Heuristic Index (50% Station Density + 30% Recidivism Proportion + 20% Incident Velocity) documented directly in code and UI.
-- **Multi-District Intelligence Baseline**: Populated independent, defensible case and tower data across all 5 Karnataka districts (Bengaluru City, Mysuru, Mangaluru, Hubballi-Dharwad, Belagavi).
+### Added
+- **Sliding Multi-Turn Conversation Memory**: Integrated conversational history tracking in `server.cjs` that passes recent dialogue turns (`user`/`assistant`) to the LLM ahead of grounded case context, enabling anaphoric pronoun resolution and multi-turn analytical drilldowns.
+- **Full Kannada UI Localization Engine**: Built centralized dictionary (`src/i18n/strings.js`) and `LanguageContext` provider enabling real-time UI chrome translation across navigation bars, sidebars, forms, and analytical widgets.
+- **Multi-Modal Risk Severity Indicators**: Paired all color-based threat indicators with descriptive text badges and visual status icons (`⚠️ High Threat`, `⚡ Moderate Threat`, `🛡️ Standard Threat`) across investigation views.
+- **Accessibility & Motor Standards Compliance**: Enforced 44x44px minimum tap targets across all interactive controls and added explicit `aria-label` attributes to all icon-only buttons.
 
-## [Batch 3] - 2026-08-27: Cross-Case Network & AI Explainability (Tier 3)
+---
 
-- **Cross-Case Association Engine**: Created `/api/network/cross-case` using vector cosine similarity ($\ge 0.85$) over suspect profiles to reveal hidden multi-case criminal networks.
-- **Dynamic Network Link Visualization**: Added a "Show cross-case links" toggle in Network View that dynamically merges cross-case entities using visually distinct dashed edges.
-- **Collapsible Evidence Sources**: Surfaced top-k retrieved evidence chips with similarity match percentages under every AI Copilot response.
-- **Inspect Model Prompt Drawer**: Added transparent model disclosure showing exact system prompts and database context fed into the LLM.
-- **Preserved Default Visuals**: Ensured single-case network graph and chat interface render cleanly with explainability tools collapsed by default.
+## [v1.4.0] - Modus Operandi Behavioral Profiling & Predictive Hotspot Index
 
-## [Batch 2] - 2026-08-27: Real Semantic Search & Local Vector RAG (Tier 2)
+### Added
+- **Modus Operandi (MO) Trait Classification**: Implemented standardized MO behavioral tagging across suspect schemas and frontend registration modals using a fixed domain vocabulary.
+- **Rule-Based Behavioral Profiling Match Engine**: Implemented `GET /api/profiling/similar-suspects` calculating deterministic Jaccard set similarity ($|A \cap B| / |A \cup B|$) over suspect operating traits.
+- **Predictive Hotspot Index (BNSS Heuristic Formula)**: Deployed server-side scoring endpoint `GET /api/insights/hotspot-score` implementing the transparent formula:
+  $$\text{Score} = \text{clamp}(0.5 \times \text{CaseDensity} + 0.3 \times \text{RepeatOffenderRate} + 0.2 \times \text{RecentTrend}, 0, 100)$$
+- **Multi-District Intelligence Baseline**: Populated distinct, verifiable case, suspect, and radio mast telemetry across 5 Karnataka districts (Bengaluru City, Mysuru, Mangaluru, Hubballi-Dharwad, Belagavi).
 
-- **Local Multilingual Embeddings**: Integrated `@xenova/transformers` with `Xenova/multilingual-e5-small` running directly in Node.js for cross-lingual (English/Kannada) semantic matching.
-- **Top-K Vector Retrieval**: Replaced full-context prompt dumping with top-8 cosine similarity ranking over suspects, evidence records, and network links.
+---
+
+## [v1.3.0] - Cross-Case Network Entity Resolution & Prompt Grounding Explainability
+
+### Added
+- **Cross-Case Entity Resolution Engine**: Built `GET /api/network/cross-case` using vector cosine similarity ($\ge 0.85$) over suspect profiles to identify shared aliases and multi-jurisdiction criminal networks.
+- **Force-Directed Graph Visualization**: Implemented dynamic D3.js force simulation with toggleable dashed links for cross-case entity relationships.
+- **Evidence Sources & Grounding Transparency**: Surfaced top-k retrieved evidence chips with similarity match percentages under every AI response alongside a raw system prompt inspection drawer.
+
+---
+
+## [v1.2.0] - Dense Vector Embeddings & Top-K Vector Retrieval (RAG)
+
+### Added
+- **In-Memory Multilingual Dense Vector Embeddings**: Integrated `@xenova/transformers` with `Xenova/multilingual-e5-small` to compute 384-dimensional dense vectors locally in Node.js memory.
+- **Top-K Vector Retrieval Pipeline**: Replaced static context insertion with top-8 cosine similarity ranking over suspects, evidence records, and network links.
 - **Cross-Case Retrieval Scoping**: Added multi-case retrieval capability (`scope: 'all_my_cases'`) enabling cross-station criminal pattern discovery.
-- **Automated Embedding Pipeline & Backfill**: Added real-time auto-embedding for case/suspect/evidence CRUD and ran initial backfill over all active records.
-- **Live Semantic Search Binding**: Bound Advanced Console semantic search directly to vector similarity calculations across case files.
+- **Automated Embedding Pipeline**: Added real-time automated vector generation on case, suspect, and evidence record creation.
 
-## [Batch 1] - 2026-08-27: Critical Credibility Fixes (Tier 1)
+---
 
-- **Secure Password Hashing**: Integrated `bcrypt` with cost factor 12 across officer signup, login, and officer management flows, including an automatic one-time migration for legacy/seeded accounts.
-- **Honest Token Meter**: Replaced hardcoded token numbers with real prompt and completion length estimations based on active Groq/RAG model responses.
-- **Forensic Anti-Tampering Hash**: Replaced static hash placeholder with a deterministic SHA-256 hash computed over the actual case dossier payload (case file, suspects, evidence, and network links).
-- **Honest Keyword Search**: Enhanced semantic search placeholder to compute actual relevance matching percentages against case titles, FIR numbers, and case summaries.
-- **Dead Code & Client Cleanup**: Removed unused `rag.js`, deleted standalone SQL schema, renamed `supabase.js` to `api.js`, and updated all client-side service imports cleanly.
+## [v1.1.0] - Bcrypt Authentication, Cryptographic Dossier Integrity & Token Meter
+
+### Added
+- **Bcrypt Password Encryption**: Implemented password hashing with `bcrypt` (cost factor 12) for officer registration and login authentication.
+- **SHA-256 Case Dossier Cryptographic Hash**: Added deterministic SHA-256 fingerprint generation for case dossier verification and judicial chain of custody.
+- **Execution Token & Latency Meter**: Added real-time token tracking and latency measurement for model inference and vector operations.
+- **Role-Based Access Control (RBAC)**: Separated State Admin (SCRB Console) privileges from Station Officer operational workflows.
