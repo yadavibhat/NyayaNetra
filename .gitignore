@@ -24,3 +24,6 @@ Thumbs.db
 # Backup & Prototype Folders (not used in running Vite/React app)
 nyayanetra-final/
 nyayanetra-updated/
+files/
+catalyst-dist/
+*.pdf
