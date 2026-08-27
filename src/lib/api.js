@@ -212,6 +212,15 @@ export const dbService = {
     return await res.json();
   },
 
+  getCrossCaseNetwork: async (caseId, suspectId) => {
+    const params = new URLSearchParams();
+    if (caseId) params.append('caseId', caseId);
+    if (suspectId) params.append('suspectId', suspectId);
+    const res = await fetch(`/api/network/cross-case?${params.toString()}`);
+    if (!res.ok) throw new Error(await res.text());
+    return await res.json();
+  },
+
   addSuspectLink: async (currentUser, linkData) => {
     const res = await fetch('/api/links', {
       method: 'POST',

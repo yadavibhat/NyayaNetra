@@ -30,9 +30,11 @@ export function ChatView({ setActiveScreen }) {
   const [isAddLinkOpen, setIsAddLinkOpen] = useState(false);
   const [isAddEvidenceOpen, setIsAddEvidenceOpen] = useState(false);
 
-  // Custom Menus / Toggles
+  // Custom Menus / Toggles / Explainability
   const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
+  const [expandedSources, setExpandedSources] = useState({});
+  const [expandedPrompts, setExpandedPrompts] = useState({});
 
   const chatEndRef = useRef(null);
 
@@ -433,6 +435,111 @@ export function ChatView({ setActiveScreen }) {
                             </button>
                           </div>
                         </div>
+
+                        {/* Collapsible Sources & Model Prompt Explainability Section */}
+                        {((msg.retrieved_records && msg.retrieved_records.length > 0) ||
+                          (msg.retrievedRecords && msg.retrievedRecords.length > 0) ||
+                          msg.explainability) && (
+                          <div className="mt-3 pt-3 border-t border-outline-variant/40 space-y-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              {((msg.retrieved_records && msg.retrieved_records.length > 0) ||
+                                (msg.retrievedRecords && msg.retrievedRecords.length > 0)) && (
+                                <button
+                                  onClick={() => setExpandedSources(prev => ({ ...prev, [msg.id]: !prev[msg.id] }))}
+                                  className="px-2.5 py-1 bg-surface-container hover:bg-surface-container-high border border-outline-variant rounded-lg text-navy-deep font-semibold text-[11px] flex items-center gap-1.5 transition-colors"
+                                >
+                                  <Sparkles className="w-3 h-3 text-gold-accent" />
+                                  <span>
+                                    Sources ({(msg.retrieved_records || msg.retrievedRecords || []).length})
+                                  </span>
+                                  <ChevronDown
+                                    className={`w-3 h-3 text-outline transition-transform duration-200 ${
+                                      expandedSources[msg.id] ? 'rotate-180' : ''
+                                    }`}
+                                  />
+                                </button>
+                              )}
+
+                              {msg.explainability && (
+                                <button
+                                  onClick={() => setExpandedPrompts(prev => ({ ...prev, [msg.id]: !prev[msg.id] }))}
+                                  className="px-2.5 py-1 bg-surface-container hover:bg-surface-container-high border border-outline-variant rounded-lg text-on-surface-variant font-semibold text-[11px] flex items-center gap-1.5 transition-colors"
+                                >
+                                  <FileText className="w-3 h-3 text-primary" />
+                                  <span>View prompt sent to model</span>
+                                  <ChevronDown
+                                    className={`w-3 h-3 text-outline transition-transform duration-200 ${
+                                      expandedPrompts[msg.id] ? 'rotate-180' : ''
+                                    }`}
+                                  />
+                                </button>
+                              )}
+                            </div>
+
+                            {/* Expanded Sources List */}
+                            {expandedSources[msg.id] && (
+                              <div className="p-3 bg-surface-container-low rounded-xl border border-outline-variant/60 space-y-2 text-xs">
+                                <div className="font-bold text-[11px] text-navy-deep uppercase tracking-wider">
+                                  Top-K Retrieved Evidence & Entities ({ (msg.retrieved_records || msg.retrievedRecords || []).length })
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                  {(msg.retrieved_records || msg.retrievedRecords || []).map((rec, i) => (
+                                    <div
+                                      key={rec.id || i}
+                                      className="p-2 bg-white border border-outline-variant rounded-lg flex items-center justify-between gap-2 shadow-2xs"
+                                    >
+                                      <div className="flex items-center gap-1.5 overflow-hidden">
+                                        <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded uppercase ${
+                                          rec.type === 'suspect' ? 'bg-amber-100 text-amber-900 border border-amber-300' :
+                                          rec.type === 'evidence' ? 'bg-blue-100 text-blue-900 border border-blue-300' :
+                                          'bg-purple-100 text-purple-900 border border-purple-300'
+                                        }`}>
+                                          {rec.type}
+                                        </span>
+                                        <span className="font-semibold text-navy-deep text-[11px] truncate" title={rec.label}>
+                                          {rec.label || rec.id}
+                                        </span>
+                                      </div>
+                                      <span className="shrink-0 text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                        {rec.score}% match
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Expanded Model Prompt Disclosure */}
+                            {expandedPrompts[msg.id] && msg.explainability && (
+                              <div className="p-3 bg-slate-900 text-slate-100 rounded-xl border border-slate-700 space-y-2 text-xs font-mono">
+                                <div className="flex items-center justify-between border-b border-slate-700 pb-1.5">
+                                  <span className="text-[10px] text-gold-accent font-bold uppercase tracking-wider">
+                                    Raw Model Prompt & Grounded Context
+                                  </span>
+                                  <span className="text-[10px] text-slate-400">
+                                    Model: openai/gpt-oss-120b
+                                  </span>
+                                </div>
+                                {msg.explainability.systemPrompt && (
+                                  <div className="space-y-1">
+                                    <span className="text-[10px] text-amber-400 font-bold block">[System Prompt / Grounding Contract]</span>
+                                    <pre className="text-[11px] text-slate-300 bg-slate-950/80 p-2.5 rounded border border-slate-800 whitespace-pre-wrap max-h-40 overflow-y-auto leading-relaxed">
+                                      {msg.explainability.systemPrompt}
+                                    </pre>
+                                  </div>
+                                )}
+                                {msg.explainability.formattedContext && (
+                                  <div className="space-y-1">
+                                    <span className="text-[10px] text-teal-400 font-bold block">[Retrieved Database Context Payload]</span>
+                                    <pre className="text-[11px] text-slate-300 bg-slate-950/80 p-2.5 rounded border border-slate-800 whitespace-pre-wrap max-h-48 overflow-y-auto leading-relaxed">
+                                      {msg.explainability.formattedContext}
+                                    </pre>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

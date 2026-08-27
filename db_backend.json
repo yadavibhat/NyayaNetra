@@ -7439,6 +7439,34 @@
       "user_id": "usr-1784704355604",
       "title": "Smoke Test Conversation",
       "createdAt": "2026-08-27T06:34:24.142Z"
+    },
+    {
+      "id": "conv-1787812704930",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-27T06:38:24.930Z"
+    },
+    {
+      "id": "conv-1787812729529",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-27T06:38:49.529Z"
+    },
+    {
+      "id": "conv-1787812838021",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Batch 2 Flow Test",
+      "createdAt": "2026-08-27T06:40:38.021Z"
+    },
+    {
+      "id": "conv-1787813134093",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-27T06:45:34.093Z"
     }
   ],
   "messages": [
@@ -7949,9 +7977,280 @@
       ],
       "confidence_score": 95,
       "createdAt": "2026-08-27T06:34:25.207Z"
+    },
+    {
+      "id": "msg-1787812704948",
+      "conversation_id": "conv-1787812704930",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-27T06:38:24.948Z"
+    },
+    {
+      "id": "msg-1787812705982",
+      "conversation_id": "conv-1787812704930",
+      "role": "assistant",
+      "content": "The case lists two active suspects:\n\n1. **Shivanna K** – also known as **Shiva** – with a risk score of **72 %**【susp-1784704530760】.  \n2. **Basavaraju H** – also known as **Basa** or **BH‑402** – with a risk score of **88 %**【susp-1784704530760】.",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530760",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "createdAt": "2026-08-27T06:38:25.982Z"
+    },
+    {
+      "id": "msg-1787812729542",
+      "conversation_id": "conv-1787812729529",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-27T06:38:49.542Z"
+    },
+    {
+      "id": "msg-1787812730502",
+      "conversation_id": "conv-1787812729529",
+      "role": "assistant",
+      "content": "The case lists two active suspects:\n\n1. **Shivanna K** – also known as “Shiva,” with a risk score of 72%【susp-1784704530760】.  \n2. **Basavaraju H** – also known as “Basa” or “BH‑402,” with a risk score of 88%【susp-1784704530760】.",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530760",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "createdAt": "2026-08-27T06:38:50.502Z"
+    },
+    {
+      "id": "msg-1787812838034",
+      "conversation_id": "conv-1787812838021",
+      "role": "user",
+      "content": "Which suspects have an active risk assessment in this investigation?",
+      "language": "en",
+      "createdAt": "2026-08-27T06:40:38.034Z"
+    },
+    {
+      "id": "msg-1787812839227",
+      "conversation_id": "conv-1787812838021",
+      "role": "assistant",
+      "content": "The investigation’s suspect roster includes two individuals who have been assigned risk scores, indicating that they each have an active risk assessment:\n\n- **Shivanna K** (alias Shiva) – Risk Score 72%【susp-1784704530760】  \n- **Basavaraju H** (aliases Basa, BH‑402) – Risk Score 88%【susp-1784704530760】",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530760",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "createdAt": "2026-08-27T06:40:39.227Z"
+    },
+    {
+      "id": "msg-1787813091326",
+      "conversation_id": "test-b3-conv",
+      "role": "user",
+      "content": "Identify the primary suspects and their associated phone records.",
+      "language": "en",
+      "createdAt": "2026-08-27T06:44:51.326Z"
+    },
+    {
+      "id": "msg-1787813094580",
+      "conversation_id": "test-b3-conv",
+      "role": "assistant",
+      "content": "**Primary suspects**\n\n| Suspect ID | Name | Aliases | Risk Score |\n|------------|------|---------|------------|\n| susp-1784704530760 | Basavaraju H | Basa, BH‑402 | 88 % |\n| susp-1784704530760 | Shivanna K | Shiva | 72 % |\n\n**Associated phone record**\n\n- Phone: **+91 94808‑99402** – recorded at **Tower KA‑BLR‑N4 (Malleshwaram 18th Cross)**【evid-1784704530760】.  \n\n**Link between the suspects**\n\n- The two suspects (both with ID susp‑1784704530760) are linked by **14 CDR calls** made between 02:00 AM and 05:00 AM at the same tower【link-1784704530760】.  \n\nThus, the primary suspects are Basavaraju H and Shivanna K, and the phone record tied to the investigation is +91 94808‑99402.",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530760",
+        "susp-1784704530760",
+        "evid-1784704530760",
+        "link-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 86,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 83,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 83,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "evid-1784704530760",
+          "type": "evidence",
+          "score": 82,
+          "label": "CDR: +91 94808-99402"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n- ID: susp-1784704530760 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n\nEvidence Records:\n- ID: evid-1784704530760 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: Tower KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: {\"note\":\"ANPR camera matched vehicle KA-04-MB-4020\"}\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530760 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-27T06:44:54.580Z"
+    },
+    {
+      "id": "msg-1787813134109",
+      "conversation_id": "conv-1787813134093",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-27T06:45:34.109Z"
+    },
+    {
+      "id": "msg-1787813135067",
+      "conversation_id": "conv-1787813134093",
+      "role": "assistant",
+      "content": "The case lists two active suspects:\n\n1. **Shivanna K** – also known as **Shiva**, with a risk score of **72 %**【susp-1784704530760】.  \n2. **Basavaraju H** – also known as **Basa** or **BH‑402**, with a risk score of **88 %**【susp-1784704530760】.",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530760",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 85,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 84,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 84,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "evid-1784704530760",
+          "type": "evidence",
+          "score": 80,
+          "label": "CDR: +91 94808-99402"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530760 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-1784704530760 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: Tower KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: {\"note\":\"ANPR camera matched vehicle KA-04-MB-4020\"}\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530760 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-27T06:45:35.067Z"
     }
   ],
   "audit_logs": [
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787813134093",
+      "details": {
+        "title": "Smoke Test Conversation"
+      },
+      "createdAt": "2026-08-27T06:45:34.102Z",
+      "id": "audit-1787813134102"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:45:34.075Z",
+      "id": "audit-1787813134075"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "RAG_QUERY",
+      "target_table": "conversations",
+      "target_id": null,
+      "details": {
+        "query": "Which suspects have an active risk assessment in this investigation?",
+        "language": "en",
+        "confidenceScore": 95,
+        "citedRecordsCount": 2,
+        "retrievedRecordsCount": 4,
+        "scope": "this_case"
+      },
+      "createdAt": "2026-08-27T06:40:39.232Z",
+      "id": "audit-1787812839232"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787812838021",
+      "details": {
+        "title": "Batch 2 Flow Test"
+      },
+      "createdAt": "2026-08-27T06:40:38.027Z",
+      "id": "audit-1787812838027"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:40:37.991Z",
+      "id": "audit-1787812837991"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787812729529",
+      "details": {
+        "title": "Smoke Test Conversation"
+      },
+      "createdAt": "2026-08-27T06:38:49.535Z",
+      "id": "audit-1787812729535"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:38:49.505Z",
+      "id": "audit-1787812729505"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "CONVERSATION_CREATE",
+      "target_table": "conversations",
+      "target_id": "conv-1787812704930",
+      "details": {
+        "title": "Smoke Test Conversation"
+      },
+      "createdAt": "2026-08-27T06:38:24.940Z",
+      "id": "audit-1787812704940"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-27T06:38:24.906Z",
+      "id": "audit-1787812704906"
+    },
     {
       "user_id": "usr-1784704355604",
       "action": "CONVERSATION_CREATE",

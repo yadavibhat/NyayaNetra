@@ -18,6 +18,12 @@ export function NetworkView({ setActiveScreen }) {
   const [evidence, setEvidence] = useState([]);
   const [selectedSuspect, setSelectedSuspect] = useState(null);
 
+  // Cross-case links state
+  const [showCrossCase, setShowCrossCase] = useState(false);
+  const [crossCaseLinks, setCrossCaseLinks] = useState([]);
+  const [crossCaseSuspects, setCrossCaseSuspects] = useState([]);
+  const [isLoadingCrossCase, setIsLoadingCrossCase] = useState(false);
+
   // Modals
   const [isAddCaseOpen, setIsAddCaseOpen] = useState(false);
   const [isAddSuspectOpen, setIsAddSuspectOpen] = useState(false);
@@ -55,13 +61,54 @@ export function NetworkView({ setActiveScreen }) {
     reloadData();
   }, [session, selectedCaseId]);
 
+  // Fetch cross-case links when toggle is enabled
+  useEffect(() => {
+    if (!showCrossCase || !selectedCaseId) {
+      setCrossCaseLinks([]);
+      setCrossCaseSuspects([]);
+      return;
+    }
+
+    const fetchCrossCase = async () => {
+      setIsLoadingCrossCase(true);
+      try {
+        const data = await dbService.getCrossCaseNetwork(selectedCaseId);
+        setCrossCaseLinks(data.links || []);
+        setCrossCaseSuspects(data.suspects || []);
+      } catch (err) {
+        console.error('Failed to fetch cross-case network:', err);
+      } finally {
+        setIsLoadingCrossCase(false);
+      }
+    };
+
+    fetchCrossCase();
+  }, [showCrossCase, selectedCaseId]);
+
   const selectedCase = cases.find(c => c.id === selectedCaseId);
 
+  // Merge nodes & links based on cross-case toggle
+  const activeSuspects = showCrossCase
+    ? [
+        ...suspects,
+        ...crossCaseSuspects
+          .filter(cs => !suspects.some(s => (s.id || s._id) === (cs.id || cs._id)))
+          .map(cs => ({ ...cs, is_cross_case: true }))
+      ]
+    : suspects;
+
+  const activeLinks = showCrossCase
+    ? [
+        ...links,
+        ...crossCaseLinks.filter(cl => !links.some(l => l.id === cl.id))
+      ]
+    : links;
+
   // Calculate Force Layout Positions dynamically
-  const nodePositions = suspects.map((s, index) => {
-    const total = suspects.length;
+  const nodePositions = activeSuspects.map((s, index) => {
+    const total = activeSuspects.length;
     const angle = (index / (total || 1)) * 2 * Math.PI;
-    const radius = total === 1 ? 0 : 200;
+    const radius = total === 1 ? 0 : (s.is_cross_case ? 250 : 190);
     const cx = 500 + radius * Math.cos(angle);
     const cy = 400 + radius * Math.sin(angle);
     return { ...s, cx, cy };
@@ -95,7 +142,8 @@ export function NetworkView({ setActiveScreen }) {
                 Network Scope: {selectedCase ? selectedCase.fir_number : 'All Cases'}
               </h2>
               <p className="text-xs text-on-surface-variant leading-snug">
-                {suspects.length} suspect node(s) and {links.length} edge link(s) loaded live from database.
+                {activeSuspects.length} suspect node(s) and {activeLinks.length} edge link(s) loaded live from database.
+                {showCrossCase && crossCaseLinks.length > 0 && ` (${crossCaseLinks.length} cross-case link(s) merged)`}
               </p>
             </div>
 
@@ -113,11 +161,31 @@ export function NetworkView({ setActiveScreen }) {
               >
                 <Network className="w-4 h-4 text-navy-deep" /> Connect Link
               </button>
+
+              {/* Cross-case links toggle */}
+              <label className="flex items-center gap-2 cursor-pointer bg-white/95 backdrop-blur-md border border-outline-variant px-3 py-2 rounded-lg hover:bg-surface-container transition-colors shadow-2xs select-none">
+                <input
+                  type="checkbox"
+                  checked={showCrossCase}
+                  onChange={(e) => setShowCrossCase(e.target.checked)}
+                  className="rounded text-purple-600 focus:ring-purple-500 w-4 h-4 accent-purple-600"
+                />
+                <span className="text-xs font-bold text-navy-deep flex items-center gap-1">
+                  <Share2 className={`w-3.5 h-3.5 ${showCrossCase ? 'text-purple-600' : 'text-outline'}`} />
+                  Show cross-case links
+                  {isLoadingCrossCase && <span className="animate-spin text-[10px] text-purple-600">⌛</span>}
+                  {showCrossCase && crossCaseLinks.length > 0 && (
+                    <span className="bg-purple-100 text-purple-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold border border-purple-200">
+                      +{crossCaseLinks.length}
+                    </span>
+                  )}
+                </span>
+              </label>
             </div>
           </div>
 
           {/* Empty State when no suspects exist */}
-          {suspects.length === 0 ? (
+          {activeSuspects.length === 0 ? (
             <div className="absolute inset-0 flex items-center justify-center p-8">
               <div className="max-w-md text-center p-8 bg-surface-container-low border border-dashed border-outline-variant rounded-2xl shadow-sm space-y-3">
                 <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-700 mx-auto">
@@ -147,10 +215,28 @@ export function NetworkView({ setActiveScreen }) {
                 ))}
               </defs>
               <g id="edges">
-                {links.map(link => {
+                {activeLinks.map(link => {
                   const s = nodePositions.find(n => (n.id || n._id) === link.suspect_a_id);
                   const t = nodePositions.find(n => (n.id || n._id) === link.suspect_b_id);
                   if (!s || !t) return null;
+
+                  const isCross = link.is_cross_case;
+                  const isCdr = link.link_type === 'cdr_call';
+
+                  let strokeColor = '#0F2A4A';
+                  let strokeDash = 'none';
+                  let strokeW = 2;
+
+                  if (isCross) {
+                    strokeColor = '#8B5CF6';
+                    strokeDash = '6 4';
+                    strokeW = 2.5;
+                  } else if (isCdr) {
+                    strokeColor = '#D9A441';
+                    strokeDash = '6';
+                    strokeW = 3;
+                  }
+
                   return (
                     <line
                       key={link.id}
@@ -158,10 +244,10 @@ export function NetworkView({ setActiveScreen }) {
                       y1={s.cy}
                       x2={t.cx}
                       y2={t.cy}
-                      stroke={link.link_type === 'cdr_call' ? '#D9A441' : '#0F2A4A'}
-                      strokeWidth={link.link_type === 'cdr_call' ? 3 : 2}
-                      strokeDasharray={link.link_type === 'cdr_call' ? '6' : 'none'}
-                      className={link.link_type === 'cdr_call' ? 'connection-dash' : ''}
+                      stroke={strokeColor}
+                      strokeWidth={strokeW}
+                      strokeDasharray={strokeDash}
+                      className={isCdr ? 'connection-dash' : isCross ? 'cross-case-dash' : ''}
                     />
                   );
                 })}
@@ -170,7 +256,12 @@ export function NetworkView({ setActiveScreen }) {
               <g id="nodes">
                 {nodePositions.map(node => {
                   const nodeId = node.id || node._id;
+                  const isCross = node.is_cross_case;
                   const r = node.risk_score > 80 ? 48 : 38;
+                  
+                  let strokeColor = isCross ? '#8B5CF6' : (node.risk_score > 80 ? '#D9A441' : '#0F2A4A');
+                  let fillColor = isCross ? '#7C3AED' : (node.risk_score > 80 ? '#D9A441' : '#0F2A4A');
+
                   return (
                     <g
                       key={nodeId}
@@ -184,8 +275,9 @@ export function NetworkView({ setActiveScreen }) {
                             cy={node.cy}
                             r={r}
                             fill="#FFFFFF"
-                            stroke={node.risk_score > 80 ? '#D9A441' : '#0F2A4A'}
-                            strokeWidth="3"
+                            stroke={strokeColor}
+                            strokeWidth={isCross ? '3.5' : '3'}
+                            strokeDasharray={isCross ? '4 2' : 'none'}
                           />
                           <image
                             href={node.image_url}
@@ -203,9 +295,9 @@ export function NetworkView({ setActiveScreen }) {
                             cx={node.cx}
                             cy={node.cy}
                             r={r}
-                            fill={node.risk_score > 80 ? '#D9A441' : '#0F2A4A'}
-                            stroke="#FFFFFF"
-                            strokeWidth="3"
+                            fill={fillColor}
+                            stroke={isCross ? '#E9D5FF' : '#FFFFFF'}
+                            strokeWidth={isCross ? '3.5' : '3'}
                           />
                           <text
                             x={node.cx}
@@ -222,10 +314,10 @@ export function NetworkView({ setActiveScreen }) {
                         x={node.cx}
                         y={node.cy + (node.risk_score > 80 ? 68 : 58)}
                         textAnchor="middle"
-                        fill="#0F2A4A"
+                        fill={isCross ? '#6B21A8' : '#0F2A4A'}
                         className="font-bold text-xs select-none pointer-events-none"
                       >
-                        {node.name}
+                        {node.name}{isCross ? ' (Cross-Case)' : ''}
                       </text>
                     </g>
                   );
@@ -244,6 +336,12 @@ export function NetworkView({ setActiveScreen }) {
               <div className="w-3 h-3 rounded-full bg-navy-deep"></div>
               <span className="text-xs text-navy-deep font-bold">Associate Entity</span>
             </div>
+            {showCrossCase && (
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-purple-600 border border-purple-300"></div>
+                <span className="text-xs text-purple-800 font-bold">Cross-Case Link (Dashed)</span>
+              </div>
+            )}
           </div>
 
           {/* Slide-out Entity Details Panel */}

@@ -106,6 +106,8 @@ const MessageSchema = new mongoose.Schema({
   language: { type: String, enum: ['en', 'kn'], default: 'en' },
   cited_record_ids: { type: [String], default: [] },
   confidence_score: { type: Number, default: null },
+  retrieved_records: { type: [mongoose.Schema.Types.Mixed], default: [] },
+  explainability: { type: mongoose.Schema.Types.Mixed, default: null },
   createdAt: { type: Date, default: Date.now }
 });
 const Message = mongoose.model('Message', MessageSchema);
@@ -672,7 +674,11 @@ ${finalLinks.map(l => `- ID: ${l.id || l._id} | Suspect 1 ID: ${l.suspect_a_id |
           answer: answerText,
           confidenceScore: 95,
           citedRecordIds,
-          retrievedRecords
+          retrievedRecords,
+          explainability: {
+            systemPrompt,
+            formattedContext
+          }
         };
       } else {
         console.error('Groq API failed:', await response.text());
@@ -1221,6 +1227,117 @@ app.post('/api/links', async (req, res) => {
   }
 });
 
+// Cross-Case Network Links API
+app.get('/api/network/cross-case', async (req, res) => {
+  try {
+    const { suspectId, caseId, userId } = req.query;
+    
+    // Fetch cases, suspects, and links
+    const allCases = await Store.getCases();
+    const allSuspects = await Store.getSuspects();
+    const allLinks = await Store.getLinks();
+
+    // Determine target suspects
+    let targetSuspects = [];
+    if (suspectId) {
+      const found = allSuspects.find(s => s.id === suspectId || s._id?.toString() === suspectId);
+      if (found) targetSuspects.push(found);
+    } else if (caseId) {
+      targetSuspects = allSuspects.filter(s => s.case_id === caseId);
+    } else {
+      targetSuspects = allSuspects.slice(0, 5);
+    }
+
+    if (targetSuspects.length === 0) {
+      return res.json({ links: [], suspects: [], cases: [], crossCaseCount: 0 });
+    }
+
+    const matchedSuspectsMap = new Map();
+    const crossCaseLinks = [];
+
+    for (const target of targetSuspects) {
+      const targetId = target.id || target._id?.toString();
+      const targetCaseId = target.case_id;
+      const targetNameNorm = target.name.trim().toLowerCase();
+      const targetAliases = (target.aliases || []).map(a => a.trim().toLowerCase());
+
+      for (const other of allSuspects) {
+        const otherId = other.id || other._id?.toString();
+        if (otherId === targetId || other.case_id === targetCaseId) {
+          continue; // Skip same suspect or suspects already in the same case
+        }
+
+        const otherNameNorm = other.name.trim().toLowerCase();
+        const otherAliases = (other.aliases || []).map(a => a.trim().toLowerCase());
+
+        // 1. Fuzzy match via cosine similarity on name/alias embeddings (threshold 0.85)
+        let isMatch = false;
+        let simScore = 0;
+
+        if (target.embedding?.length > 0 && other.embedding?.length > 0) {
+          simScore = cosineSimilarity(target.embedding, other.embedding);
+          if (simScore >= 0.85) {
+            isMatch = true;
+          }
+        }
+
+        // 2. Exact or substring name/alias match fallback
+        if (!isMatch) {
+          const exactNameMatch = targetNameNorm === otherNameNorm;
+          const aliasOverlap = targetAliases.some(a => otherAliases.includes(a) || otherNameNorm.includes(a)) ||
+                               otherAliases.some(a => targetAliases.includes(a) || targetNameNorm.includes(a));
+          if (exactNameMatch || aliasOverlap) {
+            isMatch = true;
+            simScore = 0.95;
+          }
+        }
+
+        if (isMatch) {
+          matchedSuspectsMap.set(otherId, other);
+
+          const otherCase = allCases.find(c => c.id === other.case_id || c._id?.toString() === other.case_id);
+          const caseLabel = otherCase ? otherCase.fir_number : `Case ${other.case_id}`;
+
+          crossCaseLinks.push({
+            id: `cross-${targetId}-${otherId}`,
+            case_id: targetCaseId,
+            suspect_a_id: targetId,
+            suspect_b_id: otherId,
+            link_type: 'cross_case_match',
+            detail: `Cross-Case Match (${Math.round(simScore * 100)}% similarity with ${other.name} in ${caseLabel})`,
+            similarity: Math.round(simScore * 100),
+            is_cross_case: true
+          });
+        }
+      }
+    }
+
+    // Also collect any existing links touching matched suspects in external cases
+    const matchedIds = Array.from(matchedSuspectsMap.keys());
+    for (const link of allLinks) {
+      if (matchedIds.includes(link.suspect_a_id) && matchedIds.includes(link.suspect_b_id)) {
+        crossCaseLinks.push({
+          ...link,
+          is_cross_case: true
+        });
+      }
+    }
+
+    const matchedSuspectsList = Array.from(matchedSuspectsMap.values());
+    const relevantCaseIds = new Set(matchedSuspectsList.map(s => s.case_id));
+    const matchedCasesList = allCases.filter(c => relevantCaseIds.has(c.id) || relevantCaseIds.has(c._id?.toString()));
+
+    res.json({
+      links: crossCaseLinks,
+      suspects: matchedSuspectsList,
+      cases: matchedCasesList,
+      crossCaseCount: crossCaseLinks.length
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 // Evidence
 app.get('/api/evidence', async (req, res) => {
   try {
@@ -1301,14 +1418,16 @@ app.post('/api/messages', async (req, res) => {
     // 2. Generate grounded classical NLP answer with top-k vector retrieval
     const ragResult = await generateLocalAIResponse(content, caseId, language, { scope });
 
-    // 3. Save assistant response
+    // 3. Save assistant response with explainability metadata
     const assistantMsg = await Store.addMessage({
       conversation_id,
       role: 'assistant',
       content: ragResult.answer,
       language: language || 'en',
       cited_record_ids: ragResult.citedRecordIds,
-      confidence_score: ragResult.confidenceScore
+      confidence_score: ragResult.confidenceScore,
+      retrieved_records: ragResult.retrievedRecords || [],
+      explainability: ragResult.explainability || null
     });
 
     // 4. Log audit event
@@ -1326,7 +1445,8 @@ app.post('/api/messages', async (req, res) => {
     res.json({
       userMessage: userMsg,
       assistantMessage: assistantMsg,
-      retrievedRecords: ragResult.retrievedRecords || []
+      retrievedRecords: ragResult.retrievedRecords || [],
+      explainability: ragResult.explainability || null
     });
   } catch (err) {
     res.status(500).send(err.message);
