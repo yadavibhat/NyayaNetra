@@ -1,5 +1,13 @@
 # NyayaNetra Changelog
 
+## [Batch 5] - 2026-08-27: Multi-Turn Memory, Full Kannada UI & Accessibility (Tier 5)
+
+- **Multi-Turn Investigation Memory**: Added conversational context tracking that feeds recent dialogue turns into LLM queries, enabling intuitive follow-up questions and pronoun resolution.
+- **Full Kannada UI Localization**: Extracted all navigation, action buttons, and analytical metrics into a dual-language dictionary (`i18n/strings.js`) with an instant navbar toggle.
+- **Explainable Multi-Modal Risk Indicators**: Paired all risk severity colors with clear descriptive text badges and visual status icons across all investigation views.
+- **Touch & Motor Accessibility Standard**: Upgraded all navigation items, modal triggers, and action buttons to meet 44x44px minimum tap target standards.
+- **Screen Reader & Voice Accessibility**: Added explicit ARIA labels and title descriptions to all icon-only buttons (STT voice mic, audio TTS playback, copy, and close actions).
+
 ## [Batch 4] - 2026-08-27: Behavioral Profiling & Predictive Hotspot Formulas (Tier 4)
 
 - **Modus Operandi (MO) Trait Tagging**: Added structured MO behavioral tagging with a fixed multi-select vocabulary across suspect registration and profile cards.
