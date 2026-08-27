@@ -5,11 +5,13 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
+const { embedText, cosineSimilarity } = require('./lib/embeddings.cjs');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/nyayanetra';
+const TOP_K = 8;
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -44,6 +46,7 @@ const CaseSchema = new mongoose.Schema({
   description: { type: String, default: '' },
   status: { type: String, enum: ['open', 'under_review', 'closed'], default: 'open' },
   priority: { type: String, enum: ['low', 'medium', 'high'], default: 'medium' },
+  embedding: { type: [Number], default: [] },
   created_by: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
@@ -55,6 +58,7 @@ const SuspectSchema = new mongoose.Schema({
   aliases: { type: [String], default: [] },
   risk_score: { type: Number, min: 0, max: 100, default: null },
   image_url: { type: String, default: null },
+  embedding: { type: [Number], default: [] },
   created_by: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
@@ -66,6 +70,7 @@ const SuspectLinkSchema = new mongoose.Schema({
   suspect_b_id: { type: String, required: true },
   link_type: { type: String, enum: ['cdr_call', 'anpr', 'secondary_associate'], required: true },
   detail: { type: String, default: '' },
+  embedding: { type: [Number], default: [] },
   created_by: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
@@ -80,6 +85,7 @@ const EvidenceRecordSchema = new mongoose.Schema({
   captured_at: { type: Date, required: true },
   image_url: { type: String, default: null },
   details: { type: mongoose.Schema.Types.Mixed, default: {} },
+  embedding: { type: [Number], default: [] },
   created_by: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
@@ -238,6 +244,10 @@ const Store = {
     return localDb.cases;
   },
   addCase: async (data) => {
+    if (!data.embedding || data.embedding.length === 0) {
+      const summary = `FIR: ${data.fir_number} | Title: ${data.title} | Description: ${data.description || ''} | Status: ${data.status} | Priority: ${data.priority}`;
+      data.embedding = await embedText(summary, false);
+    }
     if (isMongoConnected) {
       const c = new Case(data);
       return await c.save();
@@ -269,6 +279,10 @@ const Store = {
     return localDb.suspects;
   },
   addSuspect: async (data) => {
+    if (!data.embedding || data.embedding.length === 0) {
+      const summary = `Suspect: ${data.name} | Aliases: ${data.aliases?.join(', ') || 'None'} | Risk Score: ${data.risk_score || 0}%`;
+      data.embedding = await embedText(summary, false);
+    }
     if (isMongoConnected) {
       const s = new Suspect(data);
       return await s.save();
@@ -289,6 +303,10 @@ const Store = {
     return localDb.suspect_links;
   },
   addLink: async (data) => {
+    if (!data.embedding || data.embedding.length === 0) {
+      const summary = `Suspect Association: ${data.link_type} | Detail: ${data.detail || 'None'}`;
+      data.embedding = await embedText(summary, false);
+    }
     if (isMongoConnected) {
       const l = new SuspectLink(data);
       return await l.save();
@@ -309,6 +327,11 @@ const Store = {
     return localDb.evidence_records;
   },
   addEvidence: async (data) => {
+    if (!data.embedding || data.embedding.length === 0) {
+      const detailsStr = data.details?.notes || JSON.stringify(data.details || {});
+      const summary = `Evidence Type: ${data.type} | Phone: ${data.phone_number || 'N/A'} | Cell Tower: ${data.cell_tower || 'N/A'} | Details: ${detailsStr}`;
+      data.embedding = await embedText(summary, false);
+    }
     if (isMongoConnected) {
       const e = new EvidenceRecord(data);
       return await e.save();
@@ -460,22 +483,114 @@ function deterministicStringify(obj) {
   return '{' + keys.map(k => JSON.stringify(k) + ':' + deterministicStringify(obj[k])).join(',') + '}';
 }
 
-async function generateLocalAIResponse(query, caseId, language = 'en') {
+async function generateLocalAIResponse(query, caseId, language = 'en', options = {}) {
+  const scope = (typeof options === 'object' ? options.scope : options) || 'this_case';
+  const isCrossCase = scope === 'all_my_cases';
+
   const cases = await Store.getCases();
-  const allSuspects = await Store.getSuspects(caseId);
-  const allEvidence = await Store.getEvidence(caseId);
-  const allLinks = await Store.getLinks(caseId);
+  const allSuspects = await Store.getSuspects(isCrossCase ? null : caseId);
+  const allEvidence = await Store.getEvidence(isCrossCase ? null : caseId);
+  const allLinks = await Store.getLinks(isCrossCase ? null : caseId);
 
   const targetCase = cases.find(c => c.id === caseId || c._id?.toString() === caseId) || cases[0];
   const groqApiKey = process.env.GROQ_API_KEY;
 
   if (targetCase && groqApiKey) {
-    console.log('Routing RAG query to Groq Cloud API using local JSON/Mongo database context...');
+    console.log('Routing RAG query to Groq Cloud API with local multilingual semantic top-k retrieval...');
     try {
       const caseIdStr = targetCase.id || targetCase._id?.toString();
-      const caseSuspects = allSuspects.filter(s => s.case_id === caseIdStr);
-      const caseEvidence = allEvidence.filter(e => e.case_id === caseIdStr);
-      const caseLinks = allLinks.filter(l => l.case_id === caseIdStr);
+      
+      const candidateSuspects = isCrossCase ? allSuspects : allSuspects.filter(s => s.case_id === caseIdStr);
+      const candidateEvidence = isCrossCase ? allEvidence : allEvidence.filter(e => e.case_id === caseIdStr);
+      const candidateLinks = isCrossCase ? allLinks : allLinks.filter(l => l.case_id === caseIdStr);
+
+      // Embed user query with local model (with fallback)
+      let queryVec = [];
+      try {
+        queryVec = await embedText(query, true);
+      } catch (embErr) {
+        console.warn('Query embedding generation failed, using keyword fallback:', embErr.message);
+      }
+      const queryLower = query.toLowerCase();
+
+      const scoredCandidates = [];
+
+      // 1. Score Suspects
+      for (const s of candidateSuspects) {
+        const id = s.id || s._id?.toString();
+        const textSummary = `Suspect: ${s.name} | Aliases: ${s.aliases?.join(' ') || ''} | Risk: ${s.risk_score || 0}%`;
+        let score = 0;
+        if (queryVec && queryVec.length > 0 && s.embedding && s.embedding.length === queryVec.length) {
+          score = Math.max(0, cosineSimilarity(queryVec, s.embedding));
+        } else {
+          const terms = queryLower.split(/\s+/).filter(t => t.length > 1);
+          const matched = terms.filter(t => textSummary.toLowerCase().includes(t)).length;
+          score = terms.length ? matched / terms.length : 0.5;
+        }
+        scoredCandidates.push({
+          id,
+          type: 'suspect',
+          item: s,
+          score,
+          label: `${s.name} (${s.risk_score || 0}% Risk)`
+        });
+      }
+
+      // 2. Score Evidence Records
+      for (const e of candidateEvidence) {
+        const id = e.id || e._id?.toString();
+        const detailsStr = e.details?.notes || JSON.stringify(e.details || {});
+        const textSummary = `Evidence Type: ${e.type} | Phone: ${e.phone_number || ''} | Cell Tower: ${e.cell_tower || ''} | Details: ${detailsStr}`;
+        let score = 0;
+        if (queryVec && queryVec.length > 0 && e.embedding && e.embedding.length === queryVec.length) {
+          score = Math.max(0, cosineSimilarity(queryVec, e.embedding));
+        } else {
+          const terms = queryLower.split(/\s+/).filter(t => t.length > 1);
+          const matched = terms.filter(t => textSummary.toLowerCase().includes(t)).length;
+          score = terms.length ? matched / terms.length : 0.5;
+        }
+        scoredCandidates.push({
+          id,
+          type: 'evidence',
+          item: e,
+          score,
+          label: `${e.type.toUpperCase()}: ${e.phone_number || e.cell_tower || 'Record'}`
+        });
+      }
+
+      // 3. Score Suspect Links
+      for (const l of candidateLinks) {
+        const id = l.id || l._id?.toString();
+        const textSummary = `Suspect Association: ${l.link_type} | Detail: ${l.detail || ''}`;
+        let score = 0;
+        if (queryVec && queryVec.length > 0 && l.embedding && l.embedding.length === queryVec.length) {
+          score = Math.max(0, cosineSimilarity(queryVec, l.embedding));
+        } else {
+          const terms = queryLower.split(/\s+/).filter(t => t.length > 1);
+          const matched = terms.filter(t => textSummary.toLowerCase().includes(t)).length;
+          score = terms.length ? matched / terms.length : 0.5;
+        }
+        scoredCandidates.push({
+          id,
+          type: 'link',
+          item: l,
+          score,
+          label: `Link: ${l.link_type} (${l.detail || 'Association'})`
+        });
+      }
+
+      // Sort by similarity descending & select TOP_K (8)
+      scoredCandidates.sort((a, b) => b.score - a.score);
+      const topKScored = scoredCandidates.slice(0, TOP_K);
+
+      const topSuspects = topKScored.filter(c => c.type === 'suspect').map(c => c.item);
+      const topEvidence = topKScored.filter(c => c.type === 'evidence').map(c => c.item);
+      const topLinks = topKScored.filter(c => c.type === 'link').map(c => c.item);
+
+      // Fallback to case defaults if nothing was retrieved
+      const finalSuspects = topSuspects.length ? topSuspects : candidateSuspects.slice(0, 4);
+      const finalEvidence = topEvidence.length ? topEvidence : candidateEvidence.slice(0, 4);
+      const finalLinks = topLinks.length ? topLinks : candidateLinks.slice(0, 4);
 
       const systemPrompt = language === 'kn'
         ? `ನೀವು ನ್ಯಾಯನೇತ್ರ, ಕರ್ನಾಟಕ ರಾಜ್ಯ ಪೊಲೀಸ್ ತನಿಖಾ ಸಹಾಯಕರಾಗಿದ್ದೀರಿ.
@@ -503,13 +618,13 @@ Case Profile:
 - Priority: ${targetCase.priority}
 
 Suspects Roster:
-${caseSuspects.map(s => `- ID: ${s.id || s._id} | Name: ${s.name} | Aliases: ${s.aliases?.join(', ') || 'None'} | Risk Score: ${s.risk_score || 0}%`).join('\n') || 'None'}
+${finalSuspects.map(s => `- ID: ${s.id || s._id} | Name: ${s.name} | Aliases: ${s.aliases?.join(', ') || 'None'} | Risk Score: ${s.risk_score || 0}%`).join('\n') || 'None'}
 
 Evidence Records:
-${caseEvidence.map(e => `- ID: ${e.id || e._id} | Type: ${e.type} | Phone: ${e.phone_number || 'N/A'} | Cell Tower: ${e.cell_tower || 'N/A'} | Notes: ${e.details?.notes || JSON.stringify(e.details || {})}`).join('\n') || 'None'}
+${finalEvidence.map(e => `- ID: ${e.id || e._id} | Type: ${e.type} | Phone: ${e.phone_number || 'N/A'} | Cell Tower: ${e.cell_tower || 'N/A'} | Notes: ${e.details?.notes || JSON.stringify(e.details || {})}`).join('\n') || 'None'}
 
 Suspect Network Links:
-${caseLinks.map(l => `- ID: ${l.id || l._id} | Suspect 1 ID: ${l.suspect_a_id || l.suspect_id_1} | Suspect 2 ID: ${l.suspect_b_id || l.suspect_id_2} | Type: ${l.link_type} | Detail: ${l.detail || 'N/A'}`).join('\n') || 'None'}
+${finalLinks.map(l => `- ID: ${l.id || l._id} | Suspect 1 ID: ${l.suspect_a_id || l.suspect_a_id || l.suspect_id_1} | Suspect 2 ID: ${l.suspect_b_id || l.suspect_id_2} | Type: ${l.link_type} | Detail: ${l.detail || 'N/A'}`).join('\n') || 'None'}
 `;
 
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -539,17 +654,25 @@ ${caseLinks.map(l => `- ID: ${l.id || l._id} | Suspect 1 ID: ${l.suspect_a_id ||
 
         // Extract cited IDs
         const citedRecordIds = [];
-        const allIds = [caseIdStr, ...caseSuspects.map(s => s.id || s._id?.toString()), ...caseEvidence.map(e => e.id || e._id?.toString()), ...caseLinks.map(l => l.id || l._id?.toString())];
+        const allIds = [caseIdStr, ...finalSuspects.map(s => s.id || s._id?.toString()), ...finalEvidence.map(e => e.id || e._id?.toString()), ...finalLinks.map(l => l.id || l._id?.toString())];
         allIds.forEach(id => {
           if (id && answerText.includes(id)) {
             citedRecordIds.push(id);
           }
         });
 
+        const retrievedRecords = topKScored.map(r => ({
+          id: r.id,
+          type: r.type,
+          score: Math.round(r.score * 100),
+          label: r.label
+        }));
+
         return {
           answer: answerText,
           confidenceScore: 95,
-          citedRecordIds
+          citedRecordIds,
+          retrievedRecords
         };
       } else {
         console.error('Groq API failed:', await response.text());
@@ -1165,7 +1288,7 @@ app.get('/api/messages', async (req, res) => {
 
 app.post('/api/messages', async (req, res) => {
   try {
-    const { conversation_id, role, content, language, caseId, userId } = req.body;
+    const { conversation_id, role, content, language, caseId, userId, scope } = req.body;
 
     // 1. Save user message
     const userMsg = await Store.addMessage({
@@ -1175,8 +1298,8 @@ app.post('/api/messages', async (req, res) => {
       language: language || 'en'
     });
 
-    // 2. Generate grounded classical NLP answer
-    const ragResult = await generateLocalAIResponse(content, caseId, language);
+    // 2. Generate grounded classical NLP answer with top-k vector retrieval
+    const ragResult = await generateLocalAIResponse(content, caseId, language, { scope });
 
     // 3. Save assistant response
     const assistantMsg = await Store.addMessage({
@@ -1194,13 +1317,16 @@ app.post('/api/messages', async (req, res) => {
         query: content,
         language,
         confidenceScore: ragResult.confidenceScore,
-        citedRecordsCount: ragResult.citedRecordIds.length
+        citedRecordsCount: ragResult.citedRecordIds.length,
+        retrievedRecordsCount: ragResult.retrievedRecords?.length || 0,
+        scope: scope || 'this_case'
       });
     }
 
     res.json({
       userMessage: userMsg,
-      assistantMessage: assistantMsg
+      assistantMessage: assistantMsg,
+      retrievedRecords: ragResult.retrievedRecords || []
     });
   } catch (err) {
     res.status(500).send(err.message);
@@ -1285,25 +1411,32 @@ app.post('/api/advanced/execute', async (req, res) => {
             estimatedCost: `$${((totalTokens / 1000) * 0.00015).toFixed(6)} USD (Groq GPT-OSS-120b Free Tier)`
           };
         } else if (subFeature === 'semantic_search') {
-          // TODO(Batch 2): replace with embedding cosine similarity
-          const rawQuery = (query || req.body.searchQuery || payload?.query || payload?.searchQuery || '').trim().toLowerCase();
-          const queryKeywords = rawQuery.split(/\s+/).filter(w => w.length > 1);
+          const rawQuery = (query || req.body.searchQuery || payload?.query || payload?.searchQuery || '').trim();
+          let queryVec = [];
+          try {
+            queryVec = await embedText(rawQuery, true);
+          } catch (e) {
+            console.warn('Semantic search embedding failed, using fallback:', e.message);
+          }
 
           const matches = cases.map(c => {
-            const searchableText = `${c.fir_number || ''} ${c.title || ''} ${c.description || ''} ${c.status || ''} ${c.priority || ''}`.toLowerCase();
             let score = 0;
-            if (queryKeywords.length === 0) {
-              score = 60;
+            if (queryVec && queryVec.length > 0 && c.embedding && c.embedding.length === queryVec.length) {
+              const cos = cosineSimilarity(queryVec, c.embedding);
+              // Map cosine similarity [-1, 1] to [0, 100]%
+              score = Math.round(Math.max(0, Math.min(1, (cos + 1) / 2)) * 100);
             } else {
-              let matchedCount = 0;
-              for (const kw of queryKeywords) {
-                if (searchableText.includes(kw)) {
-                  matchedCount++;
+              // Fallback keyword relevance
+              const searchableText = `${c.fir_number || ''} ${c.title || ''} ${c.description || ''} ${c.status || ''} ${c.priority || ''}`.toLowerCase();
+              const queryKeywords = rawQuery.toLowerCase().split(/\s+/).filter(w => w.length > 1);
+              if (queryKeywords.length === 0) {
+                score = 60;
+              } else {
+                let matchedCount = 0;
+                for (const kw of queryKeywords) {
+                  if (searchableText.includes(kw)) matchedCount++;
                 }
-              }
-              score = Math.round((matchedCount / queryKeywords.length) * 100);
-              if (searchableText.includes(rawQuery) && rawQuery.length > 2) {
-                score = Math.min(100, Math.max(score, 85) + 15);
+                score = Math.round((matchedCount / queryKeywords.length) * 100);
               }
             }
             return {
@@ -1315,7 +1448,7 @@ app.post('/api/advanced/execute', async (req, res) => {
           }).sort((a, b) => b.scoreValue - a.scoreValue);
 
           result = {
-            searchScope: "Active District Case Files",
+            searchScope: "Active District Case Files (Multilingual Semantic Index)",
             query: rawQuery || "All Active Cases",
             matches: matches.map(({ fir, title, relevance }) => ({ fir, title, relevance }))
           };
