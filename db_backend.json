@@ -23193,6 +23193,62 @@
       "user_id": "usr-1784704355604",
       "title": "Smoke Test Conversation",
       "createdAt": "2026-08-27T08:08:04.468Z"
+    },
+    {
+      "id": "conv-1787903587303",
+      "case_id": "case-blr-002",
+      "user_id": "usr-1784708645028",
+      "title": "Investigation Session",
+      "createdAt": "2026-08-28T07:53:07.303Z"
+    },
+    {
+      "id": "conv-1787903587314",
+      "case_id": "case-blr-002",
+      "user_id": "usr-1784708645028",
+      "title": "Investigation Session",
+      "createdAt": "2026-08-28T07:53:07.314Z"
+    },
+    {
+      "id": "conv-1787903620196",
+      "case_id": "case-blr-003",
+      "user_id": "usr-1784708645028",
+      "title": "Investigation Session",
+      "createdAt": "2026-08-28T07:53:40.196Z"
+    },
+    {
+      "id": "conv-1787908037777",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-28T09:07:17.777Z"
+    },
+    {
+      "id": "conv-1787908077651",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-28T09:07:57.651Z"
+    },
+    {
+      "id": "conv-1787908513353",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-28T09:15:13.353Z"
+    },
+    {
+      "id": "conv-1787909328950",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-28T09:28:48.950Z"
+    },
+    {
+      "id": "conv-1787931207007",
+      "case_id": "case-1784704530759",
+      "user_id": "usr-1784704355604",
+      "title": "Smoke Test Conversation",
+      "createdAt": "2026-08-28T15:33:27.007Z"
     }
   ],
   "messages": [
@@ -24910,9 +24966,532 @@
         "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
       },
       "createdAt": "2026-08-27T08:08:05.794Z"
+    },
+    {
+      "id": "msg-1787908037792",
+      "conversation_id": "conv-1787908037777",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-28T09:07:17.792Z"
+    },
+    {
+      "id": "msg-1787908077666",
+      "conversation_id": "conv-1787908077651",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-28T09:07:57.666Z"
+    },
+    {
+      "id": "msg-1787908079424",
+      "conversation_id": "conv-1787908077651",
+      "role": "assistant",
+      "content": "The case lists two active suspects:\n\n1. **Shivanna K** – also known as **Shiva**. He has a risk score of **72 %**【susp-1784704530761】.  \n2. **Basavaraju H** – also known as **Basa** and **BH‑402**. He has a risk score of **88 %**【susp-1784704530760】.",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530761",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "susp-1784704530761",
+          "type": "suspect",
+          "score": 84,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 84,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 83,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "evid-blr-002",
+          "type": "evidence",
+          "score": 81,
+          "label": "ANPR: KA-BLR-ANPR-09 (Sampige Road)"
+        },
+        {
+          "id": "evid-blr-004",
+          "type": "evidence",
+          "score": 80,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "evid-blr-001",
+          "type": "evidence",
+          "score": 79,
+          "label": "CDR: +91 94808-99402"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-28T09:07:59.424Z"
+    },
+    {
+      "id": "msg-1787908513368",
+      "conversation_id": "conv-1787908513353",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-28T09:15:13.368Z"
+    },
+    {
+      "id": "msg-1787908514472",
+      "conversation_id": "conv-1787908513353",
+      "role": "assistant",
+      "content": "**Active Suspects**\n\n| Suspect ID | Name | Aliases | Risk Score |\n|------------|------|---------|------------|\n| susp-1784704530761 | Shivanna K | Shiva | 72% |\n| susp-1784704530760 | Basavaraju H | Basa, BH‑402 | 88% |\n\nBoth suspects are currently listed as active participants in the “Malleshwaram CDR & Telemetry Investigation” (case‑1784704530759)【susp-1784704530761】【susp-1784704530760】.",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530761",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "susp-1784704530761",
+          "type": "suspect",
+          "score": 84,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 84,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 83,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "evid-blr-002",
+          "type": "evidence",
+          "score": 81,
+          "label": "ANPR: KA-BLR-ANPR-09 (Sampige Road)"
+        },
+        {
+          "id": "evid-blr-004",
+          "type": "evidence",
+          "score": 80,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "evid-blr-001",
+          "type": "evidence",
+          "score": 79,
+          "label": "CDR: +91 94808-99402"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-28T09:15:14.472Z"
+    },
+    {
+      "id": "msg-1787909328964",
+      "conversation_id": "conv-1787909328950",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-28T09:28:48.964Z"
+    },
+    {
+      "id": "msg-1787909329806",
+      "conversation_id": "conv-1787909328950",
+      "role": "assistant",
+      "content": "The case lists two active suspects:\n\n1. **Shivanna K** – also known as **Shiva**. He has a risk score of **72 %**. 【susp-1784704530761】\n\n2. **Basavaraju H** – also known as **Basa** and **BH‑402**. He has a risk score of **88 %**. 【susp-1784704530760】",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530761",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "susp-1784704530761",
+          "type": "suspect",
+          "score": 84,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 84,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 83,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "evid-blr-002",
+          "type": "evidence",
+          "score": 81,
+          "label": "ANPR: KA-BLR-ANPR-09 (Sampige Road)"
+        },
+        {
+          "id": "evid-blr-004",
+          "type": "evidence",
+          "score": 80,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "evid-blr-001",
+          "type": "evidence",
+          "score": 79,
+          "label": "CDR: +91 94808-99402"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-28T09:28:49.806Z"
+    },
+    {
+      "id": "msg-1787931207024",
+      "conversation_id": "conv-1787931207007",
+      "role": "user",
+      "content": "Summarize the active suspects in this case.",
+      "language": "en",
+      "createdAt": "2026-08-28T15:33:27.024Z"
+    },
+    {
+      "id": "msg-1787931208204",
+      "conversation_id": "conv-1787931207007",
+      "role": "assistant",
+      "content": "The case lists two active suspects:\n\n1. **Shivanna K** – also known as **Shiva**. He has a risk score of **72 %**. 【susp-1784704530761】\n\n2. **Basavaraju H** – also known as **Basa** and **BH‑402**. He has a risk score of **88 %**. 【susp-1784704530760】\n\nThese are the only suspects currently recorded for the Malleshwaram CDR & Telemetry Investigation.",
+      "language": "en",
+      "cited_record_ids": [
+        "susp-1784704530761",
+        "susp-1784704530760"
+      ],
+      "confidence_score": 95,
+      "retrieved_records": [
+        {
+          "id": "susp-1784704530761",
+          "type": "suspect",
+          "score": 84,
+          "label": "Shivanna K (72% Risk)"
+        },
+        {
+          "id": "link-1784704530760",
+          "type": "link",
+          "score": 84,
+          "label": "Link: cdr_call (14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4)"
+        },
+        {
+          "id": "susp-1784704530760",
+          "type": "suspect",
+          "score": 83,
+          "label": "Basavaraju H (88% Risk)"
+        },
+        {
+          "id": "evid-blr-002",
+          "type": "evidence",
+          "score": 81,
+          "label": "ANPR: KA-BLR-ANPR-09 (Sampige Road)"
+        },
+        {
+          "id": "evid-blr-004",
+          "type": "evidence",
+          "score": 80,
+          "label": "CDR: +91 94808-99402"
+        },
+        {
+          "id": "evid-blr-001",
+          "type": "evidence",
+          "score": 79,
+          "label": "CDR: +91 94808-99402"
+        }
+      ],
+      "explainability": {
+        "systemPrompt": "You are NyayaNetra, an AI Copilot for the Karnataka State Police.\nYour job is to answer the user's question using ONLY the provided database context.\nRules:\n1. Grounding: Answer the question using ONLY the facts present in the retrieved context. If the answer cannot be found in the context, state that you do not have that information and refuse to answer. Do not use any pre-existing knowledge.\n2. Security Filter: If the user's query is out-of-scope (e.g. asking for recipes, jokes, general knowledge, or unrelated information), refuse to answer and state that you are authorized only to answer case-related intelligence queries under BNSS/BSA compliance.\n3. Citations: Cite the record IDs (which are UUIDs or ObjectIDs provided in the context) for any facts you mention. Format citations as [Record ID].\n4. Language: Respond in English.",
+        "formattedContext": "\nCase Profile:\n- ID: case-1784704530759\n- FIR Number: FIR #0184/2026\n- Title: Malleshwaram CDR & Telemetry Investigation\n- Description: Investigation into unauthorized cell tower activity and gold store burglary near 18th Cross.\n- Status: open\n- Priority: high\n\nSuspects Roster:\n- ID: susp-1784704530761 | Name: Shivanna K | Aliases: Shiva | Risk Score: 72%\n- ID: susp-1784704530760 | Name: Basavaraju H | Aliases: Basa, BH-402 | Risk Score: 88%\n\nEvidence Records:\n- ID: evid-blr-002 | Type: anpr | Phone: N/A | Cell Tower: KA-BLR-ANPR-09 (Sampige Road) | Notes: KA-04-MB-4022 getaway car registered.\n- ID: evid-blr-004 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: Secondary call intercept.\n- ID: evid-blr-001 | Type: cdr | Phone: +91 94808-99402 | Cell Tower: KA-BLR-N4 (Malleshwaram 18th Cross) | Notes: 14 calls to accomplice during burglary window.\n\nSuspect Network Links:\n- ID: link-1784704530760 | Suspect 1 ID: susp-1784704530760 | Suspect 2 ID: susp-1784704530761 | Type: cdr_call | Detail: 14 calls recorded between 02:00 AM and 05:00 AM at Tower KA-BLR-N4\n"
+      },
+      "createdAt": "2026-08-28T15:33:28.204Z"
     }
   ],
   "audit_logs": [
+    {
+      "user_id": "usr-1784708645028",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784708645028",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T15:37:53.835Z",
+      "id": "audit-1787931473835"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-08-28T15:37:32.949Z",
+      "id": "audit-1787931452949"
+    },
+    {
+      "user_id": "sys",
+      "action": "RAG_QUERY",
+      "target_table": "messages",
+      "target_id": "msg-1787931207024",
+      "details": {
+        "language": "en"
+      },
+      "createdAt": "2026-08-28T15:33:27.037Z",
+      "id": "audit-1787931207037"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T15:33:26.929Z",
+      "id": "audit-1787931206929"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T09:30:44.085Z",
+      "id": "audit-1787909444085"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-08-28T09:29:30.980Z",
+      "id": "audit-1787909370980"
+    },
+    {
+      "user_id": "sys",
+      "action": "RAG_QUERY",
+      "target_table": "messages",
+      "target_id": "msg-1787909328964",
+      "details": {
+        "language": "en"
+      },
+      "createdAt": "2026-08-28T09:28:48.976Z",
+      "id": "audit-1787909328976"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T09:28:48.921Z",
+      "id": "audit-1787909328921"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T09:16:13.822Z",
+      "id": "audit-1787908573822"
+    },
+    {
+      "user_id": "sys",
+      "action": "RAG_QUERY",
+      "target_table": "messages",
+      "target_id": "msg-1787908513368",
+      "details": {
+        "language": "en"
+      },
+      "createdAt": "2026-08-28T09:15:13.381Z",
+      "id": "audit-1787908513381"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T09:15:13.316Z",
+      "id": "audit-1787908513316"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T09:10:05.450Z",
+      "id": "audit-1787908205450"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-08-28T09:09:04.724Z",
+      "id": "audit-1787908144724"
+    },
+    {
+      "user_id": "usr-1784708645028",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784708645028",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T09:08:42.359Z",
+      "id": "audit-1787908122359"
+    },
+    {
+      "user_id": "sys",
+      "action": "RAG_QUERY",
+      "target_table": "messages",
+      "target_id": "msg-1787908077666",
+      "details": {
+        "language": "en"
+      },
+      "createdAt": "2026-08-28T09:07:57.680Z",
+      "id": "audit-1787908077680"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T09:07:57.614Z",
+      "id": "audit-1787908077614"
+    },
+    {
+      "user_id": "sys",
+      "action": "RAG_QUERY",
+      "target_table": "messages",
+      "target_id": "msg-1787908037792",
+      "details": {
+        "language": "en"
+      },
+      "createdAt": "2026-08-28T09:07:17.804Z",
+      "id": "audit-1787908037804"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T09:07:17.740Z",
+      "id": "audit-1787908037740"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T08:09:24.338Z",
+      "id": "audit-1787904564338"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-08-28T08:08:35.323Z",
+      "id": "audit-1787904515323"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T07:55:19.788Z",
+      "id": "audit-1787903719788"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-08-28T07:54:33.706Z",
+      "id": "audit-1787903673706"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T07:51:18.800Z",
+      "id": "audit-1787903478800"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGOUT",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {},
+      "createdAt": "2026-08-28T07:50:40.684Z",
+      "id": "audit-1787903440684"
+    },
+    {
+      "user_id": "usr-1784704355604",
+      "action": "AUTH_LOGIN",
+      "target_table": "profiles",
+      "target_id": "usr-1784704355604",
+      "details": {
+        "role": "investigator"
+      },
+      "createdAt": "2026-08-28T07:42:44.156Z",
+      "id": "audit-1787902964156"
+    },
     {
       "user_id": "usr-1784704355604",
       "action": "CONVERSATION_CREATE",

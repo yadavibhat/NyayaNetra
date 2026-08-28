@@ -6,11 +6,9 @@ import { Navbar } from '../components/Navbar';
 import { Sidebar } from '../components/Sidebar';
 import { BarChart3, PieChart, TrendingUp, AlertTriangle, Lightbulb, Users, Radio, ShieldAlert, ShieldCheck } from 'lucide-react';
 
-export function InsightsView({ setActiveScreen }) {
+export function InsightsView({ setActiveScreen, selectedCaseId, setSelectedCaseId, cases = [], reloadCases }) {
   const { session } = useAuth();
   const { language, t } = useLanguage();
-  const [cases, setCases] = useState([]);
-  const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [suspects, setSuspects] = useState([]);
   const [evidence, setEvidence] = useState([]);
   const [links, setLinks] = useState([]);
@@ -34,22 +32,6 @@ export function InsightsView({ setActiveScreen }) {
     };
     fetchHotspotScore();
   }, [selectedDistrict]);
-
-  // Load cases in session
-  useEffect(() => {
-    const loadCases = async () => {
-      try {
-        const loadedCases = await dbService.getCases(session);
-        setCases(loadedCases);
-        if (loadedCases.length > 0) {
-          setSelectedCaseId(loadedCases[0].id || loadedCases[0]._id);
-        }
-      } catch (err) {
-        console.error('Failed to load cases for insights:', err);
-      }
-    };
-    loadCases();
-  }, [session]);
 
   const activeCase = cases.find(c => c.id === selectedCaseId || c._id === selectedCaseId) || cases[0];
 

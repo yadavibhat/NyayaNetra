@@ -682,10 +682,8 @@ const renderSubFeatureData = (data) => {
   );
 };
 
-export function AdvancedConsoleView({ setActiveScreen }) {
+export function AdvancedConsoleView({ setActiveScreen, selectedCaseId, setSelectedCaseId, cases = [], reloadCases }) {
   const { session } = useAuth();
-  const [cases, setCases] = useState([]);
-  const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [activeCategory, setActiveCategory] = useState('chatbot');
   
   // State for subfeature execution results
@@ -699,21 +697,6 @@ export function AdvancedConsoleView({ setActiveScreen }) {
       setShowRawJson(false); // Reset to visual view whenever modal changes
     }
   }, [activeModalFeature]);
-
-  useEffect(() => {
-    const loadCases = async () => {
-      try {
-        const loadedCases = await dbService.getCases(session);
-        setCases(loadedCases);
-        if (loadedCases.length > 0) {
-          setSelectedCaseId(loadedCases[0].id || loadedCases[0]._id);
-        }
-      } catch (err) {
-        console.error('Failed to load cases in advanced console:', err);
-      }
-    };
-    loadCases();
-  }, [session]);
 
   const executeSubFeature = async (categoryId, subFeatureId, subFeatureTitle) => {
     const mapKey = `${categoryId}-${subFeatureId}`;

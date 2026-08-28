@@ -6,17 +6,11 @@ import { dbService } from '../lib/api';
 import { createSpeechRecognizer, speakText, stopSpeaking } from '../lib/speech';
 import { Navbar } from '../components/Navbar';
 import { Sidebar } from '../components/Sidebar';
-import { AddCaseModal } from '../components/Modals/AddCaseModal';
-import { AddSuspectModal } from '../components/Modals/AddSuspectModal';
-import { AddSuspectLinkModal } from '../components/Modals/AddSuspectLinkModal';
-import { AddEvidenceModal } from '../components/Modals/AddEvidenceModal';
-import { Sparkles, Send, Mic, Volume2, VolumeX, Copy, CheckCircle2, FileText, Info, X, Plus, ChevronDown, User, Share2, FileSpreadsheet } from 'lucide-react';
+import { Sparkles, Send, Mic, Volume2, VolumeX, Copy, CheckCircle2, FileText, Info, X } from 'lucide-react';
 
-export function ChatView({ setActiveScreen }) {
+export function ChatView({ setActiveScreen, selectedCaseId, setSelectedCaseId, cases = [], reloadCases }) {
   const { session } = useAuth();
   const { language, setLanguage, t } = useLanguage();
-  const [cases, setCases] = useState([]);
-  const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [currentConversationId, setCurrentConversationId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [promptInput, setPromptInput] = useState('');
@@ -25,14 +19,7 @@ export function ChatView({ setActiveScreen }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [citationModalRecord, setCitationModalRecord] = useState(null);
 
-  // Modals
-  const [isAddCaseOpen, setIsAddCaseOpen] = useState(false);
-  const [isAddSuspectOpen, setIsAddSuspectOpen] = useState(false);
-  const [isAddLinkOpen, setIsAddLinkOpen] = useState(false);
-  const [isAddEvidenceOpen, setIsAddEvidenceOpen] = useState(false);
-
   // Custom Menus / Toggles / Explainability
-  const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
   const [expandedSources, setExpandedSources] = useState({});
   const [expandedPrompts, setExpandedPrompts] = useState({});
@@ -42,36 +29,27 @@ export function ChatView({ setActiveScreen }) {
   const [caseSuspects, setCaseSuspects] = useState([]);
   const [caseEvidence, setCaseEvidence] = useState([]);
 
-  const reloadData = async () => {
-    try {
-      const loadedCases = await dbService.getCases(session);
-      setCases(loadedCases);
-      
-      let activeId = selectedCaseId;
-      if (!activeId && loadedCases.length > 0) {
-        activeId = loadedCases[0].id || loadedCases[0]._id;
-        setSelectedCaseId(activeId);
-      }
-      
-      if (activeId) {
+  // Fetch case details when selectedCaseId changes
+  useEffect(() => {
+    if (!selectedCaseId) {
+      setCaseSuspects([]);
+      setCaseEvidence([]);
+      return;
+    }
+    const fetchDetails = async () => {
+      try {
         const [loadedSuspects, loadedEvidence] = await Promise.all([
-          dbService.getSuspects(activeId),
-          dbService.getEvidence(activeId)
+          dbService.getSuspects(selectedCaseId),
+          dbService.getEvidence(selectedCaseId)
         ]);
         setCaseSuspects(loadedSuspects);
         setCaseEvidence(loadedEvidence);
-      } else {
-        setCaseSuspects([]);
-        setCaseEvidence([]);
+      } catch (err) {
+        console.error('Failed to load case details inside chat view:', err);
       }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    reloadData();
-  }, [session, selectedCaseId]);
+    };
+    fetchDetails();
+  }, [selectedCaseId, cases]);
 
   // Load or create conversation session whenever selectedCaseId or session changes
   useEffect(() => {
@@ -276,50 +254,6 @@ export function ChatView({ setActiveScreen }) {
               >
                 <Sparkles className="w-3.5 h-3.5 text-gold-accent" /> {language === 'kn' ? 'ಹೊಸ ಚಾಟ್' : 'New Chat'}
               </button>
-              <span className="text-outline">|</span>
-              
-              <div className="relative">
-                <button
-                  onClick={() => setIsActionsMenuOpen(!isActionsMenuOpen)}
-                  className="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high border border-outline-variant/60 text-primary text-[11px] font-bold rounded-lg transition-all flex items-center gap-1"
-                >
-                  <Plus className="w-3.5 h-3.5 text-gold-accent" />
-                  <span>{language === 'kn' ? 'ದಾಖಲೆ ಸೇರಿಸಿ' : 'Add Record'}</span>
-                  <ChevronDown className="w-3 h-3 text-outline" />
-                </button>
-                {isActionsMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-outline-variant rounded-xl shadow-lg py-1.5 z-30 font-semibold text-xs text-on-surface">
-                    <button
-                      onClick={() => { setIsAddCaseOpen(true); setIsActionsMenuOpen(false); }}
-                      className="w-full text-left px-4 py-2 hover:bg-surface-container flex items-center gap-2"
-                    >
-                      <FileText className="w-3.5 h-3.5 text-primary" /> {language === 'kn' ? 'ಎಫ್‌ಐಆರ್ ದಾಖಲಿಸಿ' : 'Register Case (FIR)'}
-                    </button>
-                    {selectedCaseId && (
-                      <>
-                        <button
-                          onClick={() => { setIsAddSuspectOpen(true); setIsActionsMenuOpen(false); }}
-                          className="w-full text-left px-4 py-2 hover:bg-surface-container flex items-center gap-2"
-                        >
-                          <User className="w-3.5 h-3.5 text-primary" /> {language === 'kn' ? 'ಶಂಕಿತರನ್ನು ಸೇರಿಸಿ' : 'Add Suspect'}
-                        </button>
-                        <button
-                          onClick={() => { setIsAddLinkOpen(true); setIsActionsMenuOpen(false); }}
-                          className="w-full text-left px-4 py-2 hover:bg-surface-container flex items-center gap-2"
-                        >
-                          <Share2 className="w-3.5 h-3.5 text-primary" /> {language === 'kn' ? 'ಸಂಪರ್ಕ ಜೋಡಿಸಿ' : 'Link Suspects'}
-                        </button>
-                        <button
-                          onClick={() => { setIsAddEvidenceOpen(true); setIsActionsMenuOpen(false); }}
-                          className="w-full text-left px-4 py-2 hover:bg-surface-container flex items-center gap-2"
-                        >
-                          <FileSpreadsheet className="w-3.5 h-3.5 text-primary" /> {language === 'kn' ? 'ಸಾಕ್ಷ್ಯ ಅಪ್ಲೋಡ್' : 'Upload Evidence'}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
             </div>
           </div>
 
@@ -668,116 +602,6 @@ export function ChatView({ setActiveScreen }) {
             </div>
           </div>
         </main>
-
-        {/* Right Insights Sidebar */}
-        <aside className="w-[340px] bg-surface-container-low border-l border-outline-variant flex flex-col h-full overflow-y-auto scrolling-content hidden lg:flex shrink-0">
-          <div className="p-4 border-b border-outline-variant bg-white sticky top-0 z-10 flex justify-between items-center shadow-2xs">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-gold-accent" />
-              <h3 className="text-xs font-bold text-primary uppercase tracking-wider">Contextual Insights</h3>
-            </div>
-            <span className="text-[10px] font-mono bg-primary-fixed text-primary px-2 py-0.5 rounded font-bold">LIVE DATABASE</span>
-          </div>
-
-          <div className="p-4 space-y-4">
-            {/* Live Suspect Roster Card */}
-            <div className="bg-white border border-outline-variant rounded-xl p-4 shadow-2xs space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-primary">Case Suspect Roster ({caseSuspects.length})</span>
-                <button
-                  onClick={() => setIsAddSuspectOpen(true)}
-                  className="text-[11px] text-gold-accent font-bold hover:underline"
-                >
-                  + Add Suspect
-                </button>
-              </div>
-
-              {caseSuspects.length === 0 ? (
-                <p className="text-xs text-outline italic">No suspects added for this case yet.</p>
-              ) : (
-                <div className="space-y-2">
-                  {caseSuspects.map(s => (
-                    <div key={s.id} className="p-2.5 bg-surface-container-low border border-outline-variant/50 rounded-lg flex justify-between items-center text-xs">
-                      <div>
-                        <p className="font-bold text-navy-deep">{s.name}</p>
-                        <p className="text-[10px] text-outline">{s.aliases?.join(', ') || 'No aliases'}</p>
-                      </div>
-                      <span className="font-mono text-[10px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded">
-                        Risk: {s.risk_score !== null ? `${s.risk_score}%` : 'Unassessed'}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Live Evidence Records Card */}
-            <div className="bg-white border border-outline-variant rounded-xl p-4 shadow-2xs space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-primary">Evidence Log ({caseEvidence.length})</span>
-                <button
-                  onClick={() => setIsAddEvidenceOpen(true)}
-                  className="text-[11px] text-gold-accent font-bold hover:underline"
-                >
-                  + Upload CDR
-                </button>
-              </div>
-
-              {caseEvidence.length === 0 ? (
-                <p className="text-xs text-outline italic">No CDR/ANPR evidence uploaded yet.</p>
-              ) : (
-                <div className="space-y-2">
-                  {caseEvidence.map(e => (
-                    <div key={e.id} className="p-2.5 bg-surface-container-low border border-outline-variant/50 rounded-lg text-xs space-y-1">
-                      <div className="flex justify-between items-center font-mono font-bold">
-                        <span className="text-navy-deep">{e.type.toUpperCase()} Record</span>
-                        <span className="text-emerald-700">{e.phone_number || 'Tower Feed'}</span>
-                      </div>
-                      <p className="text-[11px] text-outline">{e.cell_tower}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Collapsible Glossary Card */}
-            <div className="bg-white border border-outline-variant rounded-xl p-4 shadow-2xs space-y-2 text-xs shrink-0">
-              <button
-                type="button"
-                onClick={() => setIsGlossaryOpen(!isGlossaryOpen)}
-                className="w-full flex justify-between items-center font-bold text-primary hover:underline outline-none"
-              >
-                <span className="flex items-center gap-1.5">
-                  <span>💡</span>
-                  <span>{language === 'kn' ? 'ತ್ವರಿತ ಸಹಾಯ: ಪದಗಳ ಅರ್ಥ' : 'Quick Glossary: Police Terms'}</span>
-                </span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform text-outline ${isGlossaryOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {isGlossaryOpen && (
-                <div className="space-y-3.5 pt-2.5 border-t border-outline-variant/60 text-[11px] leading-relaxed text-on-surface-variant">
-                  <div>
-                    <p className="font-bold text-navy-deep">{language === 'kn' ? 'ಎಫ್‌ಐಆರ್ (FIR - Case File)' : 'Case File (FIR)'}</p>
-                    <p>{language === 'kn' ? 'ದಾಖಲಾದ ಅಪರಾಧ ಪ್ರಕರಣದ ಪ್ರಾಥಮಿಕ ತನಿಖಾ ವರದಿ.' : 'First Information Report registering the crime & triggering the investigation.'}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold text-navy-deep">{language === 'kn' ? 'ಕರೆ ದಾಖಲೆಗಳು (CDR)' : 'Phone Records (CDR)'}</p>
-                    <p>{language === 'kn' ? 'ಮೊಬೈಲ್ ಕರೆಗಳ ವಿವರ, ಸಂಭಾಷಣೆ ನಡೆದ ಸಮಯ ಮತ್ತು ಟವರ್ ಲೊಕೇಶನ್.' : 'Call Detail Records showing call timelines and cell tower locations.'}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold text-navy-deep">{language === 'kn' ? 'ಕ್ಯಾಮೆರಾ ದಾಖಲೆಗಳು (ANPR)' : 'Vehicle Cameras (ANPR)'}</p>
-                    <p>{language === 'kn' ? 'ವಾಹನಗಳ ಚಲನವಲನ ಮತ್ತು ನಂಬರ್ ಪ್ಲೇಟ್ ಪತ್ತೆಮಾಡುವ ಆಟೋಮ್ಯಾಟಿಕ್ ಕ್ಯಾಮೆರಾಗಳು.' : 'Automatic Number Plate Recognition cameras logging vehicle plates.'}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold text-navy-deep">{language === 'kn' ? 'ಸಂಪರ್ಕ ಜಾಲಬಂಧ (Connection Map)' : 'Connection Map'}</p>
-                    <p>{language === 'kn' ? 'ಶಂಕಿತರು ಒಬ್ಬರಿಗೊಬ್ಬರು ಹೇಗೆ ಸಂಪರ್ಕ ಹೊಂದಿದ್ದಾರೆ ಎಂಬುದನ್ನು ತೋರಿಸುವ ಚಿತ್ರ.' : 'Visual chart mapping links (calls/meetings) between suspects.'}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Context Insights */}
-          </div>
-        </aside>
       </div>
 
       {/* Citation Record Inspector Modal */}
@@ -806,36 +630,7 @@ export function ChatView({ setActiveScreen }) {
         </div>
       )}
 
-      <AddCaseModal
-        isOpen={isAddCaseOpen}
-        onClose={() => setIsAddCaseOpen(false)}
-        onAdded={reloadData}
-        currentUser={session}
-      />
 
-      <AddSuspectModal
-        isOpen={isAddSuspectOpen}
-        onClose={() => setIsAddSuspectOpen(false)}
-        onAdded={reloadData}
-        caseId={selectedCaseId}
-        currentUser={session}
-      />
-
-      <AddSuspectLinkModal
-        isOpen={isAddLinkOpen}
-        onClose={() => setIsAddLinkOpen(false)}
-        onAdded={reloadData}
-        caseId={selectedCaseId}
-        currentUser={session}
-      />
-
-      <AddEvidenceModal
-        isOpen={isAddEvidenceOpen}
-        onClose={() => setIsAddEvidenceOpen(false)}
-        onAdded={reloadData}
-        caseId={selectedCaseId}
-        currentUser={session}
-      />
     </div>
   );
 }

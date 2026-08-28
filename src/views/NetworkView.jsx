@@ -5,16 +5,11 @@ import { useLanguage } from '../context/LanguageContext';
 import { dbService } from '../lib/api';
 import { Navbar } from '../components/Navbar';
 import { Sidebar } from '../components/Sidebar';
-import { AddSuspectModal } from '../components/Modals/AddSuspectModal';
-import { AddSuspectLinkModal } from '../components/Modals/AddSuspectLinkModal';
-import { AddCaseModal } from '../components/Modals/AddCaseModal';
-import { Share2, Plus, UserPlus, Network, X, FileText } from 'lucide-react';
+import { Share2, X, FileText } from 'lucide-react';
 
-export function NetworkView({ setActiveScreen }) {
+export function NetworkView({ setActiveScreen, selectedCaseId, setSelectedCaseId, cases = [], reloadCases }) {
   const { session } = useAuth();
   const { language, t } = useLanguage();
-  const [cases, setCases] = useState([]);
-  const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [suspects, setSuspects] = useState([]);
   const [links, setLinks] = useState([]);
   const [evidence, setEvidence] = useState([]);
@@ -27,20 +22,11 @@ export function NetworkView({ setActiveScreen }) {
   const [isLoadingCrossCase, setIsLoadingCrossCase] = useState(false);
   const [similarSuspectsData, setSimilarSuspectsData] = useState(null);
 
-  // Modals
-  const [isAddCaseOpen, setIsAddCaseOpen] = useState(false);
-  const [isAddSuspectOpen, setIsAddSuspectOpen] = useState(false);
-  const [isAddLinkOpen, setIsAddLinkOpen] = useState(false);
+
 
   const reloadData = async () => {
     try {
-      const loadedCases = await dbService.getCases(session);
-      setCases(loadedCases);
-      const activeId = selectedCaseId || (loadedCases[0]?.id || loadedCases[0]?._id || null);
-      if (!selectedCaseId && loadedCases.length > 0) {
-        setSelectedCaseId(loadedCases[0].id || loadedCases[0]._id);
-      }
-
+      const activeId = selectedCaseId;
       if (activeId) {
         const [sList, lList, eList] = await Promise.all([
           dbService.getSuspects(activeId),
@@ -56,13 +42,13 @@ export function NetworkView({ setActiveScreen }) {
         setEvidence([]);
       }
     } catch (err) {
-      console.error(err);
+      console.error('Failed to reload network view data:', err);
     }
   };
 
   useEffect(() => {
     reloadData();
-  }, [session, selectedCaseId]);
+  }, [session, selectedCaseId, cases]);
 
   // Fetch cross-case links when toggle is enabled
   useEffect(() => {
@@ -146,9 +132,6 @@ export function NetworkView({ setActiveScreen }) {
           cases={cases}
           selectedCaseId={selectedCaseId}
           setSelectedCaseId={setSelectedCaseId}
-          onOpenAddCase={() => setIsAddCaseOpen(true)}
-          onOpenAddSuspect={() => setIsAddSuspectOpen(true)}
-          onOpenAddEvidence={() => {}}
         />
 
         {/* Network Canvas */}
@@ -168,20 +151,6 @@ export function NetworkView({ setActiveScreen }) {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setIsAddSuspectOpen(true)}
-                className="bg-navy-deep text-on-primary px-3 py-2 rounded-lg hover:opacity-90 transition-colors shadow-2xs flex items-center gap-1.5 text-xs font-bold"
-              >
-                <UserPlus className="w-4 h-4 text-gold-accent" /> Add Suspect
-              </button>
-
-              <button
-                onClick={() => setIsAddLinkOpen(true)}
-                className="bg-white border border-outline-variant px-3 py-2 rounded-lg hover:bg-surface-container transition-colors shadow-2xs flex items-center gap-1.5 text-xs font-bold text-navy-deep"
-              >
-                <Network className="w-4 h-4 text-navy-deep" /> Connect Link
-              </button>
-
               {/* Cross-case links toggle */}
               <label className="flex items-center gap-2 cursor-pointer bg-white/95 backdrop-blur-md border border-outline-variant px-3 py-2 rounded-lg hover:bg-surface-container transition-colors shadow-2xs select-none">
                 <input
@@ -217,10 +186,10 @@ export function NetworkView({ setActiveScreen }) {
                 </p>
                 <div className="pt-2 flex justify-center gap-2">
                   <button
-                    onClick={() => setIsAddSuspectOpen(true)}
-                    className="px-4 py-2 bg-navy-deep text-on-primary text-xs font-bold rounded-xl hover:opacity-90 transition-all inline-flex items-center gap-1"
+                    onClick={() => setActiveScreen('cases')}
+                    className="px-4 py-2 bg-navy-deep text-on-primary text-xs font-bold rounded-xl hover:opacity-90 transition-all inline-flex items-center gap-1.5"
                   >
-                    <Plus className="w-4 h-4 text-gold-accent" /> Add Suspect
+                    Go to Case Files
                   </button>
                 </div>
               </div>
@@ -548,28 +517,7 @@ export function NetworkView({ setActiveScreen }) {
         </section>
       </main>
 
-      <AddCaseModal
-        isOpen={isAddCaseOpen}
-        onClose={() => setIsAddCaseOpen(false)}
-        onAdded={reloadData}
-        currentUser={session}
-      />
 
-      <AddSuspectModal
-        isOpen={isAddSuspectOpen}
-        onClose={() => setIsAddSuspectOpen(false)}
-        onAdded={reloadData}
-        caseId={selectedCaseId}
-        currentUser={session}
-      />
-
-      <AddSuspectLinkModal
-        isOpen={isAddLinkOpen}
-        onClose={() => setIsAddLinkOpen(false)}
-        onAdded={reloadData}
-        caseId={selectedCaseId}
-        currentUser={session}
-      />
     </div>
   );
 }

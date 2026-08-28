@@ -3,6 +3,7 @@ export const strings = {
     // App Branding & Navigation
     app_title: "NyayaNetra",
     app_tagline: "Karnataka Police Multilingual AI Copilot",
+    nav_cases: "FIR Case Files",
     nav_chat: "Intelligence Chat",
     nav_network: "Network Map",
     nav_admin: "SCRB Console",
@@ -100,6 +101,7 @@ export const strings = {
     // App Branding & Navigation
     app_title: "ನ್ಯಾಯನೇತ್ರ",
     app_tagline: "ಕರ್ನಾಟಕ ಪೊಲೀಸ್ ಬಹುಭಾಷಾ AI ತನಿಖಾ ಸಹಾಯಕ",
+    nav_cases: "ಪ್ರಕರಣಗಳು (FIR)",
     nav_chat: "ಬುದ್ಧಿವಂತಿಕೆ ಸಂವಾದ",
     nav_network: "ಜಾಲಬಂಧ ನಕ್ಷೆ",
     nav_admin: "SCRB ನಿಯಂತ್ರಣ ಫಲಕ",

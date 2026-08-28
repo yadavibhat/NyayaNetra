@@ -3,11 +3,9 @@ import { useAuth } from '../context/AuthContext';
 import { dbService } from '../lib/api';
 import { ArrowLeft, Printer, ShieldAlert } from 'lucide-react';
 
-export function PdfExportView({ setActiveScreen }) {
+export function PdfExportView({ setActiveScreen, selectedCaseId, setSelectedCaseId, cases = [], reloadCases }) {
   const { session } = useAuth();
   const profile = session?.profile;
-  const [cases, setCases] = useState([]);
-  const [selectedCaseId, setSelectedCaseId] = useState(null);
   const [suspects, setSuspects] = useState([]);
   const [evidence, setEvidence] = useState([]);
   const [station, setStation] = useState(null);
@@ -17,21 +15,6 @@ export function PdfExportView({ setActiveScreen }) {
   const [includeSynopsis, setIncludeSynopsis] = useState(true);
   const [includeSuspects, setIncludeSuspects] = useState(true);
   const [includeEvidence, setIncludeEvidence] = useState(true);
-
-  useEffect(() => {
-    const loadCases = async () => {
-      try {
-        const loadedCases = await dbService.getCases(session);
-        setCases(loadedCases);
-        if (loadedCases.length > 0) {
-          setSelectedCaseId(loadedCases[0].id || loadedCases[0]._id);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    loadCases();
-  }, [session]);
 
   const activeCase = cases.find(c => c.id === selectedCaseId || c._id === selectedCaseId) || cases[0];
 
