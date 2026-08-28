@@ -8,7 +8,7 @@
       "api"
     ],
     "scripts": {
-      "predeploy": "cp ../server.cjs api/ && cp ../db_backend.json api/"
+      "predeploy": "cp -r ../backend api/ && cp ../server.cjs api/ && cp ../db_backend.json api/"
     }
   }
 }

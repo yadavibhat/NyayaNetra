@@ -110,6 +110,7 @@ The root `server.cjs` is the canonical backend implementation. When deploying to
 
 ## 📄 Documentation Links
 
+- **[System Architecture Guide](docs/ARCHITECTURE.md)**: Developer documentation explaining directory structure, database hybrid store, and RAG pipelines.
 - **[System Self-Audit Report](docs/AUDIT-REPORT.md)**: Ground-truth scorecard across all 7 core claims with exact file:line citations.
 - **[Changelog](CHANGELOG.md)**: Technical release notes and version history.
 
