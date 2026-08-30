@@ -8,6 +8,30 @@ import { Navbar } from '../components/Navbar';
 import { Sidebar } from '../components/Sidebar';
 import { Sparkles, Send, Mic, Volume2, VolumeX, Copy, CheckCircle2, FileText, Info, X, ChevronDown } from 'lucide-react';
 
+function FormattedText({ content }) {
+  if (!content) return null;
+  const lines = content.split('\n');
+  return (
+    <div className="space-y-1">
+      {lines.map((line, lineIdx) => {
+        if (!line.trim()) return <div key={lineIdx} className="h-1.5" />;
+        const parts = line.split(/(\*\*[^*]+\*\*)/g);
+        return (
+          <div key={lineIdx} className="leading-relaxed">
+            {parts.map((part, partIdx) => {
+              if (part.startsWith('**') && part.endsWith('**')) {
+                const boldText = part.slice(2, -2);
+                return <strong key={partIdx} className="font-bold text-navy-deep">{boldText}</strong>;
+              }
+              return part;
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function ChatView({ setActiveScreen, selectedCaseId, setSelectedCaseId, cases = [], reloadCases }) {
   const { session } = useAuth();
   const { language, setLanguage, t } = useLanguage();
@@ -134,8 +158,9 @@ export function ChatView({ setActiveScreen, selectedCaseId, setSelectedCaseId, c
     }
 
     setIsSpeaking(true);
+    const cleanText = text ? text.replace(/\*\*/g, '') : '';
     speakText({
-      text,
+      text: cleanText,
       lang: language,
       onEnd: () => setIsSpeaking(false)
     });
@@ -330,7 +355,9 @@ export function ChatView({ setActiveScreen, selectedCaseId, setSelectedCaseId, c
                           )}
                         </div>
 
-                        <p className="text-sm text-on-surface leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                        <div className="text-sm text-on-surface">
+                          <FormattedText content={msg.content} />
+                        </div>
 
                         {/* Citations Footer */}
                         <div className="mt-4 pt-3 border-t border-outline-variant/60 flex flex-wrap justify-between items-center gap-2">
