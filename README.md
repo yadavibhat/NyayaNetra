@@ -10,7 +10,7 @@ NyayaNetra (ನ್ಯಾಯನೇತ್ರ) is a state-of-the-art, bilingual AI 
 * **Local Multilingual Vector Search (RAG)**: Uses `@xenova/transformers` with `Xenova/multilingual-e5-small` to generate 384-dimensional dense vector embeddings in Node.js memory for semantic matching across Kannada and English case files.
 * **Top-K Vector Retrieval**: Extracts and ranks the top-8 most relevant suspect profiles, CDR cell tower records, and ANPR telemetry logs before querying the LLM.
 * **Multi-Turn Dialogue Memory**: Maintains a sliding 6-turn conversation history (capped at 3,000 characters) for natural follow-up questions and anaphoric pronoun resolution (*e.g., "What is his risk score?"*).
-* **Transparent Grounding & Security**: Strict zero-hallucination guardrails enforce answers derived exclusively from verified case context. Includes clickable citation chips and a "View prompt sent to model" inspector drawer.
+* **Transparent Grounding & Security**: Strict zero-hallucination guardrails enforce answers derived exclusively from verified case context. Includes clickable citation chips and top-k evidence sources.
 * **Full-UI Localization**: Instant navbar toggle (`EN` / `ಕನ್ನಡ`) dynamically translates all navigation chrome, sidebar controls, buttons, and analytical metrics via `src/i18n/strings.js`.
 
 ### 2. Advanced Crime Analytics & Behavioral Profiling
