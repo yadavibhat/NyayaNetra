@@ -61,7 +61,6 @@ export function CasesView({ setActiveScreen, selectedCaseId, setSelectedCaseId, 
   const [selectedDistrict, setSelectedDistrict] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
-  const [isFirGuideOpen, setIsFirGuideOpen] = useState(false);
 
   // Load details for the selected case
   const loadCaseDetails = async () => {
@@ -212,15 +211,6 @@ export function CasesView({ setActiveScreen, selectedCaseId, setSelectedCaseId, 
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setIsFirGuideOpen(true)}
-                      className="px-4 py-3 bg-amber-500/10 border border-amber-500/30 text-amber-900 rounded-xl text-xs font-bold hover:bg-amber-500/20 transition-all flex items-center gap-1.5 min-h-[44px]"
-                    >
-                      <Sparkles className="w-4 h-4 text-gold-accent" />
-                      <span>FIR Structure & Official Portal Guide</span>
-                    </button>
-                    
                     <button
                       onClick={() => setIsAddCaseOpen(true)}
                       className="px-5 py-3 bg-navy-deep hover:bg-primary-container text-on-primary rounded-xl text-xs font-bold shadow-sm transition-all active:scale-[0.98] flex items-center gap-2 self-start md:self-auto min-h-[44px]"
@@ -813,66 +803,6 @@ export function CasesView({ setActiveScreen, selectedCaseId, setSelectedCaseId, 
         currentUser={session}
         onAdded={loadCaseDetails}
       />
-
-      {/* Official Karnataka FIR Lookup Guide Modal */}
-      {isFirGuideOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="w-full max-w-xl bg-white border border-outline-variant rounded-2xl shadow-xl overflow-hidden p-6 space-y-5"
-          >
-            <div className="flex justify-between items-start border-b border-outline-variant pb-4">
-              <div>
-                <span className="text-[10px] font-mono font-bold bg-navy-deep text-gold-accent px-2 py-0.5 rounded uppercase">
-                  State Crime Records Bureau (SCRB) Standard
-                </span>
-                <h3 className="text-lg font-bold text-navy-deep pt-1">Karnataka FIR Structure & Verification Guide</h3>
-              </div>
-              <button
-                onClick={() => setIsFirGuideOpen(false)}
-                className="p-1 text-outline hover:text-navy-deep rounded-lg"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-4 text-xs font-medium text-on-surface-variant leading-relaxed">
-              <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl space-y-1">
-                <span className="font-bold text-indigo-900 block">1. Sequential Station Numbering (0001-9999)</span>
-                <p className="text-indigo-950">
-                  FIR numbers in Karnataka start at <code className="font-mono font-bold">0001</code> each calendar year (Jan 1st) for every police station, formatted as <code className="font-mono font-bold text-navy-deep">FIR No. XXXX/YYYY</code> (e.g. <code className="font-mono font-bold text-navy-deep">0045/2026</code>).
-                </p>
-              </div>
-
-              <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl space-y-1">
-                <span className="font-bold text-amber-900 block">2. Jurisdictional Zero FIR (0/YYYY)</span>
-                <p className="text-amber-950">
-                  When a crime is reported outside local station limits, a <code className="font-mono font-bold">Zero FIR</code> is registered with serial <code className="font-mono font-bold">0</code> until transferred to the jurisdictional police station.
-                </p>
-              </div>
-
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                <span className="font-bold text-navy-deep block">3. Looking Up Official Copies via Portals</span>
-                <ul className="list-disc list-inside space-y-1 text-outline">
-                  <li><strong>KSP Public Portal:</strong> Filter by District, Police Station Name, FIR Number, and Year.</li>
-                  <li><strong>eCourts Karnataka:</strong> Search by Court Complex, District, Station Name & FIR Year.</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <button
-                onClick={() => setIsFirGuideOpen(false)}
-                className="px-5 py-2 bg-navy-deep text-on-primary text-xs font-bold rounded-xl"
-              >
-                Got It
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
     </div>
   );
 }
