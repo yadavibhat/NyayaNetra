@@ -41,7 +41,7 @@ export function LoginView({ setActiveScreen }) {
             badge_id: 'ka-08-2007',
             password: 'password123'
           });
-          setActiveScreen(session.profile.role === 'admin' ? 'admin' : 'chat');
+          setActiveScreen(session.profile.role === 'admin' ? 'admin' : 'cases');
         } catch (err) {
           setError('Biometric authentication failed. Please use standard Sign In.');
           setBioState('idle');
@@ -70,14 +70,14 @@ export function LoginView({ setActiveScreen }) {
           role
         });
 
-        setActiveScreen(session.profile.role === 'admin' ? 'admin' : 'chat');
+        setActiveScreen(session.profile.role === 'admin' ? 'admin' : 'cases');
       } else {
         const session = await login({
           email,
           badge_id: badgeId,
           password
         });
-        setActiveScreen(session.profile.role === 'admin' ? 'admin' : 'chat');
+        setActiveScreen(session.profile.role === 'admin' ? 'admin' : 'cases');
       }
     } catch (err) {
       if (err.message?.startsWith('ACCOUNT_NOT_FOUND:')) {

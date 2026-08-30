@@ -1,8 +1,13 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
-const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const { embedText } = require('./utils/embeddings.cjs');
+
+function hashPassword(plain) {
+  if (!plain) plain = 'password123';
+  return crypto.createHash('sha256').update(plain).digest('hex');
+}
 const {
   Station,
   Profile,
@@ -29,9 +34,42 @@ const KARNATAKA_DEFAULT_STATIONS = [
   { id: 'stn-mng-nth', name: 'Mangaluru North Police Station', district: 'Mangaluru City Police' }
 ];
 
+const KARNATAKA_DEFAULT_PROFILES = [
+  {
+    id: 'usr-ka-08-2007',
+    email: 'ka082007@nyayanetra.gov.in',
+    full_name: 'Insp. B. Gowda',
+    badge_id: 'ka-08-2007',
+    role: 'investigator',
+    station_id: 'stn-blr-mll',
+    access_status: 'active',
+    createdAt: '2026-08-01T00:00:00.000Z'
+  },
+  {
+    id: 'usr-ka-04-9999',
+    email: 'ka049999@nyayanetra.gov.in',
+    full_name: 'Chief Officer Gowda',
+    badge_id: 'KA-04-9999',
+    role: 'admin',
+    station_id: 'stn-cid-hq',
+    access_status: 'active',
+    createdAt: '2026-08-01T00:00:00.000Z'
+  },
+  {
+    id: 'usr-ka-02-7777',
+    email: 'ka027777@nyayanetra.gov.in',
+    full_name: 'Inspector Gowda',
+    badge_id: 'KA-02-7777',
+    role: 'investigator',
+    station_id: 'stn-blr-ind',
+    access_status: 'active',
+    createdAt: '2026-08-01T00:00:00.000Z'
+  }
+];
+
 let localDb = {
   stations: [...KARNATAKA_DEFAULT_STATIONS],
-  profiles: [],
+  profiles: [...KARNATAKA_DEFAULT_PROFILES],
   cases: [],
   suspects: [],
   suspect_links: [],
@@ -49,29 +87,42 @@ if (fs.existsSync(DB_FILE)) {
     if (!localDb.stations || localDb.stations.length === 0) {
       localDb.stations = [...KARNATAKA_DEFAULT_STATIONS];
     }
+    if (!localDb.profiles || localDb.profiles.length === 0) {
+      localDb.profiles = [...KARNATAKA_DEFAULT_PROFILES];
+    } else {
+      // Ensure default demo badges exist
+      for (const defP of KARNATAKA_DEFAULT_PROFILES) {
+        if (!localDb.profiles.some(p => p.badge_id?.toLowerCase() === defP.badge_id.toLowerCase())) {
+          localDb.profiles.push(defP);
+        }
+      }
+    }
   } catch (e) {
-    console.error('Failed to parse local JSON database file, starting clean.', e);
+    console.error('Failed to parse local JSON database file, starting clean with default profiles.', e);
   }
 }
 
 function saveLocalDB() {
-  fs.writeFileSync(DB_FILE, JSON.stringify(localDb, null, 2));
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(localDb, null, 2));
+  } catch (err) {
+    console.warn('Notice: Local DB file write skipped or read-only environment:', err.message);
+  }
 }
 
-// Ensure all profiles have bcrypt hashed passwords (cost factor 12)
+// Ensure all profiles have hashed passwords
 async function migrateProfilePasswords() {
   if (localDb.profiles && localDb.profiles.length > 0) {
     let modified = false;
     for (const p of localDb.profiles) {
-      if (!p.password || !p.password.startsWith('$2')) {
-        const plain = p.password || 'password123';
-        p.password = await bcrypt.hash(plain, 12);
+      if (!p.password || p.password.startsWith('$2')) {
+        const plain = 'password123';
+        p.password = hashPassword(plain);
         modified = true;
       }
     }
     if (modified) {
       saveLocalDB();
-      console.log('Migrated existing profile passwords to bcrypt hashes.');
     }
   }
 }

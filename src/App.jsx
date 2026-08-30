@@ -46,18 +46,12 @@ function AppContent() {
     }
   }, [session]);
 
-  // If session is active and currently on login, route to default home view
+  // If session is terminated, redirect to login page
   useEffect(() => {
-    if (session?.user && activeScreen === 'login') {
-      if (session.profile?.role === 'admin') {
-        setActiveScreen('admin');
-      } else {
-        setActiveScreen('cases'); // Land on dedicated FIR Cases manager view
-      }
-    } else if (!session && activeScreen !== 'login' && activeScreen !== 'status' && activeScreen !== 'reset') {
+    if (!session && activeScreen !== 'login' && activeScreen !== 'status' && activeScreen !== 'reset') {
       setActiveScreen('login');
     }
-  }, [session]);
+  }, [session, activeScreen]);
 
   const pageVariants = {
     initial: { opacity: 0, y: 8 },
