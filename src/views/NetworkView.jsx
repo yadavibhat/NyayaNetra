@@ -91,7 +91,7 @@ export function NetworkView({ setActiveScreen, selectedCaseId, setSelectedCaseId
     fetchSimilar();
   }, [selectedSuspect]);
 
-  const selectedCase = cases.find(c => c.id === selectedCaseId);
+  const selectedCase = cases.find(c => c.id === selectedCaseId || c._id === selectedCaseId);
 
   // Merge nodes & links based on cross-case toggle
   const activeSuspects = showCrossCase
@@ -106,7 +106,7 @@ export function NetworkView({ setActiveScreen, selectedCaseId, setSelectedCaseId
   const activeLinks = showCrossCase
     ? [
         ...links,
-        ...crossCaseLinks.filter(cl => !links.some(l => l.id === cl.id))
+        ...crossCaseLinks.filter(cl => !links.some(l => (l.id || l._id) === (cl.id || cl._id)))
       ]
     : links;
 

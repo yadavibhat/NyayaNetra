@@ -6,7 +6,7 @@ import { dbService } from '../lib/api';
 import { createSpeechRecognizer, speakText, stopSpeaking } from '../lib/speech';
 import { Navbar } from '../components/Navbar';
 import { Sidebar } from '../components/Sidebar';
-import { Sparkles, Send, Mic, Volume2, VolumeX, Copy, CheckCircle2, FileText, Info, X } from 'lucide-react';
+import { Sparkles, Send, Mic, Volume2, VolumeX, Copy, CheckCircle2, FileText, Info, X, ChevronDown } from 'lucide-react';
 
 export function ChatView({ setActiveScreen, selectedCaseId, setSelectedCaseId, cases = [], reloadCases }) {
   const { session } = useAuth();
@@ -57,7 +57,7 @@ export function ChatView({ setActiveScreen, selectedCaseId, setSelectedCaseId, c
     const loadConversation = async () => {
       try {
         const userConvs = await dbService.getConversations(session);
-        const existing = userConvs.find(c => c.case_id === selectedCaseId || !selectedCaseId);
+        const existing = userConvs.find(c => selectedCaseId ? (c.case_id === selectedCaseId) : !c.case_id);
 
         let convId = existing?.id || existing?._id;
         if (!convId) {
@@ -192,27 +192,26 @@ export function ChatView({ setActiveScreen, selectedCaseId, setSelectedCaseId, c
 
   // Citation Inspector Handler
   const handleInspectCitation = (recordId) => {
-    const db = dbService.getDB();
-    const suspect = db.suspects.find(s => s.id === recordId);
+    const suspect = caseSuspects.find(s => s.id === recordId || s._id === recordId);
     if (suspect) {
       setCitationModalRecord({ type: 'Suspect Record', title: suspect.name, details: `Aliases: ${suspect.aliases?.join(', ') || 'None'} | Risk Score: ${suspect.risk_score || 'Unassessed'}%` });
       return;
     }
-    const evidence = db.evidence_records.find(e => e.id === recordId);
+    const evidence = caseEvidence.find(e => e.id === recordId || e._id === recordId);
     if (evidence) {
-      setCitationModalRecord({ type: `Evidence Record (${evidence.type.toUpperCase()})`, title: evidence.cell_tower || evidence.phone_number || 'Evidence Log', details: `Target: ${evidence.phone_number || 'N/A'} | Captured: ${new Date(evidence.captured_at).toLocaleString()}` });
+      setCitationModalRecord({ type: `Evidence Record (${(evidence.type || 'CDR').toUpperCase()})`, title: evidence.cell_tower || evidence.phone_number || 'Evidence Log', details: `Target: ${evidence.phone_number || 'N/A'} | Cell Tower: ${evidence.cell_tower || 'N/A'} | Captured: ${evidence.captured_at ? new Date(evidence.captured_at).toLocaleString() : 'N/A'}` });
       return;
     }
-    const link = db.suspect_links.find(l => l.id === recordId);
-    if (link) {
-      setCitationModalRecord({ type: 'Suspect Link Edge', title: `Link Type: ${link.link_type.toUpperCase()}`, details: link.detail || 'Documented link basis' });
-      return;
-    }
-    const caseRec = db.cases.find(c => c.id === recordId);
+    const caseRec = cases.find(c => c.id === recordId || c._id === recordId);
     if (caseRec) {
-      setCitationModalRecord({ type: 'FIR Case Record', title: caseRec.fir_number, details: `${caseRec.title} &mdash; ${caseRec.description}` });
+      setCitationModalRecord({ type: 'FIR Case Record', title: caseRec.fir_number, details: `${caseRec.title} — ${caseRec.description || 'N/A'}` });
       return;
     }
+    setCitationModalRecord({
+      type: 'Evidence Citation',
+      title: `Record #${recordId.slice(0, 12)}`,
+      details: `Record identifier ${recordId} referenced in judicial evidence grounding context.`
+    });
   };
 
   return (
@@ -227,9 +226,9 @@ export function ChatView({ setActiveScreen, selectedCaseId, setSelectedCaseId, c
           cases={cases}
           selectedCaseId={selectedCaseId}
           setSelectedCaseId={setSelectedCaseId}
-          onOpenAddCase={() => setIsAddCaseOpen(true)}
-          onOpenAddSuspect={() => setIsAddSuspectOpen(true)}
-          onOpenAddEvidence={() => setIsAddEvidenceOpen(true)}
+          onOpenAddCase={() => setActiveScreen('cases')}
+          onOpenAddSuspect={() => setActiveScreen('cases')}
+          onOpenAddEvidence={() => setActiveScreen('cases')}
         />
 
         {/* Primary Chat Canvas */}

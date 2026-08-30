@@ -188,9 +188,9 @@ export function AdminView({ setActiveScreen }) {
                 </thead>
                 <tbody className="divide-y divide-outline-variant/60 font-medium">
                   {officers.map(off => {
-                    const st = stations.find(s => s.id === off.station_id);
+                    const st = stations.find(s => s.id === off.station_id || s._id === off.station_id);
                     return (
-                      <tr key={off.id} className="hover:bg-surface-container-low">
+                      <tr key={off.id || off._id} className="hover:bg-surface-container-low">
                         <td className="p-3 flex items-center gap-2">
                           <div className="w-7 h-7 rounded-full bg-navy-deep text-white flex items-center justify-center font-bold text-xs">
                             {off.full_name ? off.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'KA'}

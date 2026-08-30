@@ -37,8 +37,9 @@ export function AuthProvider({ children }) {
   };
 
   const refreshProfile = () => {
-    if (session?.profile?.id) {
-      const updated = dbService.getDB().profiles.find(p => p.id === session.profile.id);
+    const profId = session?.profile?.id || session?.profile?._id;
+    if (profId) {
+      const updated = dbService.getDB().profiles.find(p => (p.id || p._id) === profId);
       if (updated) {
         const newSession = { ...session, profile: updated };
         setSession(newSession);

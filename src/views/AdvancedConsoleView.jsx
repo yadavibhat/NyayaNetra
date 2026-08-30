@@ -1040,7 +1040,7 @@ export function AdvancedConsoleView({ setActiveScreen, selectedCaseId, setSelect
                   <div className="border border-outline-variant p-4 rounded-xl bg-surface-container-low space-y-1 flex-1 mr-4">
                     <span className="text-[10px] font-bold text-outline uppercase block tracking-wider">Investigator Note</span>
                     <p className="text-xs text-navy-deep font-semibold leading-relaxed">
-                      This sub-feature has successfully run the intelligence pipeline on the active local database dossier ({cases.find(c => c.id === selectedCaseId)?.fir_number || 'KSP FIR Record'}). The results are recorded under secure cryptographic audit trail controls.
+                      This sub-feature has successfully run the intelligence pipeline on the active local database dossier ({cases.find(c => c.id === selectedCaseId || c._id === selectedCaseId)?.fir_number || 'KSP FIR Record'}). The results are recorded under secure cryptographic audit trail controls.
                     </p>
                   </div>
 
