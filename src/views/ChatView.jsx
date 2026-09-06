@@ -288,30 +288,39 @@ export function ChatView({ setActiveScreen, selectedCaseId, setSelectedCaseId, c
 
               {/* Initial Welcome Card */}
               {messages.length === 0 && (
-                <div className="bg-surface-container-low border border-outline-variant/60 p-6 rounded-2xl space-y-3 shadow-2xs">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-gold-accent" />
-                    <h3 className="text-sm font-bold text-navy-deep">
-                      {language === 'kn' ? 'ನ್ಯಾಯನೇತ್ರ ಕೃತಕ ಬುದ್ಧಿಮತ್ತೆ ತನಿಖಾ ಸಹಾಯಕ' : 'NyayaNetra Grounded Intelligence Assistant'}
-                    </h3>
+                <div className="bg-navy-deep border border-gold-accent/30 p-6 rounded-2xl space-y-4 shadow-md text-white">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2.5">
+                      <Sparkles className="w-5 h-5 text-gold-accent" />
+                      <h3 className="text-sm font-bold text-white tracking-wide">
+                        {language === 'kn' ? 'ನ್ಯಾಯನೇತ್ರ ಕೃತಕ ಬುದ್ಧಿಮತ್ತೆ ತನಿಖಾ ಸಹಾಯಕ' : 'NyayaNetra Grounded Intelligence Assistant'}
+                      </h3>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold bg-gold-accent/20 text-gold-accent px-2 py-0.5 rounded border border-gold-accent/30">
+                      BSA 2023 Compliant
+                    </span>
                   </div>
-                  <p className="text-xs text-on-surface leading-relaxed">
+
+                  <p className="text-xs text-slate-300 leading-relaxed font-medium">
                     {language === 'kn'
-                      ? 'ಈ ವ್ಯವಸ್ಥೆಯು ನೀವು ದತ್ತಸಂಚಯದಲ್ಲಿ ಸೇರಿಸಿದ ಪ್ರಕಟಿತ ಎಫ್‌ಐಆರ್ ಪ್ರಕರಣಗಳು, ಸಿಡಿಆರ್ ಕರೆ ದಾಖಲೆಗಳು ಮತ್ತು ಶಂಕಿತರ ನೆಟ್‌ವರ್ಕ್ ಮಾಹಿತಿಯಿಂದ ನೈಜ ಉತ್ತರವನ್ನು ನೀಡುತ್ತದೆ.'
-                      : 'This assistant queries user-entered FIR files, suspects, and CDR/ANPR evidence records stored in the database. Enter an inquiry below to analyze forensic evidence.'
+                      ? 'ಈ ವ್ಯವಸ್ಥೆಯು ದತ್ತಸಂಚಯದಲ್ಲಿರುವ ಎಫ್‌ಐಆರ್ ಪ್ರಕರಣಗಳು, ಸಿಡಿಆರ್ ಕರೆ ದಾಖಲೆಗಳು ಮತ್ತು ಶಂಕಿತರ ಮಾಹಿತಿಯನ್ನು ಆಧಾರಿಸಿ ಉತ್ತರ ನೀಡುತ್ತದೆ.'
+                      : 'Ask inquiries in English or Kannada (ಕನ್ನಡ) to synthesize evidence records, analyze CDR cell tower co-locations, and query suspect networks.'
                     }
                   </p>
-                  <div className="pt-2 flex flex-wrap gap-2 text-xs font-semibold">
+
+                  <div className="pt-1 flex flex-wrap gap-2 text-xs font-semibold">
                     <button
                       onClick={() => setPromptInput(language === 'kn' ? 'ಪ್ರಕರಣದ ಶಂಕಿತರ ವಿವರಗಳನ್ನು ನೀಡಿ' : 'Summarize suspect details for active case')}
-                      className="px-3 py-1.5 bg-white border border-outline-variant rounded-full text-navy-deep hover:bg-surface-container transition-colors shadow-2xs"
+                      className="px-3.5 py-2 bg-slate-900/90 border border-slate-700 rounded-xl text-slate-200 hover:text-gold-accent hover:border-gold-accent/50 transition-all flex items-center gap-1.5"
                     >
+                      <Sparkles className="w-3.5 h-3.5 text-gold-accent" />
                       {language === 'kn' ? 'ಶಂಕಿತರ ವಿವರ' : 'Summarize suspect details'}
                     </button>
                     <button
                       onClick={() => setPromptInput(language === 'kn' ? 'ಸಿಡಿಆರ್ ಕರೆಯನ್ನು ಪರಿಶೀಲಿಸಿ' : 'Cross-reference CDR evidence records')}
-                      className="px-3 py-1.5 bg-white border border-outline-variant rounded-full text-navy-deep hover:bg-surface-container transition-colors shadow-2xs"
+                      className="px-3.5 py-2 bg-slate-900/90 border border-slate-700 rounded-xl text-slate-200 hover:text-gold-accent hover:border-gold-accent/50 transition-all flex items-center gap-1.5"
                     >
+                      <Sparkles className="w-3.5 h-3.5 text-gold-accent" />
                       {language === 'kn' ? 'ಸಿಡಿಆರ್ ಪರಿಶೀಲಿಸಿ' : 'Cross-reference CDR records'}
                     </button>
                   </div>
